@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const route = useRoute()
+/* const route = useRoute()
 
 const breadcrumbs = computed(() => {
   const items = [
@@ -11,7 +11,7 @@ const breadcrumbs = computed(() => {
   }
 
   return items
-})
+}) */
 </script>
 
 <template>
