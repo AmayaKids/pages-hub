@@ -2,5 +2,7 @@
 </script>
 
 <template>
-  <div>qwe</div>
+  <div>
+    qwertyqwertyqwertyytrewqytrewqytrewq
+  </div>
 </template>
