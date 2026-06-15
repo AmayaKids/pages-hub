@@ -32,25 +32,62 @@ const allWebp = computed(() => WEBP_A[`${base.value}/${props.name}@2x.webp`])
 </script>
 
 <template>
-  <picture v-if="!onlyOne" class="image">
+  <picture
+    v-if="!onlyOne"
+    class="image"
+  >
     <!-- >=1024: webp -> png -->
-    <source v-if="largeWebp" :srcset="largeWebp" type="image/webp" media="(min-width: 1024px)" />
-    <source :srcset="largePng" type="image/png"  media="(min-width: 1024px)" />
+    <source
+      v-if="largeWebp"
+      :srcset="largeWebp"
+      type="image/webp"
+      media="(min-width: 1024px)"
+    >
+    <source
+      :srcset="largePng"
+      type="image/png"
+      media="(min-width: 1024px)"
+    >
 
     <!-- 844–1023: webp -> png -->
-    <source v-if="mediumWebp" :srcset="mediumWebp" type="image/webp" media="(min-width: 844px)" />
-    <source :srcset="mediumPng" type="image/png"  media="(min-width: 844px)" />
+    <source
+      v-if="mediumWebp"
+      :srcset="mediumWebp"
+      type="image/webp"
+      media="(min-width: 844px)"
+    >
+    <source
+      :srcset="mediumPng"
+      type="image/png"
+      media="(min-width: 844px)"
+    >
 
     <!-- <844: webp -> png -->
-    <source v-if="smallWebp"  :srcset="smallWebp"  type="image/webp" />
+    <source
+      v-if="smallWebp"
+      :srcset="smallWebp"
+      type="image/webp"
+    >
     <!-- Финальный фолбек: <img> всегда PNG, чтобы без undefined -->
-    <img :src="smallPng" :alt="props.name || ''" />
+    <img
+      :src="smallPng"
+      :alt="props.name || ''"
+    >
   </picture>
 
-  <picture v-else class="image">
+  <picture
+    v-else
+    class="image"
+  >
     <!-- <844: webp -> png -->
-    <source :srcset="allWebp" type="image/webp" />
+    <source
+      :srcset="allWebp"
+      type="image/webp"
+    >
     <!-- Финальный фолбек: <img> всегда PNG, чтобы без undefined -->
-    <img :src="allPng" :alt="props.name || ''" />
+    <img
+      :src="allPng"
+      :alt="props.name || ''"
+    >
   </picture>
 </template>
