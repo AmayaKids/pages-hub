@@ -62,7 +62,7 @@ onMounted(() => {
     width: 520,
     height: 520,
     type: 'svg',
-    data: link.value, // ← используй реальный url, не props
+    data: link.value as string, // ← используй реальный url, не props
     margin: 0,
     dotsOptions: { type: 'extra-rounded', color: '#5A24B8' },
     cornersSquareOptions: { type: 'extra-rounded', color: '#5A24B8' },
