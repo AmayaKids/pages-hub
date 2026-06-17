@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import defaultLargePng from '@/assets/images/e/instruction/how-to-activate-gift-code/hero-large@2x.png'
-import defaultMediumPng from '@/assets/images/e/instruction/how-to-activate-gift-code/hero-medium@2x.png'
-import defaultSmallPng from '@/assets/images/e/instruction/how-to-activate-gift-code/hero-small@2x.png'
+import defaultLargePng from '@/assets/images/a/instruction/how-to-activate-gift-code/hero-large@2x.png'
+import defaultMediumPng from '@/assets/images/a/instruction/how-to-activate-gift-code/hero-medium@2x.png'
+import defaultSmallPng from '@/assets/images/a/instruction/how-to-activate-gift-code/hero-small@2x.png'
 
 const props = defineProps<{ path?: string, name?: string, onlyOne?: boolean }>()
 

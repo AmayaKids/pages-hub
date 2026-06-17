@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import AppPicture from '@/components/AppPicture.vue'
-
 const route = useRoute()
 
 const { getAppStoreLink } = useAppsInfo()
@@ -15,7 +13,7 @@ const link = computed(() => {
   return getAppStoreLink('farm')
 })
 
-const i18nPath = 'a.instruction.how-to-activate-gift-code'
+const i18nPath = 'a.instruction.how_to_activate_gift_code'
 </script>
 
 <template>
@@ -62,7 +60,7 @@ const i18nPath = 'a.instruction.how-to-activate-gift-code'
 
         <AppPicture
           class="image-hero"
-          path="e/instruction/how-to-activate-gift-code"
+          path="a/instruction/how-to-activate-gift-code"
           name="hero"
         />
 
@@ -249,7 +247,7 @@ const i18nPath = 'a.instruction.how-to-activate-gift-code'
       <div class="block block-1">
         <AppPicture
           class="image-1"
-          path="e/instruction/how-to-activate-gift-code"
+          path="a/instruction/how-to-activate-gift-code"
           name="1"
         />
 
@@ -314,7 +312,7 @@ const i18nPath = 'a.instruction.how-to-activate-gift-code'
       <div class="block block-2">
         <AppPicture
           class="image-2"
-          path="e/instruction/how-to-activate-gift-code"
+          path="a/instruction/how-to-activate-gift-code"
           name="2"
         />
 
@@ -397,7 +395,7 @@ const i18nPath = 'a.instruction.how-to-activate-gift-code'
       <div class="block block-3">
         <AppPicture
           class="image-3"
-          path="e/instruction/how-to-activate-gift-code"
+          path="a/instruction/how-to-activate-gift-code"
           name="3"
         />
 
@@ -448,31 +446,31 @@ const i18nPath = 'a.instruction.how-to-activate-gift-code'
 
           <AppPicture
             class="star star--1"
-            path="e/instruction/how-to-activate-gift-code"
+            path="a/instruction/how-to-activate-gift-code"
             name="star-1"
             :only-one="true"
           />
           <AppPicture
             class="star star--2"
-            path="e/instruction/how-to-activate-gift-code"
+            path="a/instruction/how-to-activate-gift-code"
             name="star-2"
             :only-one="true"
           />
           <AppPicture
             class="star star--3"
-            path="e/instruction/how-to-activate-gift-code"
+            path="a/instruction/how-to-activate-gift-code"
             name="star-3"
             :only-one="true"
           />
           <AppPicture
             class="star star--4"
-            path="e/instruction/how-to-activate-gift-code"
+            path="a/instruction/how-to-activate-gift-code"
             name="star-4"
             :only-one="true"
           />
           <AppPicture
             class="star star--5"
-            path="e/instruction/how-to-activate-gift-code"
+            path="a/instruction/how-to-activate-gift-code"
             name="star-5"
             :only-one="true"
           />
