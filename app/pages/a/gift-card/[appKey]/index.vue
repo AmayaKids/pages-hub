@@ -62,7 +62,7 @@ onMounted(() => {
     width: 520,
     height: 520,
     type: 'svg',
-    data: link.value as string, // ← используй реальный url, не props
+    data: link.value as string,
     margin: 0,
     dotsOptions: { type: 'extra-rounded', color: '#5A24B8' },
     cornersSquareOptions: { type: 'extra-rounded', color: '#5A24B8' },
@@ -195,13 +195,13 @@ onMounted(() => {
               tag="div"
               class="text"
             >
-              <template #link>
+              <!-- <template #link>
                 <a
                   :href="instructionLink"
                   target="_blank"
                   v-html="instructionLink"
                 />
-              </template>
+              </template> -->
             </i18n-t>
             <a
               class="button"
@@ -427,9 +427,9 @@ onMounted(() => {
           justify-content: center;
           align-self: flex-start;
           justify-self: flex-start;
-          min-width: 320px;
-          padding: 24px 40px;
-          border-radius: 40px;
+          min-width: 6.66666667rem;
+          padding: 0.5rem 0.833333333rem;
+          border-radius: 0.833333333rem;
           background-color: #5A24B8;
           color: #fff;
           font-size: 0.75rem;
@@ -462,9 +462,9 @@ onMounted(() => {
         justify-content: center;
         align-self: center;
         justify-self: center;
-        min-width: 320px;
-        padding: 24px 40px;
-        border-radius: 40px;
+        min-width: 6.66666667rem;
+        padding: 0.5rem 0.833333333rem;
+        border-radius: 0.833333333rem;
         background-color: #5A24B8;
         color: #fff;
         font-size: 0.75rem;
