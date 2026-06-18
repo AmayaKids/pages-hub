@@ -54,6 +54,7 @@ const instructionLink = computed(() => {
 const i18nPath = 'a.gift_card'
 
 const container = ref<HTMLElement>()
+const isPdfReady = ref(false)
 
 onMounted(() => {
   if (!container.value) return
@@ -71,6 +72,7 @@ onMounted(() => {
   })
 
   qr.append(container.value)
+  isPdfReady.value = true
 })
 </script>
 
@@ -234,6 +236,12 @@ onMounted(() => {
         </div>
       </footer>
     </div>
+
+    <div
+      v-if="isPdfReady"
+      data-pdf-ready="true"
+      style="display: none;"
+    ></div>
   </div>
 </template>
 
