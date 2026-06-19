@@ -4,7 +4,7 @@ import QRCodeStyling from 'qr-code-styling'
 useHead({
   style: [
     {
-      innerHTML: 'html { font-size: 24px !important; }',
+      innerHTML: 'html.gift-card-pdf-page { font-size: 24px !important; }',
       id: 'custom-page-font'
     }
   ],
@@ -62,7 +62,13 @@ const i18nPath = 'a.gift_card'
 const container = ref<HTMLElement>()
 const isPdfReady = ref(false)
 
-onMounted(() => {
+declare global {
+  interface Window {
+    __PDF_READY__?: boolean
+  }
+}
+
+onMounted(async () => {
   if (!container.value) return
 
   const qr = new QRCodeStyling({
@@ -78,7 +84,13 @@ onMounted(() => {
   })
 
   qr.append(container.value)
+
+  // Ждём, пока Vue допатчит DOM и браузер отрисует кадр,
+  // и только потом сигналим Playwright, что страница готова к page.pdf().
+  await nextTick()
+
   isPdfReady.value = true
+  window.__PDF_READY__ = true
 })
 </script>
 
@@ -308,8 +320,6 @@ body.gift-card-pdf-page {
   color: #5A24B8;
   font-family: 'Nunito', sans-serif;
   overflow: hidden;
-  page-break-after: always;
-  break-after: page;
 
   .logo {
     position: absolute;
