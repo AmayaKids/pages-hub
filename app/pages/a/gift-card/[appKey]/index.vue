@@ -4,10 +4,16 @@ import QRCodeStyling from 'qr-code-styling'
 useHead({
   style: [
     {
-      innerHTML: 'html { font-size: 48px !important; }',
+      innerHTML: 'html { font-size: 24px !important; }',
       id: 'custom-page-font'
     }
-  ]
+  ],
+  htmlAttrs: {
+    class: 'gift-card-pdf-page'
+  },
+  bodyAttrs: {
+    class: 'gift-card-pdf-page'
+  }
 })
 
 const route = useRoute()
@@ -111,6 +117,7 @@ onMounted(() => {
           class="image-hero"
           path="a/gift-card"
           :only-one="true"
+          :only-webp="true"
           name="hero"
         />
 
@@ -241,9 +248,50 @@ onMounted(() => {
       v-if="isPdfReady"
       data-pdf-ready="true"
       style="display: none;"
-    ></div>
+    />
   </div>
 </template>
+
+<style lang="scss">
+/*
+  Эти правила НЕ scoped специально, но действуют только на этой странице:
+  html/body получают класс .gift-card-pdf-page через useHead (см. <script>),
+  и Nuxt сам снимет его при переходе на другую страницу — так что глобально
+  на весь проект эти стили не текут.
+
+  Страница используется только для генерации PDF (Playwright),
+  поэтому не пытаемся подружить CSS-mm (96dpi) с px-вёрсткой (рассчитанной
+  на 150dpi через rem) — это и ломало layout. Вместо этого фиксируем
+  html/body в тех же px, что и .page (1240x1754), а физический размер
+  страницы (210mm x 297mm @ 150dpi) задаём ПАРАМЕТРАМИ ВЫЗОВА page.pdf():
+
+    const context = await browser.newContext({
+      viewport: { width: 1240, height: 1754 },
+      deviceScaleFactor: 1
+    })
+    const page = await context.newPage()
+    await page.goto(url)
+    await page.waitForSelector('.qr-wrapper svg')
+    await page.pdf({
+      path: 'gift-card.pdf',
+      width: '1240px',
+      height: '1754px',
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' }
+    })
+
+  1240px в page.pdf() сами дадут ровно 210mm на бумаге — пересчитывать
+  в CSS не нужно и не надо.
+*/
+html.gift-card-pdf-page,
+body.gift-card-pdf-page {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 1240px;
+  height: 1754px;
+  overflow: hidden;
+}
+</style>
 
 <style scoped lang="scss">
 .page {
@@ -259,6 +307,9 @@ onMounted(() => {
   background-color: #fff;
   color: #5A24B8;
   font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
 
   .logo {
     position: absolute;
