@@ -131,7 +131,14 @@ const allWebpUrl = computed(() =>
 
     <!-- Финальный фолбек -->
     <img
-      :src="onlyWebp ? (smallWebpUrl ?? smallPngUrl) : smallPngUrl"
+      v-if="onlyWebp"
+      :src="smallWebpUrl ?? smallPngUrl"
+      :alt="props.name || ''"
+    >
+    <img
+      v-else
+      :srcset="smallPngSrcset"
+      :src="smallPngUrl"
       :alt="props.name || ''"
     >
   </picture>
@@ -146,7 +153,14 @@ const allWebpUrl = computed(() =>
       type="image/webp"
     >
     <img
-      :src="onlyWebp ? (allWebpUrl ?? allPngUrl) : allPngUrl"
+      v-if="onlyWebp"
+      :src="allWebpUrl ?? allPngUrl"
+      :alt="props.name || ''"
+    >
+    <img
+      v-else
+      :srcset="allPngSrcset"
+      :src="allPngUrl"
       :alt="props.name || ''"
     >
   </picture>
