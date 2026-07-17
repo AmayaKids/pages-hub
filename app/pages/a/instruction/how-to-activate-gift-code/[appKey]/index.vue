@@ -3,6 +3,8 @@ const route = useRoute()
 
 const { getAppStoreLink } = useAppsInfo()
 
+const { t } = useI18n()
+
 const link = computed(() => {
   const key = route.params.appKey
 
@@ -14,6 +16,22 @@ const link = computed(() => {
 })
 
 const i18nPath = 'a.instruction.how_to_activate_gift_code'
+
+useSeoMeta({
+  title: () => t(`${i18nPath}.common.page_title`) + ' — Amaya Kids',
+  description: () => t(`${i18nPath}.common.landing_header_line_2`),
+
+  // Теги для соцсетей (Open Graph)
+  ogTitle: () => t(`${i18nPath}.common.page_title`) + ' — Amaya Kids',
+  ogDescription: () => t(`${i18nPath}.common.landing_header_line_2`),
+  ogImage: `https://pages.amayakids.com/assets/images/a/instruction/how-to-activate-gift-code/farm/og-image.png`,
+
+  // Теги для Twitter/X (по желанию)
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => t(`${i18nPath}.common.page_title`) + ' — Amaya Kids',
+  twitterDescription: () => t(`${i18nPath}.common.landing_header_line_2`),
+  twitterImage: `https://pages.amayakids.com/assets/images/a/instruction/how-to-activate-gift-code/farm/og-image.png`
+})
 </script>
 
 <template>
