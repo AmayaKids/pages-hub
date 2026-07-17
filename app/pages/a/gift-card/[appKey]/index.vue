@@ -54,7 +54,7 @@ const link = computed(() => {
 const instructionLink = computed(() => {
   const key = route.params.appKey
 
-  return `${baseUrl}/${locale.value}/a/instruction/how-to-activate-gift-code/${key}`
+  return `https://pages.amayakids.com/${locale.value}/a/instruction/how-to-activate-gift-code/${key}`
 })
 
 const i18nPath = 'a.gift_card'
