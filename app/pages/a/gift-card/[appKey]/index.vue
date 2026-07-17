@@ -24,8 +24,6 @@ const { locale } = useI18n()
 
 const url = useRequestURL()
 
-const baseUrl = url.origin
-
 const giftData = computed(() => {
   const raw = url.searchParams.get('data')
   if (!raw) return null
