@@ -13,7 +13,7 @@ const hostPages: Record<string, Component> = {
   'amayasoft-uz-test': AmayaSoftTest
 }
 
-const pageKey = getHostPageKey(useRequestURL().host)
+const pageKey = getHostPageKey(useAppHost())
 const Landing = pageKey ? hostPages[pageKey] : null
 
 if (!Landing) {
