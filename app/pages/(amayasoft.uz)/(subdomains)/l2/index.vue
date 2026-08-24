@@ -5,6 +5,6 @@ import HostLandingPlaceholder from '~/components/domain-pages/HostLandingPlaceho
 <template>
   <HostLandingPlaceholder
     title="L2"
-    description="Landing placeholder for l2.amayakids.uz"
+    description="Landing placeholder for l2.amayasoft.uz"
   />
 </template>

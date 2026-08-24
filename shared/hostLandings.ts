@@ -1,10 +1,8 @@
 export const HOST_PAGE_KEYS = {
-  'l1.amayakids.uz': 'amayakids-uz-l1',
-  'l2.amayakids.uz': 'amayakids-uz-l2',
-  'test.amayakids.uz': 'amayakids-uz-test',
-  'l1.amayasoft.com': 'amayasoft-com-l1',
-  'l2.amayasoft.com': 'amayasoft-com-l2',
-  'test.amayasoft.com': 'amayasoft-com-test'
+  'amayakids.com': 'amayakids-com-root',
+  'l1.amayasoft.uz': 'amayasoft-uz-l1',
+  'l2.amayasoft.uz': 'amayasoft-uz-l2',
+  'test.amayasoft.uz': 'amayasoft-uz-test'
 } as const
 
 export const LOCALES = ['en', 'ru', 'de', 'es', 'it', 'pt', 'fr', 'sv', 'nl'] as const

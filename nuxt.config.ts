@@ -11,15 +11,15 @@ export default defineNuxtConfig({
     // Domain-group folders hold plain .vue components imported directly by
     // app/pages/index.vue's host dispatcher. They must NOT become routes of
     // their own (Nuxt route groups like `(name)` are cosmetic and do not
-    // affect the URL), otherwise e.g. `(amayakids.uz)/(subdomains)/l1/index.vue`
-    // and `(amayasoft.com)/(subdomains)/l1/index.vue` would both register the
-    // same `/l1` route — bypassing the Host-based selection entirely.
+    // affect the URL), otherwise e.g. `(amayakids.com)/index.vue` and the
+    // top-level `index.vue` dispatcher would both register the same `/`
+    // route — bypassing the Host-based selection entirely.
     // NB: parens must be escaped — unescaped `(...)` is glob group syntax,
     // so an escaped literal is required to exclude these literal folder names.
     pattern: [
       '**/*.vue',
-      '!**/\\(amayakids.uz\\)/**',
-      '!**/\\(amayasoft.com\\)/**'
+      '!**/\\(amayakids.com\\)/**',
+      '!**/\\(amayasoft.uz\\)/**'
     ]
   },
 
@@ -49,13 +49,11 @@ export default defineNuxtConfig({
     server: {
       // Local Host-header /etc/hosts testing for domain/subdomain routes
       allowedHosts: [
+        'amayakids.com',
         'pages.amayakids.com',
-        'l1.amayakids.uz',
-        'l2.amayakids.uz',
-        'test.amayakids.uz',
-        'l1.amayasoft.com',
-        'l2.amayasoft.com',
-        'test.amayasoft.com'
+        'l1.amayasoft.uz',
+        'l2.amayasoft.uz',
+        'test.amayasoft.uz'
       ]
     }
   },
