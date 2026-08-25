@@ -1,0 +1,9 @@
+/* Nunito — variable font, wght axis 200–1000 (matches the shipped file's fvar table).
+   Import this file (`import '~/assets/css/fonts/nunito.css'`) only from a page/component
+   that actually sets `font-family: 'Nunito'`, so the face ships in that route's chunk only. */
+@font-face {
+  font-family: 'Nunito';
+  src: url('@/assets/fonts/Nunito.ttf') format('truetype');
+  font-weight: 200 1000;
+  font-display: swap;
+}

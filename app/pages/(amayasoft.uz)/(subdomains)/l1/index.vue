@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import '~/assets/css/fonts/nunito.css'
+import '~/assets/css/fonts/open-sans.css'
+
 import logoSvg from '~/assets/images/l1/svg/logo.svg'
 import bgBlueRoundSvg from '~/assets/images/l1/svg/bg-blue-round.svg'
 import dividerSvg from '~/assets/images/l1/svg/divider.svg'
@@ -65,6 +68,21 @@ const reviews = [
     author: 'LostHero'
   }
 ]
+
+const { isPending: isPaymentPending, error: paymentError, start: startPayment } = useMulticardCheckout()
+
+// The same "Купить" CTA is repeated in three sections; `activeCta` keeps the
+// pending label and the error message on the button the user actually clicked.
+const activeCta = ref<string | null>(null)
+
+async function buy(cta: string) {
+  activeCta.value = cta
+  await startPayment()
+}
+
+function ctaLabel(cta: string) {
+  return isPaymentPending.value && activeCta.value === cta ? 'Переходим к оплате…' : 'Купить'
+}
 </script>
 
 <template>
@@ -83,10 +101,6 @@ const reviews = [
 
       <!-- Hero -->
       <section class="hero">
-        <div class="eyebrow hero__eyebrow">
-          Amaya Kids taqdim etadi
-        </div>
-
         <div class="hero__pic">
           <img
             class="hero__pic-bg"
@@ -94,12 +108,12 @@ const reviews = [
             alt=""
           >
           <div class="hero__pic-text">
-            <h1 class="hero__title">
+            <div class="hero__title">
               Машинки
-            </h1>
-            <p class="hero__subtitle">
+            </div>
+            <div class="hero__subtitle">
               Гоняй, развивайся... тут текст от Юли нужен
-            </p>
+            </div>
           </div>
         </div>
 
@@ -141,31 +155,27 @@ const reviews = [
                 150 000 сум
               </p>
             </div>
-            <a
+            <button
               class="btn"
-              href="#buy"
-            >Купить</a>
+              type="button"
+              :disabled="isPaymentPending"
+              @click="buy('offer')"
+            >
+              {{ ctaLabel('offer') }}
+            </button>
           </div>
         </div>
+
+        <p
+          v-if="paymentError && activeCta === 'offer'"
+          class="pay-error"
+        >
+          {{ paymentError }}
+        </p>
       </section>
 
       <!-- UTP -->
       <section class="utp">
-        <div class="utp__badges">
-          <div
-            v-for="badge in badges"
-            :key="badge.title"
-            class="utp__badge"
-          >
-            <div class="utp__badge-title">
-              {{ badge.title }}
-            </div>
-            <div class="utp__badge-text">
-              {{ badge.text }}
-            </div>
-          </div>
-        </div>
-
         <div class="utp__grid">
           <div
             v-for="item in utpItems"
@@ -185,18 +195,25 @@ const reviews = [
           </div>
         </div>
 
-        <a
+        <button
           class="btn utp__btn"
-          href="#buy"
-        >Купить</a>
+          type="button"
+          :disabled="isPaymentPending"
+          @click="buy('utp')"
+        >
+          {{ ctaLabel('utp') }}
+        </button>
+
+        <p
+          v-if="paymentError && activeCta === 'utp'"
+          class="pay-error"
+        >
+          {{ paymentError }}
+        </p>
       </section>
 
       <!-- Video -->
       <section class="video">
-        <div class="eyebrow video__eyebrow">
-          Qanday o‘ynaladi?
-        </div>
-
         <div class="video__frame">
           <img
             :src="videoPreviewPng"
@@ -243,10 +260,21 @@ const reviews = [
           </article>
         </div>
 
-        <a
+        <button
           class="btn reviews__btn"
-          href="#buy"
-        >Купить</a>
+          type="button"
+          :disabled="isPaymentPending"
+          @click="buy('reviews')"
+        >
+          {{ ctaLabel('reviews') }}
+        </button>
+
+        <p
+          v-if="paymentError && activeCta === 'reviews'"
+          class="pay-error"
+        >
+          {{ paymentError }}
+        </p>
 
         <!-- Footer -->
         <footer class="footer">
@@ -329,7 +357,7 @@ const reviews = [
   }
 
   @include md-desktop {
-    max-width: 1088px;
+    max-width: 768px;
     box-shadow: 0 40px 140px rgba(0, 0, 0, 0.18);
   }
 }
@@ -369,6 +397,8 @@ const reviews = [
   justify-content: center;
   height: 48px;
   padding: 0 28px;
+  -webkit-appearance: none;
+  appearance: none;
   border: 0;
   border-bottom: 6px solid #017c2e;
   border-radius: 120px;
@@ -390,6 +420,34 @@ const reviews = [
     color: #ffffff;
     text-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
   }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+}
+
+/* Payment error notice under a "Купить" button. Sits on both the white hero
+   and the blue reviews background, hence the solid red pill. */
+.pay-error {
+  margin-top: 12px;
+  max-width: 280px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  -webkit-border-radius: 99px;
+  background: #e5133a;
+  font-family: "Nunito", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+  color: #ffffff;
+
+  @include md-tablet {
+    max-width: 360px;
+    font-size: 15px;
+    line-height: 20px;
+  }
 }
 
 /* ---------- header ---------- */
@@ -406,6 +464,7 @@ const reviews = [
 
   @include md-tablet {
     padding: 24px 56px;
+    align-items: flex-start;
   }
 
   @include md-desktop {
@@ -415,7 +474,6 @@ const reviews = [
   &__logo {
     width: 120px;
     height: 38px;
-    margin: 0 auto;
 
     @include md-tablet {
       width: 166px;
@@ -439,7 +497,6 @@ const reviews = [
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center;
-  padding-top: 20px;
 
   &__eyebrow {
     margin-bottom: 16px;
@@ -449,6 +506,7 @@ const reviews = [
     position: relative;
     width: 100%;
     height: 0;
+    height: 256px;
     padding-top: 44.01%; /* 338 / 768 — original Figma aspect ratio */
     overflow: hidden;
     background: #05b8f6;
@@ -460,11 +518,13 @@ const reviews = [
 
     &-bg {
       position: absolute;
-      left: -9.84%;
-      top: -36.54%;
+      left: 0;
+      top: 0;
       width: 129.95%;
-      height: 136.54%;
+      height: 256px;
       max-width: none;
+      height: 100%!important;
+      object-fit: cover!important;
     }
 
     &-text {
@@ -483,7 +543,7 @@ const reviews = [
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding-top: 25.44%; /* 86 / 338 — original Figma text offset */
+      padding-top: 86px;
       text-align: center;
     }
   }
@@ -497,6 +557,11 @@ const reviews = [
     -webkit-text-stroke: 2px #ffffff;
     paint-order: stroke fill;
     text-shadow: 0 6px 6px rgba(0, 0, 0, 0.45), 0 4px 1px rgba(0, 0, 0, 0.8), 0 3px 0 #84a5b1, 0 12px 24px rgba(0, 0, 0, 0.8);
+
+    text-shadow: 0 20px 40px rgba(0, 0, 0, 0.80), 0 5px 0 #84A5B1, 0 7px 2px rgba(0, 0, 0, 0.80), 0 10px 10px rgba(0, 0, 0, 0.45);
+    -webkit-text-stroke-width: 3px;
+    -webkit-text-stroke-color: #FFF;
+    font-weight: 900;
 
     @include md-tablet {
       font-size: 44px;

@@ -1,0 +1,10 @@
+/* Open Sans — variable font, wght axis 300–800 and wdth axis 75–100% (matches the shipped
+   file's fvar table). Import this file only from a page/component that actually sets
+   `font-family: 'Open Sans'`, so the face ships in that route's chunk only. */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('@/assets/fonts/OpenSans.TTF') format('truetype');
+  font-weight: 300 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+}

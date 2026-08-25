@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import '~/assets/css/fonts/nunito.css'
+import '~/assets/css/fonts/open-sans.css'
+
 const route = useRoute()
 
 const { getAppStoreLink } = useAppsInfo()

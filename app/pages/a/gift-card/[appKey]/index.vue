@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import '~/assets/css/fonts/nunito.css'
+import '~/assets/css/fonts/open-sans.css'
+
 import QRCodeStyling from 'qr-code-styling'
 
 useHead({
