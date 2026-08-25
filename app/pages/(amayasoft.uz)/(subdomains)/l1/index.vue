@@ -18,6 +18,12 @@ useSeoMeta({
   title: 'Машинки — Amaya Kids'
 })
 
+const badges = [
+  { title: '75+', text: 'mashina turi' },
+  { title: '2+', text: 'yoshdan' },
+  { title: 'Oflayn', text: 'ham o‘ynaydi' }
+]
+
 const utpItems = [
   {
     icon: utpAgeSvg,
@@ -77,6 +83,10 @@ const reviews = [
 
       <!-- Hero -->
       <section class="hero">
+        <div class="eyebrow hero__eyebrow">
+          Amaya Kids taqdim etadi
+        </div>
+
         <div class="hero__pic">
           <img
             class="hero__pic-bg"
@@ -141,6 +151,21 @@ const reviews = [
 
       <!-- UTP -->
       <section class="utp">
+        <div class="utp__badges">
+          <div
+            v-for="badge in badges"
+            :key="badge.title"
+            class="utp__badge"
+          >
+            <div class="utp__badge-title">
+              {{ badge.title }}
+            </div>
+            <div class="utp__badge-text">
+              {{ badge.text }}
+            </div>
+          </div>
+        </div>
+
         <div class="utp__grid">
           <div
             v-for="item in utpItems"
@@ -168,6 +193,10 @@ const reviews = [
 
       <!-- Video -->
       <section class="video">
+        <div class="eyebrow video__eyebrow">
+          Qanday o‘ynaladi?
+        </div>
+
         <div class="video__frame">
           <img
             :src="videoPreviewPng"
@@ -285,6 +314,30 @@ const reviews = [
   background: #ffffff;
   border-radius: 24px;
   margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- eyebrow pill (section lead-in label) ---------- */
+
+.eyebrow {
+  display: inline-flex;
+  padding: 6px 16px;
+  border-radius: 99px;
+  background: #ff8800;
+  font-family: "Nunito", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 18px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  margin-bottom: 16px;
+}
+
+.video__eyebrow {
+  margin-bottom: 16px;
 }
 
 /* ---------- shared button ---------- */
@@ -358,6 +411,7 @@ const reviews = [
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center;
+  padding-top: 20px;
 }
 
 .hero__pic {
@@ -572,6 +626,53 @@ const reviews = [
   padding: 32px 16px 40px;
 }
 
+.utp__badges {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.utp__badge {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  padding: 8px 20px;
+  margin: 4px;
+  border-radius: 99px;
+  background: #ff8800;
+  color: #ffffff;
+}
+
+.utp__badge-title {
+  font-family: "Nunito", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.utp__badge-text {
+  font-family: "Nunito", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+}
+
 /* always a 2-column grid, from 375px up */
 .utp__grid {
   width: 100%;
@@ -653,6 +754,13 @@ const reviews = [
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
@@ -866,6 +974,13 @@ const reviews = [
 
   .page {
     border-radius: 40px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.15);
+  }
+
+  .eyebrow {
+    padding: 8px 20px;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   .header {
@@ -1102,6 +1217,7 @@ const reviews = [
 
   .page {
     max-width: 1088px;
+    box-shadow: 0 40px 140px rgba(0, 0, 0, 0.18);
   }
 
   .header {
