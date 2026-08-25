@@ -1,5 +1,5 @@
 <template>
   <div>
-    Thanks bro
+    Thanks results is here
   </div>
 </template>
