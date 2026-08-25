@@ -62,13 +62,17 @@ useSeoMeta({
     <div class="page">
       <!-- Header -->
       <header class="header">
-        <img
+        <NuxtLink
           class="header__logo"
-          :src="logoSvg"
-          width="166"
-          height="52"
-          alt="Amaya Kids"
+          to="/"
         >
+          <img
+            :src="logoSvg"
+            width="166"
+            height="52"
+            alt="Amaya Kids"
+          >
+        </NuxtLink>
       </header>
 
       <!-- Document -->
@@ -206,9 +210,18 @@ useSeoMeta({
   }
 
   &__logo {
+    display: block;
     width: 120px;
     height: 38px;
     margin: 0 auto;
+    line-height: 0;
+    text-decoration: none;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
 
     @include md-tablet {
       width: 166px;
@@ -325,11 +338,7 @@ useSeoMeta({
     flex-direction: row;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: 51px 56px;
-  }
-
-  @include md-desktop {
-    padding: 56px 80px;
+    padding: 32px 44px;
   }
 
   &__company,

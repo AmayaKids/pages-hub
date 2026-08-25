@@ -13,6 +13,7 @@ import headPicPng from '~/assets/images/l1/png/head-pic.png'
 import carPng from '~/assets/images/l1/png/car.png'
 import robotPng from '~/assets/images/l1/png/robot.png'
 import videoPreviewPng from '~/assets/images/l1/png/video-preview.png'
+import cars2Video from '~/assets/videos/Cars2_1280x720.mp4'
 import commasPng from '~/assets/images/l1/png/commas.png'
 import starPng from '~/assets/images/l1/png/star.png'
 
@@ -76,6 +77,16 @@ async function buy(cta: string) {
 function ctaLabel(cta: string) {
   return isPaymentPending.value && activeCta.value === cta ? 'Yuklanmoqda…' : 'Ochish'
 }
+
+const gameplayVideo = ref<HTMLVideoElement | null>(null)
+
+onMounted(() => {
+  const video = gameplayVideo.value
+  if (!video) return
+  video.muted = true
+  video.playsInline = true
+  void video.play()
+})
 </script>
 
 <template>
@@ -161,13 +172,17 @@ function ctaLabel(cta: string) {
     <div class="page">
       <!-- Header -->
       <header class="header">
-        <img
+        <NuxtLink
           class="header__logo"
-          :src="logoSvg"
-          width="166"
-          height="52"
-          alt="Amaya Kids"
+          to="/"
         >
+          <img
+            :src="logoSvg"
+            width="166"
+            height="52"
+            alt="Amaya Kids"
+          >
+        </NuxtLink>
       </header>
 
       <!-- Hero -->
@@ -283,12 +298,22 @@ function ctaLabel(cta: string) {
       <!-- Video -->
       <section class="video">
         <div class="video__frame">
-          <img
-            :src="videoPreviewPng"
-            width="720"
-            height="404"
-            alt="Видео игры Kids Cars 2"
-          >
+          <video
+            ref="gameplayVideo"
+            :src="cars2Video"
+            :poster="videoPreviewPng"
+            width="1280"
+            height="720"
+            autoplay
+            muted
+            loop
+            playsinline
+            webkit-playsinline
+            disablepictureinpicture
+            controlslist="nodownload nofullscreen noremoteplayback"
+            preload="auto"
+            aria-label="Видео игры Kids Cars 2"
+          />
         </div>
       </section>
 
@@ -539,8 +564,17 @@ function ctaLabel(cta: string) {
   }
 
   &__logo {
+    display: block;
     width: 120px;
     height: 38px;
+    line-height: 0;
+    text-decoration: none;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
 
     @include md-tablet {
       width: 166px;
@@ -1128,7 +1162,9 @@ function ctaLabel(cta: string) {
       -webkit-border-radius: 32px;
     }
 
-    img {
+    img,
+    video {
+      display: block;
       width: 100%;
       height: auto;
     }
@@ -1172,7 +1208,7 @@ function ctaLabel(cta: string) {
     -webkit-box-align: center;
     -webkit-align-items: center;
     align-items: center;
-    align-items: flex-start;
+    // align-items: flex-start;
 
     @include md-tablet {
       max-width: 768px;
@@ -1354,11 +1390,7 @@ function ctaLabel(cta: string) {
     justify-content: space-between;
     -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
-    padding: 51px 56px;
-  }
-
-  @include md-desktop {
-    padding: 56px 80px;
+    padding: 32px 44px;
   }
 
   &__company,
