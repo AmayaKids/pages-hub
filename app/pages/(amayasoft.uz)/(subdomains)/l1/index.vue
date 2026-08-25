@@ -17,7 +17,7 @@ import commasPng from '~/assets/images/l1/png/commas.png'
 import starPng from '~/assets/images/l1/png/star.png'
 
 useSeoMeta({
-  title: 'Машинки — Amaya Kids'
+  title: 'Mashinalar — Amaya Kids'
 })
 
 const utpItems = [
@@ -80,6 +80,84 @@ function ctaLabel(cta: string) {
 
 <template>
   <div class="l1">
+    <!--
+      Comic-style text outline, done as an SVG filter instead of
+      `-webkit-text-stroke`: dilating the alpha channel (feMorphology) and
+      flooding it white gives a clean, evenly-rounded ring. `-webkit-text-stroke`
+      draws a naive per-glyph outline that self-intersects and looks blobby at
+      sharp corners on bold display type — fine in Figma's renderer, ugly in
+      real browsers. Two radii (mobile/tablet+) so the ring keeps a sensible
+      weight as the type scales up; reused by both hero__title and
+      hero__subtitle for visual consistency.
+    -->
+    <svg
+      class="stroke-defs"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <filter
+          id="l1-text-stroke-sm"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+          primitiveUnits="userSpaceOnUse"
+        >
+          <feMorphology
+            in="SourceAlpha"
+            operator="dilate"
+            radius="2"
+            result="dilated"
+          />
+          <feFlood
+            flood-color="#ffffff"
+            result="white"
+          />
+          <feComposite
+            in="white"
+            in2="dilated"
+            operator="in"
+            result="outline"
+          />
+          <feMerge>
+            <feMergeNode in="outline" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <filter
+          id="l1-text-stroke-lg"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+          primitiveUnits="userSpaceOnUse"
+        >
+          <feMorphology
+            in="SourceAlpha"
+            operator="dilate"
+            radius="3"
+            result="dilated"
+          />
+          <feFlood
+            flood-color="#ffffff"
+            result="white"
+          />
+          <feComposite
+            in="white"
+            in2="dilated"
+            operator="in"
+            result="outline"
+          />
+          <feMerge>
+            <feMergeNode in="outline" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+
     <div class="page">
       <!-- Header -->
       <header class="header">
@@ -545,20 +623,22 @@ function ctaLabel(cta: string) {
     font-size: 28px;
     line-height: 30px;
     color: #ff8800;
-    -webkit-text-stroke: 2px #ffffff;
-    paint-order: stroke fill;
-    text-shadow: 0 6px 6px rgba(0, 0, 0, 0.45), 0 4px 1px rgba(0, 0, 0, 0.8), 0 3px 0 #84a5b1, 0 12px 24px rgba(0, 0, 0, 0.8);
-
-    text-shadow: 0 20px 40px rgba(0, 0, 0, 0.80), 0 5px 0 #84A5B1, 0 7px 2px rgba(0, 0, 0, 0.80), 0 10px 10px rgba(0, 0, 0, 0.45);
-    -webkit-text-stroke-width: 3px;
-    -webkit-text-stroke-color: #FFF;
-    font-weight: 900;
+    filter:
+      url(#l1-text-stroke-sm)
+      drop-shadow(0 6px 6px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 4px 1px rgba(0, 0, 0, 0.8))
+      drop-shadow(0 3px 0 #84a5b1)
+      drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8));
 
     @include md-tablet {
       font-size: 44px;
       line-height: 44px;
-      -webkit-text-stroke-width: 3px;
-      text-shadow: 0 10px 10px rgba(0, 0, 0, 0.45), 0 7px 2px rgba(0, 0, 0, 0.8), 0 5px 0 #84a5b1, 0 20px 40px rgba(0, 0, 0, 0.8);
+      filter:
+        url(#l1-text-stroke-lg)
+        drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45))
+        drop-shadow(0 7px 2px rgba(0, 0, 0, 0.8))
+        drop-shadow(0 5px 0 #84a5b1)
+        drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
     }
 
     @include md-desktop {
@@ -575,17 +655,24 @@ function ctaLabel(cta: string) {
     font-size: 13px;
     line-height: 16px;
     color: #ff8800;
-    -webkit-text-stroke: 1.5px #ffffff;
-    paint-order: stroke fill;
-    text-shadow: 0 5px 6px rgba(0, 0, 0, 0.45), 0 3px 1px rgba(0, 0, 0, 0.8), 0 2px 0 #84a5b1, 0 12px 24px rgba(0, 0, 0, 0.8);
+    filter:
+      url(#l1-text-stroke-sm)
+      drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 3px 1px rgba(0, 0, 0, 0.8))
+      drop-shadow(0 2px 0 #84a5b1)
+      drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8));
 
     @include md-tablet {
       margin-top: 8px;
       width: 311px;
       font-size: 20px;
       line-height: 24px;
-      -webkit-text-stroke-width: 2px;
-      text-shadow: 0 8px 10px rgba(0, 0, 0, 0.45), 0 5px 2px rgba(0, 0, 0, 0.8), 0 3px 0 #84a5b1, 0 20px 40px rgba(0, 0, 0, 0.8);
+      filter:
+        url(#l1-text-stroke-lg)
+        drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45))
+        drop-shadow(0 5px 2px rgba(0, 0, 0, 0.8))
+        drop-shadow(0 3px 0 #84a5b1)
+        drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
     }
 
     @include md-desktop {
@@ -594,6 +681,13 @@ function ctaLabel(cta: string) {
       line-height: 26px;
     }
   }
+}
+
+.stroke-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* ---------- offer bubble ---------- */
@@ -1080,6 +1174,7 @@ function ctaLabel(cta: string) {
     -webkit-box-align: center;
     -webkit-align-items: center;
     align-items: center;
+    align-items: flex-start;
 
     @include md-tablet {
       max-width: 768px;
@@ -1091,6 +1186,7 @@ function ctaLabel(cta: string) {
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
+      align-items: flex-start;
     }
 
     @include md-desktop {

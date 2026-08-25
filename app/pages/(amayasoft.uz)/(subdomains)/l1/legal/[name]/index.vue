@@ -30,18 +30,27 @@ interface LegalDocument {
 // @nuxtjs/i18n yet. Once real localization lands, this map (and the content/
 // folder layout) is what gets replaced by an actual i18n-driven lookup.
 const DOCUMENTS: Record<string, LegalDocument> = {
-  'public-offer': publicOfferUz,
-  'privacy-policy': privacyPolicyUz,
-  'refund-policy': refundPolicyUz
+  'public-offer': publicOfferUz as LegalDocument,
+  'privacy-policy': privacyPolicyUz as LegalDocument,
+  'refund-policy': refundPolicyUz as LegalDocument
 }
 
 const route = useRoute()
 const slug = computed(() => String(route.params.name))
-const doc = computed(() => DOCUMENTS[slug.value])
 
-if (!doc.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Legal document not found' })
-}
+// Throwing inside the getter (rather than guarding `.value` at the top level)
+// is what makes `doc`'s type `LegalDocument` instead of `LegalDocument |
+// undefined` everywhere it's read — including in the template, where a
+// top-level `if (!doc.value) throw` guard doesn't narrow anything.
+const doc = computed<LegalDocument>(() => {
+  const found = DOCUMENTS[slug.value]
+
+  if (!found) {
+    throw createError({ statusCode: 404, statusMessage: 'Legal document not found' })
+  }
+
+  return found
+})
 
 useSeoMeta({
   title: () => `${doc.value.title} — Amaya Kids`
