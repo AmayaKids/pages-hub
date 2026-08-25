@@ -26,12 +26,20 @@ export const HOST_CONFIGS = {
   },
   'l1.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l1',
+    locale: { localized: false } // у этого лендинга вообще нет /:lng-префикса
+  },
+  'l2.amayasoft.uz': {
+    pageKey: 'amayasoft-uz-l2',
     locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
-  // l2.amayasoft.uz, test.amayasoft.uz — аналогично; или `{ localized: false }`,
-  // если хосту вообще не нужен /:lng-префикс (см. localization.md)
+  'test.amayasoft.uz': {
+    pageKey: 'amayasoft-uz-test',
+    locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+  }
 } as const satisfies Record<string, HostConfig>
 ```
+
+(Точный текущий список смотрите прямо в файле — здесь просто пример, чтобы показать оба варианта `locale`.)
 
 - `pageKey` — внутренний идентификатор, используемый `HostLandingRouter` для выбора компонента.
 - `locale` — настройки локализации для этого хоста (см. [localization.md](./localization.md)).
@@ -50,8 +58,8 @@ export const HOST_CONFIGS = {
    настройками `locale`.
 4. Импортировать компонент и добавить его в `hostPages` в
    `app/components/domain-pages/HostLandingRouter.vue`.
-5. Добавить домен в `vite.server.allowedHosts` в `nuxt.config.ts` — иначе локальная разработка с
-   подменой `Host`-заголовка (через `/etc/hosts` или curl) будет получать `403 Blocked request`.
+5. Добавить домен в `vite.server.allowedHosts` в `nuxt.config.ts` — **и** реальное имя, и `имя.loc`-вариант
+   (см. «Локальная разработка с разными хостами» ниже) — иначе будет `403 Blocked request`.
 
 ## Почему домен-группы исключены из авто-роутинга (`pages.pattern`)
 
@@ -105,6 +113,28 @@ if (!Landing) {
 `@nuxtjs/i18n` и полностью управляют своим редиректом самостоятельно. Подробности и почему это обязательно
 для работы `localized: false` без петель редиректов — см. [localization.md](./localization.md).
 
+### ⚠️ `[lng]` — почему обязателен `validate`
+
+`app/pages/[lng]/index.vue` использует динамический параметр `:lng`, а vue-router по умолчанию матчит **любой**
+односегментный путь этим параметром — не только настоящие 2-буквенные коды языка. Без ограничения
+`l2.amayasoft.uz/instruction` или `l1.amayasoft.uz/checkout` тоже попадали бы на эту страницу (с
+`lng = "instruction"` и т.п.), код видел бы, что это не поддерживаемая локаль, и **тихо проглатывал** путь
+редиректом на `/` или `/{defaultLocale}` — вместо честного 404.
+
+Поэтому на странице обязателен `validate`:
+
+```ts
+definePageMeta({
+  i18n: false,
+  validate: route => /^[a-z]{2}$/.test(route.params.lng as string)
+})
+```
+
+Теперь страницу матчат только сегменты, похожие на код языка (`en`, `ru`, `zz`, ...). Всё остальное не матчит
+эту страницу вообще и корректно улетает в обычный `404`. Синтаксически-валидные, но неподдерживаемые на
+конкретном хосте коды (например `/de` на хосте с `locales: ['en', 'ru']`) всё равно обрабатываются как раньше —
+редиректом на `defaultLocale` хоста, это осознанное поведение, не баг.
+
 - `useAppHost()` (`app/composables/useAppHost.ts`) возвращает "настоящий" хост запроса. На сервере это
   `X-Forwarded-Host`, если он есть, иначе — обычный `Host`; на клиенте — `window.location.host`.
   Это важно, потому что reverse-proxy может переписывать `Host` при проксировании на Node-процесс, но
@@ -142,16 +172,46 @@ if (!Landing) {
 
 ## Локальная разработка с разными хостами
 
-1. В `nuxt.config.ts` → `vite.server.allowedHosts` перечислены все домены/поддомены — без этого dev-сервер
-   Vite вернёт `403 Blocked request` на непривычный `Host`.
-2. Проще всего тестировать через `curl` с заголовком `Host`, не трогая `/etc/hosts`:
+В `nuxt.config.ts` → `vite.server.allowedHosts` перечислены все домены/поддомены **и** их `.loc`-варианты —
+без этого dev-сервер Vite вернёт `403 Blocked request` на непривычный `Host`. При добавлении нового домена
+добавляйте туда обе записи (см. «Как добавить новый домен/поддомен» выше).
+
+### Способ 1 — открыть в браузере через `*.loc` (рекомендуется)
+
+`normalizeHost()` в `shared/hostLandings.ts` в dev-режиме отрезает суффикс `.loc` перед поиском хоста в
+`HOST_CONFIGS`. Это позволяет открывать лендинги живьём в браузере через выдуманный локальный хостнейм —
+**не подменяя** в `/etc/hosts` настоящий домен (который тогда продолжает как обычно резолвиться по реальному
+DNS/сети).
+
+1. Один раз добавить в `/etc/hosts` (нужен sudo):
 
    ```bash
-   curl -H "Host: l1.amayasoft.uz" http://localhost:3000/
+   echo "::1 l1.amayasoft.uz.loc l2.amayasoft.uz.loc test.amayasoft.uz.loc amayakids.com.loc" | sudo tee -a /etc/hosts
    ```
-3. Чтобы протестировать сценарий "прокси переписывает Host, но передаёт X-Forwarded-Host" (именно так
-   ведёт себя прод), передавайте оба заголовка:
 
-   ```bash
-   curl -H "Host: pages.amayakids.com" -H "X-Forwarded-Host: l1.amayasoft.uz" http://localhost:3000/
+   ⚠️ Именно `::1`, а не `127.0.0.1` — `nuxt dev` по умолчанию слушает только IPv6-loopback. Не используйте
+   флаг `--host` для этой задачи: он заставляет Nuxt CLI пересчитать `vite.server.allowedHosts` на основе
+   сетевых адресов и на практике перекрывает список из `nuxt.config.ts`, из-за чего `.loc`-хосты снова
+   начинают давать `403`.
+
+2. Запустить обычный `pnpm dev` (без `--host`) и открыть в браузере:
+
    ```
+   http://l1.amayasoft.uz.loc:3000/
+   http://l2.amayasoft.uz.loc:3000/
+   ```
+
+### Способ 2 — `curl` с заголовком `Host`, без правки `/etc/hosts`
+
+Быстрая проверка статус-кодов/редиректов без браузера — подменяем `Host` только для одного запроса:
+
+```bash
+curl -H "Host: l1.amayasoft.uz" http://localhost:3000/
+```
+
+Чтобы протестировать сценарий "прокси переписывает Host, но передаёт X-Forwarded-Host" (именно так
+ведёт себя прод), передавайте оба заголовка:
+
+```bash
+curl -H "Host: pages.amayakids.com" -H "X-Forwarded-Host: l1.amayasoft.uz" http://localhost:3000/
+```

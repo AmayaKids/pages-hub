@@ -1,4 +1,8 @@
+import { fileURLToPath } from 'node:url'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const breakpointsScssPath = fileURLToPath(new URL('./app/assets/css/breakpoints.scss', import.meta.url))
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -50,6 +54,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-01-15',
 
   vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Makes the `md-tablet` / `md-desktop` breakpoint mixins available in
+          // every `<style lang="scss">` block without an explicit `@use`.
+          additionalData: `@use "${breakpointsScssPath}" as *;\n`
+        }
+      }
+    },
     server: {
       // Local `/etc/hosts` testing for domain/subdomain routes. The `.loc`
       // variants let you test via a made-up hostname (e.g. `l1.amayasoft.uz.loc`)

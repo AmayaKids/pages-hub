@@ -85,18 +85,19 @@ export type LandingLocaleConfig =
   | { localized: true, locales: readonly LocaleCode[], defaultLocale: LocaleCode }
 ```
 
-Примеры для `HOST_CONFIGS`:
+Примеры для `HOST_CONFIGS` (иллюстрация обоих вариантов; актуальные значения — в самом файле):
 
 ```ts
 // Несколько языков, дефолт — русский
-'l1.amayasoft.uz': {
-  pageKey: 'amayasoft-uz-l1',
+'l2.amayasoft.uz': {
+  pageKey: 'amayasoft-uz-l2',
   locale: { localized: true, locales: ['en', 'ru'], defaultLocale: 'ru' }
 }
 
-// Локализация полностью выключена — всегда просто `/`, без /xx-префикса
-'test.amayasoft.uz': {
-  pageKey: 'amayasoft-uz-test',
+// Локализация полностью выключена — всегда просто `/`, без /xx-префикса.
+// Сейчас в таком режиме реально живёт l1.amayasoft.uz.
+'l1.amayasoft.uz': {
+  pageKey: 'amayasoft-uz-l1',
   locale: { localized: false }
 }
 ```
@@ -126,6 +127,13 @@ if (config.localized) {
 ### `app/pages/[lng]/index.vue` (`/:lng`, `i18n: false`)
 
 ```ts
+definePageMeta({
+  i18n: false,
+  // без этого /:lng матчил бы ЛЮБОЙ односегментный путь, не только коды языка —
+  // см. domains-and-subdomains.md → "⚠️ [lng] — почему обязателен validate"
+  validate: route => /^[a-z]{2}$/.test(route.params.lng as string)
+})
+
 if (!config.localized) {
   await navigateTo('/', { redirectCode: 301 })
 } else {
@@ -176,22 +184,31 @@ if (!config.localized) {
 
 ## Проверка вручную (curl)
 
+Быстрая проверка статус-кодов и редиректов без браузера (для визуальной проверки лендинга живьём — см.
+[локальную разработку через `*.loc`](./domains-and-subdomains.md#локальная-разработка-с-разными-хостами)):
+
 ```bash
-# non-localized хост: "/" рендерит сразу 200, без единого редиректа
-curl -sI -H "Host: test.amayasoft.uz" http://localhost:3000/ | head -1
+# non-localized хост (l1): "/" рендерит сразу 200, без единого редиректа
+curl -sI -H "Host: l1.amayasoft.uz" http://localhost:3000/ | head -1
 
-# non-localized хост: любой префикс схлопывается в "/" одним редиректом
-curl -sI -H "Host: test.amayasoft.uz" http://localhost:3000/en | grep -i location
+# non-localized хост: любой похожий на локаль префикс схлопывается в "/" одним редиректом
+curl -sI -H "Host: l1.amayasoft.uz" http://localhost:3000/en | grep -i location
 
-# localized хост: "/" -> "/{defaultLocale}"
-curl -sI -H "Host: l1.amayasoft.uz" http://localhost:3000/ | grep -i location
+# non-localized хост: путь, НЕ похожий на код языка, — честный 404, а не редирект на "/"
+curl -sI -H "Host: l1.amayasoft.uz" http://localhost:3000/checkout | head -1
+
+# localized хост (l2): "/" -> "/{defaultLocale}"
+curl -sI -H "Host: l2.amayasoft.uz" http://localhost:3000/ | grep -i location
 
 # язык не поддерживается на хосте -> редирект на дефолтный для хоста язык
-curl -sI -H "Host: l1.amayasoft.uz" http://localhost:3000/de | grep -i location
+curl -sI -H "Host: l2.amayasoft.uz" http://localhost:3000/de | grep -i location
+
+# путь, не похожий на код языка, — 404, а не "проглатывание" в /en (см. domains-and-subdomains.md про `validate`)
+curl -sI -H "Host: l2.amayasoft.uz" http://localhost:3000/checkout | head -1
 
 # полный цикл с редиректами: 1-2 редиректа и 200, БЕЗ петли
 curl -s -o /dev/null -w "code:%{http_code} redirects:%{num_redirects}\n" -L --max-redirs 5 \
-  -H "Host: l1.amayasoft.uz" http://localhost:3000/
+  -H "Host: l2.amayasoft.uz" http://localhost:3000/
 
 # /a/** всегда на глобальных правилах, независимо от хоста выше
 curl -sI http://localhost:3000/a/gift-card/test | grep -i location
