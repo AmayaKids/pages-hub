@@ -143,6 +143,54 @@ definePageMeta({
   хост запроса.
 - Если хост не найден в конфиге — `HostLandingRouter` отдаёт `404`.
 
+## Как добавить доп. страницу для хоста (не `/`)
+
+`HostLandingRouter` диспетчеризует только `/` и `/:lng`. Если лендингу конкретного хоста нужна ещё одна
+страница по своему пути (например `/payment-result` только на `l1.amayasoft.uz`), для неё нужен свой
+собственный диспетчер — по тому же принципу, что и для `/`:
+
+1. Файл самой страницы кладём внутрь домен-группы, как обычно (роутинг туда не смотрит — папка исключена
+   `pages.pattern`, см. выше):
+
+   ```
+   app/pages/(amayasoft.uz)/(subdomains)/l1/payment-result/index.vue
+   ```
+
+2. Создаём **отдельный** файл-диспетчер вне доменных групп, на реальном пути, и импортируем туда
+   компонент напрямую — используем composable `resolveHostPage()` (`app/composables/useHostPage.ts`),
+   который делает то же самое, что и `HostLandingRouter`, но для произвольного набора хостов:
+
+   ```vue
+   <!-- app/pages/payment-result/index.vue -->
+   <script setup lang="ts">
+   import L1PaymentResult from '~/pages/(amayasoft.uz)/(subdomains)/l1/payment-result/index.vue'
+
+   // Обязательно: см. пункт 3 ниже.
+   definePageMeta({ i18n: false })
+
+   const Page = resolveHostPage({
+     'amayasoft-uz-l1': L1PaymentResult
+   })
+   </script>
+
+   <template>
+     <Page />
+   </template>
+   ```
+
+   Хосты, не перечисленные в объекте, переданном в `resolveHostPage`, получат `404` на этом пути — так же,
+   как `HostLandingRouter` 404-ит для хостов, не описанных в `HOST_CONFIGS`.
+
+3. **Обязательно** пометить страницу `definePageMeta({ i18n: false })`. Без этого при `strategy: 'prefix'`
+   `@nuxtjs/i18n` сам "забирает" этот путь под себя и требует локаль-префикс (`/:locale/payment-result`), а
+   голый `/payment-result` перестаёт матчить эту страницу и проваливается в `[lng]/index.vue` — там `:lng`
+   не проходит `validate` (это не 2-буквенный код), и запрос улетает в `404`. Ровно так возникла ошибка:
+   страница физически существовала, но не открывалась.
+
+4. Если такая страница должна быть доступна ещё и с локаль-префиксом на локализованных хостах — по тому же
+   принципу заводится второй диспетчер `app/pages/[lng]/payment-result/index.vue` (тоже с `i18n: false` и
+   собственной валидацией `lng`, аналогично `app/pages/[lng]/index.vue`).
+
 ## `/a/**` — общий обработчик, `noindex`
 
 Все пути вида `/a/...` (например `/en/a/gift-card/farm`) — это старый функционал, который должен
