@@ -290,7 +290,7 @@ const reviews = [
   background: #ebfaff;
   color: #3c4267;
   -webkit-font-smoothing: antialiased;
-  padding: 16px;
+  padding: 0;
 }
 
 .l1 img {
@@ -312,9 +312,8 @@ const reviews = [
 .page {
   overflow: hidden;
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 0;
   margin: 0 auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
 }
 
 /* ---------- eyebrow pill (section lead-in label) ---------- */

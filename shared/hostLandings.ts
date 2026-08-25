@@ -61,9 +61,20 @@ type HostConfigEntry = (typeof HOST_CONFIGS)[keyof typeof HOST_CONFIGS]
 
 export type HostPageKey = HostConfigEntry['pageKey']
 
+/** Local-only suffix (e.g. `l1.amayasoft.uz.loc`) that lets you test a host's
+ *  landing page via `/etc/hosts` without shadowing the real hostname — so the
+ *  real `l1.amayasoft.uz` keeps resolving over the actual network/DNS. */
+const LOCAL_DEV_SUFFIX = '.loc'
+
 export function normalizeHost(host: string | undefined | null): string {
   if (!host) return ''
-  return host.split(':')[0]!.toLowerCase()
+  let normalized = host.split(':')[0]!.toLowerCase()
+
+  if (import.meta.dev && normalized.endsWith(LOCAL_DEV_SUFFIX)) {
+    normalized = normalized.slice(0, -LOCAL_DEV_SUFFIX.length)
+  }
+
+  return normalized
 }
 
 export function getHostConfig(host: string | undefined | null): HostConfigEntry | undefined {

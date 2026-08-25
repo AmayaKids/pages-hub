@@ -51,13 +51,21 @@ export default defineNuxtConfig({
 
   vite: {
     server: {
-      // Local Host-header /etc/hosts testing for domain/subdomain routes
+      // Local `/etc/hosts` testing for domain/subdomain routes. The `.loc`
+      // variants let you test via a made-up hostname (e.g. `l1.amayasoft.uz.loc`)
+      // that only resolves locally, without shadowing the real domain in
+      // `/etc/hosts` — see `normalizeHost()` in shared/hostLandings.ts for the
+      // matching `.loc`-suffix stripping.
       allowedHosts: [
         'amayakids.com',
         'pages.amayakids.com',
         'l1.amayasoft.uz',
         'l2.amayasoft.uz',
-        'test.amayasoft.uz'
+        'test.amayasoft.uz',
+        'amayakids.com.loc',
+        'l1.amayasoft.uz.loc',
+        'l2.amayasoft.uz.loc',
+        'test.amayasoft.uz.loc'
       ]
     }
   },
