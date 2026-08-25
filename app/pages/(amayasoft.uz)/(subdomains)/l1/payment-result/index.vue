@@ -5,7 +5,6 @@ import '~/assets/css/fonts/open-sans.css'
 import logoSvg from '~/assets/images/l1/svg/logo.svg'
 import carPng from '~/assets/images/l1/png/car.png'
 import robotPng from '~/assets/images/l1/png/robot.png'
-import starPng from '~/assets/images/l1/png/star.png'
 
 // The payment gateway returns the user here via `return_url` /
 // `return_error_url`, which differ only by this flag. Anything other than an
