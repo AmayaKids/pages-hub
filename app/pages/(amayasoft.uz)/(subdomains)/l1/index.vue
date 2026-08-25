@@ -21,12 +21,6 @@ useSeoMeta({
   title: 'Машинки — Amaya Kids'
 })
 
-const badges = [
-  { title: '75+', text: 'mashina turi' },
-  { title: '2+', text: 'yoshdan' },
-  { title: 'Oflayn', text: 'ham o‘ynaydi' }
-]
-
 const utpItems = [
   {
     icon: utpAgeSvg,
