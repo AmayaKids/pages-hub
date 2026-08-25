@@ -45,7 +45,7 @@ export const HOST_CONFIGS = {
   },
   'l1.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l1',
-    locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+    locale: { localized: false }
   },
   'l2.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l2',
