@@ -4,7 +4,6 @@ import '~/assets/css/fonts/open-sans.css'
 
 import logoSvg from '~/assets/images/l1/svg/logo.svg'
 import bgBlueRoundSvg from '~/assets/images/l1/svg/bg-blue-round.svg'
-import dividerSvg from '~/assets/images/l1/svg/divider.svg'
 import utpAgeSvg from '~/assets/images/l1/svg/utp-age.svg'
 import utpCarsSvg from '~/assets/images/l1/svg/utp-cars.svg'
 import utpMadeForKidsSvg from '~/assets/images/l1/svg/utp-made-for-kids.svg'
@@ -272,26 +271,24 @@ function ctaLabel(cta: string) {
 
         <!-- Footer -->
         <footer class="footer">
-          <div class="footer__row">
-            <span>2026, Amaya Kids</span>
-            <span class="footer__divider"><img
-              :src="dividerSvg"
-              width="24"
-              height="1"
-              alt=""
-            ></span>
-            <span>Barcha huquqlar himoyalangan</span>
+          <div class="footer__company">
+            <p>«AMAYA SOFT», MChJ</p>
+            <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76-xonadon</p>
+            <p>2026, Amaya Kids</p>
+            <p>Barcha huquqlar himoyalangan</p>
           </div>
-          <div class="footer__row">
-            <a href="#terms">Foydalanish shartlari</a>
-            <span class="footer__divider"><img
-              :src="dividerSvg"
-              width="24"
-              height="1"
-              alt=""
-            ></span>
-            <a href="#privacy">Maxfiylik siyosati</a>
-          </div>
+
+          <nav class="footer__links">
+            <NuxtLink to="/legal/public-offer">
+              Ommaviy oferta
+            </NuxtLink>
+            <NuxtLink to="/legal/privacy-policy">
+              Maxfiylik siyosati
+            </NuxtLink>
+            <NuxtLink to="/legal/refund-policy">
+              To‘lovni qaytarish siyosati
+            </NuxtLink>
+          </nav>
         </footer>
       </section>
     </div>
@@ -1248,9 +1245,10 @@ function ctaLabel(cta: string) {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
   flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  gap: 20px;
 
   @include md-tablet {
     margin-top: 56px;
@@ -1269,63 +1267,48 @@ function ctaLabel(cta: string) {
     padding: 56px 80px;
   }
 
-  &__row {
+  &__company,
+  &__links {
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    margin-top: 12px;
-    text-align: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+
+  &__company p,
+  &__links a {
+    font-family: "Open Sans", Arial, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #ffffff;
 
     @include md-tablet {
-      margin-top: 0;
-    }
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    span,
-    a {
-      font-family: "Open Sans", Arial, sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 16px;
-      color: #ffffff;
-
-      @include md-tablet {
-        font-size: 18px;
-      }
-    }
-
-    a {
-      text-decoration: underline;
+      font-size: 18px;
+      line-height: 26px;
     }
   }
 
-  &__divider {
-    display: inline-block;
-    width: 1px;
-    height: 16px;
-    margin: 0 10px;
-    overflow: hidden;
+  &__company p + p {
+    margin-top: 8px;
 
     @include md-tablet {
-      height: 24px;
-      margin: 0 12px;
+      margin-top: 10px;
     }
+  }
 
-    img {
-      width: 16px;
-      height: 1px;
-      -webkit-transform: rotate(90deg);
-      transform: rotate(90deg);
+  &__links a {
+    text-decoration: underline;
+  }
 
-      @include md-tablet {
-        width: 24px;
-      }
+  &__links a + a {
+    margin-top: 12px;
+
+    @include md-tablet {
+      margin-top: 14px;
     }
   }
 }

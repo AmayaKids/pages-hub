@@ -1,4 +1,4 @@
-const INVOICE_ENDPOINT = '/api/payment/multicard/invoice'
+const INVOICE_ENDPOINT = 'https://l1.amayasoft.uz/api/payment/multicard/invoice'
 
 interface MulticardInvoice {
   invoiceId: string
