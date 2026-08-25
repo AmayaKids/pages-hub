@@ -163,9 +163,9 @@ const sparkles = [
         <NuxtLink to="/legal/privacy-policy">
           Maxfiylik siyosati
         </NuxtLink>
-        <NuxtLink to="/legal/refund-policy">
+        <!-- <NuxtLink to="/legal/refund-policy">
           To‘lovni qaytarish siyosati
-        </NuxtLink>
+        </NuxtLink> -->
       </nav>
     </footer>
   </div>

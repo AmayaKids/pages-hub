@@ -2,7 +2,7 @@
   "title": "OMMAVIY OFERTA SHARTNOMASI",
   "subtitle": "(2026-yil 24-avgustdagi tahrir)",
   "intro": [
-    "«AMAYA SOFT» MChJ (keyingi o‘rinlarda — Ijrochi deb yuritiladi) jismoniy va yuridik shaxslar (keyingi o‘rinlarda — Foydalanuvchi deb yuritiladi) uchun quyida bayon etilgan shartlar asosida mobil o‘yinlar va boshqa raqamli xizmatlardan foydalanish imkoniyatini taqdim etish bo‘yicha ushbu ommaviy oferta shartnomasini tuzishni taklif etadi."
+    "«AMAYA SOFT» MChJ (keyingi o‘rinlarda — Ijrochi deb yuritiladi) jismoniy va yuridik shaxslar (keyingi o‘rinlarda — Foydalanuvchi deb yuritiladi) uchun quyida bayon etilgan shartlar asosida Ijrochiga tegishli bo‘lgan Amayakids Saytida (keyingi o‘rinlarda — Sayt deb yuritiladi) taqdim etilgan  mobil o‘yinlar va boshqa raqamli xizmatlardan foydalanish imkoniyatini taqdim etish bo‘yicha ushbu ommaviy oferta shartnomasini tuzishni taklif etadi."
   ],
   "sections": [
     {
@@ -64,13 +64,7 @@
       ]
     },
     {
-      "heading": "7. Nizolarni hal qilish",
-      "blocks": [
-        { "type": "paragraph", "text": "7.1. Nizolar muzokaralar yo‘li bilan hal etiladi. Nizoni hal qilishning imkoni bo‘lmagan taqdirda, u Ijrochi joylashgan hududdagi sudda ko‘rib chiqiladi." }
-      ]
-    },
-    {
-      "heading": "8. Rekvizitlar",
+      "heading": "7. Rekvizitlar",
       "blocks": [
         { "type": "paragraph", "text": "Ijrochi:" },
         { "type": "paragraph", "text": "«AMAYA SOFT» MChJ" },
