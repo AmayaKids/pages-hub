@@ -63,15 +63,8 @@ const sparkles = [
             viewBox="0 0 24 24"
           >
             <path
-              v-if="s.kind === 'spark'"
               fill="#ffffff"
               d="M12 0c0 6.6-5.4 12-12 12 6.6 0 12 5.4 12 12 0-6.6 5.4-12 12-12-6.6 0-12-5.4-12-12Z"
-            />
-            <image
-              v-else
-              :href="starPng"
-              width="24"
-              height="24"
             />
           </svg>
         </div>
