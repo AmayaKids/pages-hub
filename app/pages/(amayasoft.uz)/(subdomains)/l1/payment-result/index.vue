@@ -88,7 +88,7 @@ const sparkles = [
           -->
           <a
             class="result__appstore"
-            href="https://apps.apple.com/us/app/car-games-for-kids-toddlers/id1442848046"
+            href="https://apps.apple.com/app/kids-car-games-police-car-fun/id1442848046"
             target="_blank"
             rel="noopener"
           >
