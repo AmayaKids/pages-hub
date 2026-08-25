@@ -95,7 +95,7 @@ const sparkles = [
           -->
           <a
             class="result__appstore"
-            href="#"
+            href="https://apps.apple.com/us/app/car-games-for-kids-toddlers/id1442848046"
             target="_blank"
             rel="noopener"
           >
