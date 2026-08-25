@@ -15,4 +15,4 @@
 | `l2.amayasoft.uz` | Лендинг `app/pages/(amayasoft.uz)/(subdomains)/l2/index.vue` | `HOST_CONFIGS['l2.amayasoft.uz']` |
 | `test.amayasoft.uz` | Лендинг `app/pages/(amayasoft.uz)/(subdomains)/test/index.vue` | `HOST_CONFIGS['test.amayasoft.uz']` |
 
-Единственный источник правды по хостам, страницам и языкам — [`shared/hostLandings.ts`](../shared/hostLandings.ts). Все middleware и страница-диспетчер (`app/pages/index.vue`) читают конфигурацию из этого файла.
+Единственный источник правды по хостам, страницам и языкам — [`shared/hostLandings.ts`](../shared/hostLandings.ts). Все middleware и диспетчер лендингов (`app/pages/index.vue`, `app/pages/[lng]/index.vue`, `app/components/domain-pages/HostLandingRouter.vue`) читают конфигурацию из этого файла.

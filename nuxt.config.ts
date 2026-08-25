@@ -86,6 +86,11 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     strategy: 'prefix',
     langDir: 'locales/',
-    detectBrowserLanguage: false
+    detectBrowserLanguage: false,
+    // Required so `definePageMeta({ i18n: false })` (used by app/pages/index.vue
+    // and app/pages/[lng]/index.vue to fully opt specific hosts out of locale
+    // prefixing) is actually honored — the default 'page' mode only recognizes
+    // the deprecated `defineI18nRoute()` macro.
+    customRoutes: 'meta'
   }
 })

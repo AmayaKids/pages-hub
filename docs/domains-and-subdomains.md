@@ -2,9 +2,11 @@
 
 ## Идея
 
-Одно Nuxt-приложение обслуживает несколько доменов/поддоменов, и то, какая страница открывается на `/`,
-зависит от заголовка `Host` входящего запроса. Поэтому в проекте нет отдельного роута `/l1`, `/l2` и т.д. —
-есть единственный диспетчер `app/pages/index.vue`, который по хосту выбирает нужный компонент.
+Одно Nuxt-приложение обслуживает несколько доменов/поддоменов, и то, какая страница открывается на `/`
+(и на `/:lng`, если для хоста включена локализация), зависит от заголовка `Host` входящего запроса. Поэтому
+в проекте нет отдельного роута `/l1`, `/l2` и т.д. — есть единый компонент `HostLandingRouter`
+(`app/components/domain-pages/HostLandingRouter.vue`), который по хосту выбирает нужный лендинг, и его
+рендерят две страницы-точки входа: `app/pages/index.vue` (`/`) и `app/pages/[lng]/index.vue` (`/:lng`).
 
 Домены делятся на две категории:
 
@@ -20,18 +22,18 @@
 export const HOST_CONFIGS = {
   'amayakids.com': {
     pageKey: 'amayakids-com-root',
-    locale: { enabled: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+    locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
   'l1.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l1',
-    locale: { enabled: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+    locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
-  // l2.amayasoft.uz, test.amayasoft.uz — аналогично
+  // l2.amayasoft.uz, test.amayasoft.uz — аналогично; или `{ localized: false }`,
+  // если хосту вообще не нужен /:lng-префикс (см. localization.md)
 } as const satisfies Record<string, HostConfig>
 ```
 
-- `pageKey` — внутренний идентификатор, используемый диспетчером `app/pages/index.vue` для выбора
-  компонента.
+- `pageKey` — внутренний идентификатор, используемый `HostLandingRouter` для выбора компонента.
 - `locale` — настройки локализации для этого хоста (см. [localization.md](./localization.md)).
 - Хосты, которых нет в `HOST_CONFIGS` (например `pages.amayakids.com`), для диспетчера считаются
   "неизвестными" — `getHostPageKey()` вернёт `undefined`, и `/` для такого хоста отдаст 404. Это ожидаемо:
@@ -46,7 +48,8 @@ export const HOST_CONFIGS = {
    обязательно).
 3. Добавить запись в `HOST_CONFIGS` в `shared/hostLandings.ts` с уникальным `pageKey` и нужными
    настройками `locale`.
-4. Импортировать компонент и добавить его в `hostPages` в `app/pages/index.vue`.
+4. Импортировать компонент и добавить его в `hostPages` в
+   `app/components/domain-pages/HostLandingRouter.vue`.
 5. Добавить домен в `vite.server.allowedHosts` в `nuxt.config.ts` — иначе локальная разработка с
    подменой `Host`-заголовка (через `/etc/hosts` или curl) будет получать `403 Blocked request`.
 
@@ -77,7 +80,9 @@ pages: {
 
 При добавлении новой доменной группы обязательно добавляйте её исключение сюда же.
 
-## Диспетчер `app/pages/index.vue`
+## Диспетчер: `HostLandingRouter` + две точки входа
+
+Сам выбор компонента лендинга живёт в `app/components/domain-pages/HostLandingRouter.vue`:
 
 ```vue
 const pageKey = getHostPageKey(useAppHost())
@@ -88,13 +93,25 @@ if (!Landing) {
 }
 ```
 
+Этот компонент рендерят две отдельные страницы:
+
+- `app/pages/index.vue` — маршрут `/`. Если у хоста локализация включена (`localized: true`) — сразу
+  редиректит на `/{defaultLocale}` и ничего не рендерит; если выключена (`localized: false`) — рендерит
+  `HostLandingRouter` прямо тут.
+- `app/pages/[lng]/index.vue` — маршрут `/:lng`. Валидирует `lng` под конкретный хост (сузить/по умолчанию,
+  см. [localization.md](./localization.md)) и рендерит тот же `HostLandingRouter`.
+
+Обе страницы помечены `definePageMeta({ i18n: false })` — они **исключены** из авто-роутинга
+`@nuxtjs/i18n` и полностью управляют своим редиректом самостоятельно. Подробности и почему это обязательно
+для работы `localized: false` без петель редиректов — см. [localization.md](./localization.md).
+
 - `useAppHost()` (`app/composables/useAppHost.ts`) возвращает "настоящий" хост запроса. На сервере это
   `X-Forwarded-Host`, если он есть, иначе — обычный `Host`; на клиенте — `window.location.host`.
   Это важно, потому что reverse-proxy может переписывать `Host` при проксировании на Node-процесс, но
   почти всегда сохраняет оригинальный хост в `X-Forwarded-Host`. `useRequestURL().host` этого не учитывает
   и может давать неверный результат за проксями — используйте `useAppHost()` везде, где нужен реальный
   хост запроса.
-- Если хост не найден в конфиге — страница отдаёт `404`.
+- Если хост не найден в конфиге — `HostLandingRouter` отдаёт `404`.
 
 ## `/a/**` — общий обработчик, `noindex`
 
@@ -121,7 +138,7 @@ if (!Landing) {
 | Файл | Где выполняется | Что делает |
 |---|---|---|
 | `server/middleware/host-landing.ts` | Только на сервере (h3/Nitro) | Канонизирует старые ссылки `/:locale/:slug` (например `/ru/l1`) в `/:locale` (или в `/`, если локализация выключена для хоста). Работает по `getRequestHost(event, { xForwardedHost: true })`. |
-| `app/middleware/i18n-redirect.global.ts` | И на сервере (SSR), и на клиенте | Следит, чтобы путь содержал корректный для хоста локаль-префикс; для `/a/**` — использует полный глобальный список языков; для остальных путей — настройки хоста из `HOST_CONFIGS`. |
+| `app/middleware/i18n-redirect.global.ts` | И на сервере (SSR), и на клиенте | Только для `/a/**`: следит, чтобы путь содержал корректный локаль-префикс из полного глобального списка языков. Лендинги домена/поддомена сюда не попадают — у них своя логика прямо в `index.vue`/`[lng]/index.vue` (см. выше), т.к. эти страницы исключены из-под `@nuxtjs/i18n`. |
 
 ## Локальная разработка с разными хостами
 

@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-import { getHostPageKey } from '~~/shared/hostLandings'
-import AmayaKidsRoot from './(amayakids.com)/index.vue'
-import AmayaSoftL1 from './(amayasoft.uz)/(subdomains)/l1/index.vue'
-import AmayaSoftL2 from './(amayasoft.uz)/(subdomains)/l2/index.vue'
-import AmayaSoftTest from './(amayasoft.uz)/(subdomains)/test/index.vue'
+import HostLandingRouter from '~/components/domain-pages/HostLandingRouter.vue'
+import { getHostLocaleConfig } from '~~/shared/hostLandings'
 
-const hostPages: Record<string, Component> = {
-  'amayakids-com-root': AmayaKidsRoot,
-  'amayasoft-uz-l1': AmayaSoftL1,
-  'amayasoft-uz-l2': AmayaSoftL2,
-  'amayasoft-uz-test': AmayaSoftTest
-}
+// This page is intentionally excluded from @nuxtjs/i18n's own routing/prefix
+// machinery (which would otherwise force-redirect bare `/` to `/en` on its
+// own, in a way we can't opt individual hosts out of). We own the redirect
+// decision entirely ourselves here — see shared/hostLandings.ts.
+definePageMeta({ i18n: false })
 
-const pageKey = getHostPageKey(useAppHost())
-const Landing = pageKey ? hostPages[pageKey] : null
+const config = getHostLocaleConfig(useAppHost())
 
-if (!Landing) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+if (config.localized) {
+  await navigateTo(`/${config.defaultLocale}`, { redirectCode: 301 })
 }
 </script>
 
 <template>
-  <Landing />
+  <HostLandingRouter v-if="!config.localized" />
 </template>
