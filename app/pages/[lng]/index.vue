@@ -4,7 +4,16 @@ import { GLOBAL_LOCALES, getHostLocaleConfig, type LocaleCode } from '~~/shared/
 
 // Manually-owned locale route for the landing dispatcher (see app/pages/index.vue
 // for why it's excluded from @nuxtjs/i18n's own `/:locale` generation).
-definePageMeta({ i18n: false })
+//
+// `validate` is required because vue-router's `:lng` param otherwise matches ANY
+// single path segment (e.g. `/some-random-page`), not just locale-shaped ones —
+// without this, unknown single-segment paths would be silently swallowed by the
+// locale-fallback logic below (redirected to `/` or `/${defaultLocale}`) instead
+// of correctly 404ing.
+definePageMeta({
+  i18n: false,
+  validate: route => /^[a-z]{2}$/.test(route.params.lng as string)
+})
 
 const route = useRoute()
 const config = getHostLocaleConfig(useAppHost())

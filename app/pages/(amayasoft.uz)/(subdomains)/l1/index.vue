@@ -328,8 +328,13 @@ const reviews = [
 
 .header {
   background: #05b8f6;
-  padding: 16px 20px;
-  text-align: center;
+  display: flex;
+  padding: 16px 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
 }
 
 .header__logo {
