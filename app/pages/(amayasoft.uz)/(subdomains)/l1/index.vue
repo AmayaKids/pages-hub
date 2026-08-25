@@ -232,7 +232,7 @@ onMounted(() => {
             </div>
             <div class="offer__price">
               <p class="offer__price-title">
-                Umrbod!
+                Umrbod
               </p>
               <p class="offer__price-now">
                 <span>Atigi </span><b>50 000 so‘m</b>
