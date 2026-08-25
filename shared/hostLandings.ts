@@ -7,18 +7,25 @@ export const LOCALES = GLOBAL_LOCALES
 
 export const GLOBAL_DEFAULT_LOCALE: LocaleCode = 'en'
 
-export type LandingLocaleConfig
-  = | { enabled: true, locales: readonly LocaleCode[], defaultLocale: LocaleCode }
-    | { enabled: false }
+export interface LandingLocaleConfig {
+  /**
+   * Which of GLOBAL_LOCALES this host supports. Requests for any other
+   * locale get redirected to `defaultLocale`.
+   *
+   * NB: `@nuxtjs/i18n` is configured with `strategy: 'prefix'` globally, which
+   * means it ALWAYS redirects an unprefixed `/` to `/${defaultLocale}` on its
+   * own, independently of any app-level logic. Because of that, a host can't
+   * truly have "no locale prefix at all" — the closest equivalent is a single
+   * fixed locale (`locales: [defaultLocale]`), so `/` always resolves to that
+   * one locale and there's nothing left to redirect back and forth over.
+   */
+  locales: readonly LocaleCode[]
+  defaultLocale: LocaleCode
+}
 
 export interface HostConfig {
   pageKey: string
-  /**
-   * Locale behaviour for this host's landing page (app/pages/index.vue).
-   * - `enabled: false` — no `/:locale` prefix at all, page lives at `/`.
-   * - `enabled: true` — restrict to `locales` (subset of GLOBAL_LOCALES), with
-   *   `defaultLocale` used whenever the requested locale isn't in that subset.
-   */
+  /** Locale behaviour for this host's landing page (app/pages/index.vue). */
   locale: LandingLocaleConfig
 }
 
@@ -28,26 +35,28 @@ export interface HostConfig {
  * full GLOBAL_LOCALES set and GLOBAL_DEFAULT_LOCALE, unchanged.
  *
  * To restrict languages for a host, edit its `locale.locales` (and optionally
- * `locale.defaultLocale`). To fully disable localization for a host, set
- * `locale: { enabled: false }`. Hosts not listed here fall back to the full
- * GLOBAL_LOCALES set with GLOBAL_DEFAULT_LOCALE (see `getHostLocaleConfig`).
+ * `locale.defaultLocale`). To effectively have "one language only" for a
+ * host, set `locales` to a single-element array, e.g. `locales: ['ru']`,
+ * `defaultLocale: 'ru'` — `/` will resolve straight to `/ru` and stay there.
+ * Hosts not listed here fall back to the full GLOBAL_LOCALES set with
+ * GLOBAL_DEFAULT_LOCALE (see `getHostLocaleConfig`).
  */
 export const HOST_CONFIGS = {
   'amayakids.com': {
     pageKey: 'amayakids-com-root',
-    locale: { enabled: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+    locale: { locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
   'l1.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l1',
-    locale: { enabled: false }
+    locale: { locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
   'l2.amayasoft.uz': {
     pageKey: 'amayasoft-uz-l2',
-    locale: { enabled: false }
+    locale: { locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   },
   'test.amayasoft.uz': {
     pageKey: 'amayasoft-uz-test',
-    locale: { enabled: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
+    locale: { locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
   }
 } as const satisfies Record<string, HostConfig>
 
@@ -77,7 +86,6 @@ export function getHostPageKey(host: string | undefined | null): HostPageKey | u
 /** Hosts without an explicit entry behave like the unrestricted global default. */
 export function getHostLocaleConfig(host: string | undefined | null): LandingLocaleConfig {
   return getHostConfig(host)?.locale ?? {
-    enabled: true,
     locales: GLOBAL_LOCALES,
     defaultLocale: GLOBAL_DEFAULT_LOCALE
   }

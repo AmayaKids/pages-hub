@@ -27,16 +27,6 @@ export default defineNuxtRouteMiddleware((to) => {
   // Everything else is a domain/subdomain landing dispatch path — apply per-host locale rules.
   const config = getHostLocaleConfig(useAppHost())
 
-  if (!config.enabled) {
-    if (locale) {
-      return navigateTo(
-        { path: rest, query: to.query, hash: to.hash },
-        { redirectCode: 301 }
-      )
-    }
-    return
-  }
-
   if (!locale || !(config.locales as readonly string[]).includes(locale)) {
     return navigateTo(
       { path: `/${config.defaultLocale}${rest === '/' ? '' : rest}`, query: to.query, hash: to.hash },

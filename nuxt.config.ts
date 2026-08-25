@@ -30,7 +30,11 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   routeRules: {
-    '/': { prerender: true },
+    // `/` must NOT be prerendered: its content and locale-redirect behaviour
+    // depend on the request's Host header (see shared/hostLandings.ts), and a
+    // prerendered static file can't vary per host. A host with locale
+    // disabled would otherwise loop forever against a statically baked
+    // "redirect to /en" page.
     '/a/**': {
       headers: {
         'X-Robots-Tag': 'noindex, nofollow'
@@ -82,11 +86,6 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     strategy: 'prefix',
     langDir: 'locales/',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root',
-      alwaysRedirect: false // Принудительно кидает на дефолтный, если язык не найден
-    }
+    detectBrowserLanguage: false
   }
 })
