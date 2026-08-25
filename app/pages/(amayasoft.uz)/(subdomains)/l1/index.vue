@@ -39,7 +39,7 @@ const utpItems = [
   {
     icon: utpOfflineSvg,
     title: 'Oflayn o‘ynang',
-    text: 'Internet yo‘qmi? Hechqisi yo‘q! Oflayn o‘ynashingiz mumkin.'
+    text: 'Internet yo‘qmi? Hechqisi yo‘q!<br/>Oflayn o‘ynashingiz mumkin.'
   }
 ]
 
@@ -74,7 +74,7 @@ async function buy(cta: string) {
 }
 
 function ctaLabel(cta: string) {
-  return isPaymentPending.value && activeCta.value === cta ? 'Переходим к оплате…' : 'Купить'
+  return isPaymentPending.value && activeCta.value === cta ? 'Yuklanmoqda…' : 'Ochish'
 }
 </script>
 
@@ -180,10 +180,10 @@ function ctaLabel(cta: string) {
           >
           <div class="hero__pic-text">
             <div class="hero__title">
-              Машинки
+              Mashinalar
             </div>
             <div class="hero__subtitle">
-              Гоняй, развивайся... тут текст от Юли нужен
+              Noyob mashinalar yarating va sarguzashtlar sari yo‘l oling!
             </div>
           </div>
         </div>
@@ -213,17 +213,14 @@ function ctaLabel(cta: string) {
 
           <div class="offer__content">
             <div class="badge">
-              Best offer
+              Eng yaxshi taklif
             </div>
             <div class="offer__price">
               <p class="offer__price-title">
-                Бесплатно навсегда!
+                Doimiy kirish!
               </p>
               <p class="offer__price-now">
-                <span>Всего за </span><b>50 000 сум</b>
-              </p>
-              <p class="offer__price-old">
-                150 000 сум
+                <span>Atigi </span><b>50 000 so‘m</b>
               </p>
             </div>
             <button
@@ -261,7 +258,7 @@ function ctaLabel(cta: string) {
             >
             <div class="utp__text">
               <h3>{{ item.title }}</h3>
-              <p>{{ item.text }}</p>
+              <p v-html="item.text" />
             </div>
           </div>
         </div>
@@ -351,7 +348,8 @@ function ctaLabel(cta: string) {
         <footer class="footer">
           <div class="footer__company">
             <p>«AMAYA SOFT», MChJ</p>
-            <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76-xonadon</p>
+            <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76 honadon</p>
+            <p>STIR 305210613</p>
             <p>2026, Amaya Kids</p>
             <p>Barcha huquqlar himoyalangan</p>
           </div>

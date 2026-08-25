@@ -11,7 +11,7 @@ import robotPng from '~/assets/images/l1/png/robot.png'
 const isSuccess = computed(() => useRoute().query.success === 'true')
 
 useSeoMeta({
-  title: () => (isSuccess.value ? 'Оплата прошла — Amaya Kids' : 'Оплата не прошла — Amaya Kids'),
+  title: () => (isSuccess.value ? 'Tabriklaymiz — Amaya Kids' : 'To‘lov amalga oshmadi — Amaya Kids'),
   robots: 'noindex, nofollow'
 })
 </script>
@@ -38,22 +38,26 @@ useSeoMeta({
       >
 
       <h1 class="result__title">
-        {{ isSuccess ? 'Оплата прошла!' : 'Оплата не прошла' }}
+        {{ isSuccess ? 'Tabriklaymiz!' : 'To‘lov amalga oshmadi' }}
       </h1>
 
-      <p class="result__text">
-        {{
-          isSuccess
-            ? 'Спасибо за покупку. Доступ к играм уже открыт — можно возвращаться в приложение и играть.'
-            : 'Платёж не был завершён. Деньги не списаны — можно попробовать оплатить ещё раз.'
-        }}
+      <p
+        v-if="isSuccess"
+        class="result__text"
+        v-html="'<b>Mashinalar</b> ilovasiga to‘liq kirish huquqiga ega bo‘ldingiz!<br/>Ilovani yuklab oling va o‘yindan zavqlaning!'"
+      />
+      <p
+        v-else
+        class="result__text"
+      >
+        To‘lov yakunlanmadi. Pul mablag‘lari yechilmagan — qayta urinib ko‘rishingiz mumkin.
       </p>
 
       <NuxtLink
         class="result__btn"
         to="/"
       >
-        {{ isSuccess ? 'На главную' : 'Попробовать снова' }}
+        {{ isSuccess ? 'Bosh sahifaga qaytish' : 'Qayta urinib ko‘rish' }}
       </NuxtLink>
     </main>
   </div>

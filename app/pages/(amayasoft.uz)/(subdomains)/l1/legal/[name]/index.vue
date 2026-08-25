@@ -129,7 +129,8 @@ useSeoMeta({
       <footer class="footer">
         <div class="footer__company">
           <p>«AMAYA SOFT», MChJ</p>
-          <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76-xonadon</p>
+          <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76 honadon</p>
+          <p>STIR 305210613</p>
           <p>2026, Amaya Kids</p>
           <p>Barcha huquqlar himoyalangan</p>
         </div>
