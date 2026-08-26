@@ -1,0 +1,162 @@
+{
+  "title": "Maxfiylik siyosati",
+  "subtitle": "Oxirgi yangilanish: 2026-08-19",
+  "intro": [
+    "Xush kelibsiz! Ushbu Maxfiylik siyosatida Amayasoft MChJ (keyingi o'rinlarda \"Amayasoft\" yoki \"Biz\" deb yuritiladi) o'yinlarini (keyingi o'rinlarda \"O'yinlar\" deb yuritiladi) o'ynaganingizda va/yoki ushbu Maxfiylik siyosatiga havola berilgan Amayasoft veb-saytlaridan (keyingi o'rinlarda \"Veb-saytlar\" deb yuritiladi) foydalanganingizda shaxsiy ma'lumotlaringizni qanday to'plashimiz va ulardan qanday foydalanishimizni tushuntiradi.",
+    "Biz ushbu Maxfiylik siyosatini vaqti-vaqti bilan yangilashimiz mumkin. Agar ushbu Maxfiylik siyosatiga muhim o'zgartirishlar kiritsak, ular kuchga kirishidan oldin, agar bizda elektron pochta manzilingiz mavjud bo'lsa, ushbu manzil orqali, yoki Veb-saytlar va/yoki O'yinlarimizda bildirishnoma e'lon qilish orqali xabardor qilamiz.",
+    "Amayasoft bolalarning maxfiyligini himoya qilishga jiddiy e'tibor beradi va biz butun dunyo bo'ylab qo'llaniladigan maxfiylikka oid qonunlar va qoidalarga, jumladan, AQSHning Bolalarning onlayn maxfiyligini himoya qilish to'g'risidagi qonuniga (Children's Online Privacy Protection Act, COPPA) rioya qilishga intilamiz. Ilovalarimiz qanday ma'lumotlarni to'plashi va ulardan qanday foydalanilishi haqida batafsil ma'lumot olish uchun ushbu siyosat bilan tanishib chiqing. Savol yoki e'tirozlaringiz bo'lsa, info@amayasoft.uz manziliga yozing — sizga yordam berishga tayyormiz.",
+    "Ota-onalar va bolalar uchun ishlab chiqilgan ilovalarimizdan (\"O'yinlar\") foydalanganingizda, kompaniyamiz va uning sho'ba korxonalari (birgalikda \"Amayasoft\" yoki \"Biz\" deb yuritiladi) siz haqingizdagi ma'lumotlarni, jumladan, O'yinlardan foydalanishingiz haqidagi ma'lumotlarni to'plashi mumkin. Kattalar yoki ota-onalar https://l1.amayasoft.uz/ saytiga (\"Veb-sayt\") tashrif buyurganlarida, biz kattalar va ota-onalar uchun mo'ljallangan Veb-saytimizdan foydalanishlari haqidagi ma'lumotlarni ham to'plashimiz mumkin. Ushbu ma'lumotlarni qanday to'plashimiz haqida quyida batafsil bayon etilgan.",
+    "Agar O'yinlar yoki Veb-saytdan Yevropa Ittifoqi (YI) hududida foydalanayotgan bo'lsangiz yoki YI fuqarosi bo'lsangiz, shaxsiy ma'lumotlaringiz qanday qayta ishlanishi va ushbu qayta ishlash bilan bog'liq huquqlaringiz haqida batafsil ma'lumot olish uchun quyidagi \"Shaxsiy ma'lumotlarni qayta ishlashning qonuniy asoslari\" va \"Shaxsiy huquqlar\" bo'limlari bilan tanishib chiqing."
+  ],
+  "sections": [
+    {
+      "heading": "O'yinlarimiz orqali to'planadigan ma'lumotlar",
+      "blocks": [
+        { "type": "subheading", "text": "Avtomatik ravishda to'planadigan ma'lumotlar:" },
+        { "type": "paragraph", "text": "Amayasoft. Ilovalarimizning aksariyati IP manzilingizni aniqlaydi va undan qurilma joylashgan mamlakatni aniqlash uchun foydalanadi. IP manzili tizimlarimizda saqlanmaydi, biroq ilovamiz qaysi mamlakatda ishlayotganini qayd etamiz. Ushbu ma'lumotni muayyan qurilma bilan bog'lab bo'lmaydi va u hech qachon uchinchi tomonlarga berilmaydi." },
+        { "type": "paragraph", "text": "O'yin o'rnatilgan har bir qurilma bo'yicha Amayasoft ayrim tahliliy ma'lumotlarni to'plashi mumkin. Biz ushbu ma'lumotlarni O'yinlarimizning ishlashi va ishonchliligini yaxshilash hamda foydalanuvchilarning afzalliklarini yaxshiroq tushunish uchun to'playmiz. Ushbu ma'lumotlarni hech qanday tarzda muayyan shaxslar bilan yoki biz olgan boshqa ma'lumotlar bilan bog'lamaymiz. Qonuniy majburiyatlarni bajarish uchun bunday ma'lumotlarni oshkor qilish zarur bo'lgan holatlar (masalan, sud qaroriga muvofiq) yoki Amayasoft ishtirokidagi qo'shilish, sotib olish yoki qayta tashkil etish natijasida ma'lumotlarga egalik huquqi o'zgargan holatlar bundan mustasno, biz ushbu ma'lumotlarni Amayasoft'dan tashqaridagi shaxslar yoki kompaniyalar bilan baham ko'rmaymiz, sotmaymiz yoki boshqa tarzda taqdim etmaymiz." },
+        { "type": "paragraph", "text": "Ilovalarimizda quyida keltirilgan xizmatlarning ayrimlaridan foydalanishimiz mumkin:" },
+        { "type": "paragraph", "text": "AppsFlyer. AppsFlyer — ayrim ilovalarimiz foydalanuvchilari qaysi saytlar, ilovalar yoki platformalar orqali kelganini aniqlash imkonini beruvchi atribusiya vositasi. Ushbu vositadan faqat ilovalarimizning voyaga yetgan foydalanuvchilariga yoki ilovalarimizdagi kattalar uchun mo'ljallangan bo'limlardan (masalan, obuna bo'limlaridan) foydalanish bilan bog'liq holda foydalanamiz." },
+        { "type": "paragraph", "text": "IDFA ma'lumotlarini to'plash funksiyasini va Apple AdSupport freymvorkiga bog'liqlikni butunlay olib tashlash uchun strict-mode SDK'dan foydalanamiz." },
+        { "type": "paragraph", "text": "AppsFlyer haqida batafsil ma'lumot olish uchun uning Maxfiylik siyosati bilan tanishing: https://www.appsflyer.com/legal/services-privacy-policy/" },
+        { "type": "paragraph", "text": "Bolalar ilovalari uchun AppsFlyer maxfiylik bayonoti: https://www.appsflyer.com/gatedpdfs/AppsFlyer-Privacy-Statement-for-Kids-Apps.pdf" },
+        { "type": "paragraph", "text": "Mixpanel. Ilovalarimizdan foydalanish usullarini yaxshiroq tushunish uchun foydalanuvchilar haqidagi ma'lumotlarni to'playmiz. Shu maqsadda shaxsiy bo'lmagan ma'lumotlar Mixpanel'ga yuborilishi mumkin. Biz shaxsiy ma'lumotlaringizni, jumladan, Mixpanel'ni ham, bizga aloqador bo'lmagan uchinchi tomonlar bilan baham ko'rmaymiz. To'plangan ma'lumotlardan faqat xizmatlarimizni yaxshilash uchun foydalaniladi. Qonuniy majburiyatni bajarish zarur bo'lgan holatlar (masalan, sud qaroriga muvofiq) yoki Amayasoft ishtirokidagi qo'shilish, sotib olish yoki qayta tashkil etish natijasida ma'lumotlarga egalik huquqi o'zgargan holatlar bundan mustasno, ushbu ma'lumotlarni uchinchi tomonlarga taqdim etmaymiz. To'planadigan ma'lumotlarning aniq tarkibi haqida batafsil ma'lumotni quyida keltirilgan ma'lumotlarda ko'rishingiz mumkin." }
+      ]
+    },
+    {
+      "heading": "O'yinlar orqali taqdim etadigan ma'lumotlaringiz",
+      "blocks": [
+        { "type": "paragraph", "text": "Bolalar foydalanuvchilari O'yinlardan foydalanish vaqtida yuqorida ko'rsatilganidek, avtomatik ravishda to'planadigan ma'lumotlardan tashqari boshqa shaxsiy ma'lumotlarni taqdim eta olmaydi. Voyaga yetgan foydalanuvchilar ilovaning voyaga yetgan foydalanuvchilar/ota-onalar uchun mo'ljallangan bo'limidagi \"Yordam\" havolasi orqali Veb-saytdagi mijozlarni qo'llab-quvvatlash xizmatlaridan foydalanishlari mumkin. Agar Veb-saytimiz orqali qo'llab-quvvatlash xizmatiga murojaat yuborsangiz, elektron pochta manzilingizni ko'rsatishingiz shart va ismingizni ixtiyoriy ravishda ko'rsatishingiz mumkin. Biz bilan bog'lanish uchun to'liq ismingizni ko'rsatishingiz talab qilinmaydi." }
+      ]
+    },
+    {
+      "heading": "Veb-saytlarimiz orqali to'planadigan ma'lumotlar",
+      "blocks": [
+        { "type": "subheading", "text": "Avtomatik ravishda to'planadigan ma'lumotlar:" },
+        { "type": "paragraph", "text": "Veb-saytlarimiz ota-onalar va voyaga yetganlar uchun mo'ljallangan bo'lib, ularda Google Analytics tahlil vositasidan foydalanishimiz mumkin. Ular quyidagi ma'lumotlarni yig'adi va bu ma'lumotlarni veb-sahifamizga kirishda foydalanadigan qurilmangizda cookie fayli sifatida ham saqlashi mumkin:" },
+        { "type": "list", "items": [
+          "Demografik ma'lumotlar (brauzer tili, mamlakat, shahar);",
+          "Tizim ma'lumotlari (brauzer, operatsion tizim, xizmat ko'rsatuvchi provayder);",
+          "Mobil qurilma ma'lumotlari (operatsion tizim, xizmat ko'rsatuvchi provayder, ekran o'lchamlari);",
+          "Foydalanuvchini jalb qilish kanali (foydalanuvchi qaysi manbadan havolani bosib kelgani; bu ma'lumotlarning aksariyati Google tomonidan oshkor etilmaydi);",
+          "Saytdagi xatti-harakatlar (foydalanuvchilar qaysi sahifalarga tashrif buyurishi, tashrif davomiyligi); va",
+          "Remarketing ro'yxati (kelgusida reklama ko'rsatish uchun foydalanuvchining tashrifini cookie fayli orqali eslab qoladi)."
+        ] },
+        { "type": "paragraph", "text": "Veb-saytlarimizdan foydalanish uchun tegishli cookie fayllarining qurilmangizga joylashtirilishi va ulardan foydalanilishiga rozilik bildirishingiz kerak." },
+        { "type": "subheading", "text": "Siz taqdim etadigan ma'lumotlar:" },
+        { "type": "paragraph", "text": "Veb-saytga tashrif buyurganingizda avtomatik ravishda to'planadigan ma'lumotlardan tashqari, ota-onalar quyidagi ikki aniq maqsad uchun o'z ismi va elektron pochta manzilini taqdim etishlari mumkin:" },
+        { "type": "list", "items": [
+          "Ota-onalar uchun yangiliklar xabarnomasiga obuna bo'lish",
+          "Biz yoki mijozlarni qo'llab-quvvatlash jamoamiz bilan bog'lanish"
+        ] },
+        { "type": "paragraph", "text": "Sizga yangiliklar xabarnomasini yuborishimiz uchun elektron pochta manzilingizni taqdim etishingiz kerak. Elektron pochta manzilingizdan faqat yangiliklar xabarnomasini yuborish uchun foydalanamiz. Istalgan vaqtda obunani bekor qilish uchun keltirilgan havolani bosib yoki info@amayasoft.uz manzili orqali biz bilan bog'lanib, yangiliklar xabarnomalarini olishdan voz kechishingiz mumkin." },
+        { "type": "paragraph", "text": "Agar Veb-saytimiz orqali yordam so'rovini yuborsangiz yoki aloqa shakli orqali biz bilan bog'lansangiz, elektron pochta manzilingizni ko'rsatishingiz shart, ismingizni esa ixtiyoriy ravishda ko'rsatishingiz mumkin. Biz bilan bog'lanish uchun to'liq ismingizni taqdim etishingiz talab qilinmaydi." }
+      ]
+    },
+    {
+      "heading": "Ma'lumotlaringizdan qanday foydalanamiz",
+      "blocks": [
+        { "type": "paragraph", "text": "O'yinlarimiz va Veb-saytlarimiz orqali to'plangan ma'lumotlardan, O'yinlarimiz va Veb-saytlarimizdan qanday foydalanilishini hamda tashrif buyuruvchilarimizning afzalliklarini yaxshiroq tushunish uchun foydalanamiz. Qonuniy majburiyatni bajarish uchun bunday ma'lumotlarni oshkor qilish zarur bo'lgan holatlar (masalan, sud qaroriga muvofiq) yoki Amayasoft ishtirokidagi qo'shilish, sotib olish yoki qayta tashkil etish natijasida ma'lumotlarga egalik huquqi o'zgargan holatlar bundan mustasno, ushbu ma'lumotlardan boshqa maqsadlarda foydalanmaymiz va ularni yuqorida ko'rsatilganlardan tashqari boshqa tomonlarga taqdim etmaymiz." }
+      ]
+    },
+    {
+      "heading": "Ma'lumotlaringiz qanday ulashiladi",
+      "blocks": [
+        { "type": "paragraph", "text": "Biz avtomatik ravishda to'playdigan har qanday shaxsiy ma'lumotdan faqat xizmatlarimizni yaxshilash uchun foydalaniladi. Qonuniy majburiyatni bajarish zarur bo'lgan holatlar (masalan, sud qaroriga muvofiq) yoki Amayasoft ishtirokidagi qo'shilish, sotib olish yoki qayta tashkil etish natijasida ma'lumotlarga egalik huquqi o'zgargan holatlardan tashqari, ushbu ma'lumotlarni yuqorida ko'rsatilganlardan boshqa uchinchi tomonlarga bermaymiz." },
+        { "type": "paragraph", "text": "Veb-saytlarimizda Google skriptlari orqali to'planadigan ma'lumotlar Google'ga ham taqdim etiladi. Amayasoft ushbu ma'lumotlarning Google tomonidan to'planishi yoki ishlatilishini nazorat qilmaydi va buning uchun javobgarlikni o'z zimmasiga olmaydi. Biroq, bizning fikrimizcha, Google tomonidan ma'lumotlarni to'plash va ulardan foydalanish tegishli qonun-qoidalarga muvofiq amalga oshiriladi. Google taqdim etgan ma'lumotlarga ko'ra, u ushbu ma'lumotlardan quyidagicha foydalanadi:" },
+        { "type": "paragraph", "text": "Bizga ma'lum bo'lgan ma'lumotlarga ko'ra, Google to'plangan ma'lumotlardan Veb-saytlarimizdan qanday foydalanilishini va tashrif buyuruvchilarimizning afzalliklarini yaxshiroq tushunishimizga yordam berish uchun foydalanadi. Google, shuningdek, internetdan yoki Google xizmatlaridan foydalanayotganingizda sizga ko'rsatiladigan reklamalarni shaxsiylashtirish uchun to'plangan ma'lumotlardan foydalanadi. Batafsil ma'lumot uchun http://www.google.com/policies/privacy/ va xususan https://support.google.com/adwordspolicy/answer/143465?hl=en&rd=1 sahifalariga qarang. Shuningdek, Google'ning Google Analytics'dan voz kechish uchun brauzer qo'shimchasidan (https://tools.google.com/dlpage/gaoptout/) foydalanishingiz mumkin." }
+      ]
+    },
+    {
+      "heading": "Shaxsiy ma'lumotlarni qayta ishlashning qonuniy asoslari",
+      "blocks": [
+        { "type": "paragraph", "text": "Agar siz Yevropa Ittifoqi hududida (YI) yashasangiz yoki YI fuqarosi bo'lsangiz, siz haqingizdagi ma'lumotlarni faqat amaldagi YI qonunchiligiga muvofiq qonuniy asosga ega bo'lgan taqdirda to'playmiz va qayta ishlaymiz. Biz ma'lumotlaringizni faqat quyidagi hollardagina to'playmiz va qayta ishlaymiz:" },
+        { "type": "list", "items": [
+          "Bu bizning qonuniy manfaatlarimizni amalga oshirish uchun zarur bo'lsa, bunda ushbu manfaatlar sizning shaxsiy hayotingiz daxlsizligi bilan bog'liq manfaatlaringizdan ustun bo'lmasligi kerak. Masalan, firibgarlikning oldini olish, Veb-saytni takomillashtirish hamda Veb-sayt va tarmoq infratuzilmasining xavfsizligini ta'minlash uchun;",
+          "Siz ma'lum bir maqsad uchun ma'lumotlaringizni to'plash va qayta ishlashga rozilik bergan bo'lsangiz;",
+          "Bu bizning shartnoma bo'yicha majburiyatlarimizni bajarish uchun zarur bo'lsa; yoki",
+          "Bu qonuniy majburiyatimizni bajarish uchun zarur bo'lsa."
+        ] },
+        { "type": "paragraph", "text": "Agar shaxsiy ma'lumotlaringizni qayta ishlash uchun sizning roziligingizga tayansak, siz istalgan vaqtda ushbu rozilikni qaytarib olish yoki rozilik berishni rad etish huquqiga egasiz. Agar roziligingizni qaytarib olmoqchi bo'lsangiz, \"Shaxsiy huquqlarga oid so'rovlar uchun aloqa ma'lumotlari\" bo'limida ko'rsatilgan ma'lumotlardan foydalanib, biz bilan bog'lanishingiz mumkin. Bizning qonuniy manfaatlarimiz va qayta ishlanadigan ma'lumotlarga oid ayrim misollar:" },
+        { "type": "list", "items": [
+          "Tarmoq va axborot xavfsizligi (parol, IP manzil, qurilma identifikatori)",
+          "Mijozlarni qo'llab-quvvatlash va firibgarlikning oldini olish (ism, elektron pochta manzili)",
+          "Mahsulot va xizmatlarimizni yaxshilash (qurilma apparat ta'minoti haqidagi ma'lumotlar, faoliyat jurnallari)"
+        ] },
+        { "type": "paragraph", "text": "Shaxsiy ma'lumotlaringizni qayta ishlashda qonuniy manfaatlarimizga tayangan bo'lsak ham, siz bunday qayta ishlashga e'tiroz bildirish huquqiga egasiz. Ushbu huquqdan foydalanish haqida batafsil ma'lumotni quyidagi \"Shaxsiy huquqlar\" bo'limida topishingiz mumkin." },
+        { "type": "paragraph", "text": "Shaxsiy ma'lumotlaringizni qanday to'plashimiz va ulardan foydalanishimiz haqida savollaringiz bo'lsa yoki qo'shimcha ma'lumot kerak bo'lsa, info@amayasoft.uz manzili orqali biz bilan bog'laning." }
+      ]
+    },
+    {
+      "heading": "Biz boshqa hech qanday ma'lumotlarni to'plamaymiz",
+      "blocks": [
+        { "type": "paragraph", "text": "O'yinlarimizni yuklab olib, ulardan foydalanganingizda yoki Veb-saytlarimizni ko'rib chiqqaningizda, sizdan hech qanday ma'lumot taqdim etishingizni talab qilmaymiz va yuqorida ko'rsatilgan umumiy ma'lumotlardan tashqari, shaxsiy ma'lumotlarni to'plamaymiz. Bunday umumiy ma'lumotlarga kompyuteringiz yoki qurilmangizni anonim tarzda aniqlash uchun foydalaniladigan noyob qurilma identifikatorlari va yuqorida ko'rsatilgan cookie-fayllar kiradi. Bu ma'lumotlardan biz sizga yanada qulayroq foydalanish imkoniyatini taqdim etish uchun foydalanamiz va ma'lumotlarni uchinchi tomonga uzatmaymiz." },
+        { "type": "paragraph", "text": "Biz 16 yoshga to'lmagan bolalar bilan bila turib bog'lanmaymiz va ulardan shaxsiy ma'lumotlarni bila turib to'plamaymiz. Agar bunday ma'lumotlarni tasodifan to'plaganimizni aniqlasangiz yoki shunday deb hisoblasangiz, ularni o'chirib tashlashimiz uchun biz bilan bog'lanishingizni so'raymiz." }
+      ]
+    },
+    {
+      "heading": "Shaxsiy ma'lumotlar bilan bog'liq huquqlar",
+      "blocks": [
+        { "type": "paragraph", "text": "Amayasoft sizga shaxsiy ma'lumotlaringizdan foydalanish bilan bog'liq ayrim huquq va imkoniyatlarni taqdim etadi. Quyida mavjud imkoniyatlaringiz va ulardan qanday foydalanish mumkinligi haqida ma'lumot berilgan. Barcha so'rovlarga imkon qadar qisqa vaqt ichida javob beramiz. Agar so'rovning murakkabligi, yoki ko'lami sababli to'liq javob berishimiz bir oydan ortiq vaqt talab qilsa, bu haqda sizni xabardor qilamiz va so'rovning ko'rib chiqilish jarayoni haqida muntazam ma'lumot berib boramiz." },
+        { "type": "paragraph", "text": "Ma'lumotlaringizni ko'rib chiqish va yangilash: Biz to'plagan har qanday shaxsiy ma'lumotlaringizga kirish va ularni yangilash huquqiga egasiz. Bizda mavjud bo'lgan ma'lumotlarni ko'rib chiqish va zarur bo'lsa yangilash uchun ushbu bo'lim oxiridagi aloqa ma'lumotlaridan foydalanib so'rov yuborishingiz mumkin. Shaxsiy ma'lumotlarni taqdim etish yoki o'zgartirishdan oldin shaxsingizni tasdiqlash uchun sizdan qo'shimcha ma'lumot so'rashimiz mumkin." },
+        { "type": "paragraph", "text": "Ma'lumotlaringizni o'chirish: Shaxsiy ma'lumotlaringizni o'chirishni talab qilish huquqiga egasiz. Siz haqingizdagi barcha shaxsiy ma'lumotlarni o'chirib tashlashimizni so'rash uchun ushbu bo'lim oxiridagi aloqa ma'lumotlaridan foydalanib so'rov yuboring. Shaxsiy ma'lumotlarni o'chirishdan oldin shaxsingizni tasdiqlash uchun qo'shimcha ma'lumot so'rashimiz mumkin." },
+        { "type": "paragraph", "text": "Shaxsiy ma'lumotlaringizni xizmatlarimizdan o'chirganingizdan keyin ham serverlarimizdagi qoldiq nusxalarni yoki zaxira nusxalarini darhol o'chirmasligimiz mumkin. Ayrim ma'lumotlarni arxivlash, firibgarlik va suiiste'molliklarning oldini olish, tahlil qilish, qonuniy majburiyatlarni bajarish yoki boshqa qonuniy sabablar tufayli saqlashimiz mumkin. Ba'zi hollarda, masalan, ma'lumotlar qonuniy majburiyatni bajarish yoki huquqiy talabni ilgari surish yoki himoya qilish uchun zarur bo'lsa, so'rovingizni bajarishni rad etishimiz mumkin." },
+        { "type": "paragraph", "text": "Qayta ishlashni cheklash: Ayrim hollarda shaxsiy ma'lumotlaringizdan qanday foydalanishimizni cheklashni so'rash huquqiga egasiz. Bu ma'lumotlaringizni o'chirishni so'rashning muqobil boshqa yo'li. Barcha shaxsiy ma'lumotlaringizni o'chirishni so'rash o'rniga, ulardan faqat ma'lum maqsadlarda foydalanishimizni so'rashingiz mumkin. Agar shaxsiy ma'lumotlaringizning to'g'riligiga e'tiroz bildirsangiz va biz ularni tekshirayotgan bo'lsak yoki shaxsiy ma'lumotlaringizni huquqiy talab bilan bog'liq holda saqlashimiz, lekin ulardan boshqa maqsadlarda foydalanmasligimizni istasangiz, ularni qayta ishlashni cheklashni so'rashingiz mumkin." },
+        { "type": "paragraph", "text": "Ma'lumotlarni ko'chirish huquqi: Siz bizga taqdim etgan shaxsiy ma'lumotlaringizni tuzilgan, keng qo'llaniladigan va mashina o'qiy oladigan formatda olish hamda ularni boshqa xizmatga ko'chirish huquqiga egasiz. Shaxsiy ma'lumotlaringizni taqdim etishdan oldin shaxsingizni tasdiqlash uchun qo'shimcha ma'lumot so'rashimiz mumkin." },
+        { "type": "paragraph", "text": "E'tiroz bildirish huquqi: Shaxsiy ma'lumotlaringizni bevosita marketing maqsadlarida qayta ishlashimizga yoki ularni qonuniy manfaatlarimiz asosida qayta ishlashimizga e'tiroz bildirish huquqiga egasiz. Shaxsiy ma'lumotlaringizni bevosita marketing maqsadlarida qayta ishlashni istalgan vaqtda to'xtatishimizni so'rashingiz mumkin. Bu mutlaq huquq hisoblanadi va bunday so'rovni rad eta olmaymiz. Bevosita marketing bilan bog'liq bo'lmagan holatlarda ushbu huquqdan foydalanmoqchi bo'lsangiz, shaxsiy holatingizni hisobga olgan holda ma'lumotlaringizni qayta ishlashimizga nima sababdan e'tiroz bildirayotganingizni tushuntirishingiz kerak. Bunday so'rovni olganimizdan keyin ham, agar ma'lumotlarni qayta ishlash huquqiy talabni ilgari surish yoki himoya qilish uchun zarur bo'lsa yoki qayta ishlash uchun ustun bo'lgan qonuniy asoslarimiz mavjud bo'lsa, ularni qayta ishlashni davom ettirishimiz mumkin." },
+        { "type": "paragraph", "text": "Agar so'rovingiz asossiz yoki haddan tashqari bo'lsa, uni rad etishimiz yoki uni bajarish uchun haq talab qilishimiz mumkin. Agar so'rovni rad etsak, buning sabablarini sizga aytamiz va boshqa huquqiy imkoniyatlar haqida ma'lumot beramiz. Agar haq talab qilinadigan bo'lsa, bu haqda sizni darhol xabardor qilamiz va haq to'langanidan keyin so'rovni bajaramiz." }
+      ]
+    },
+    {
+      "heading": "Shaxsiy huquqlarga oid so'rovlar uchun aloqa ma'lumotlari",
+      "blocks": [
+        { "type": "paragraph", "text": "Yuqoridagi huquqlardan birini amalga oshirish bo'yicha so'rov yuborishda quyidagi aloqa ma'lumotlaridan foydalaning. Iltimos, so'rovlarni bir vaqtning o'zida bir nechta aloqa kanali orqali yubormang. So'rovingizga imkon qadar qisqa vaqt ichida javob berishga harakat qilamiz." },
+        { "type": "paragraph", "text": "Email: info@amayasoft.uz" },
+        { "type": "paragraph", "text": "Agar YI fuqarosi bo'lsangiz yoki YIda yashasangiz va ma'lumotlaringizdan foydalanishimiz yuzasidan shikoyat qilmoqchi bo'lsangiz (sizda mavjud bo'lishi mumkin bo'lgan boshqa huquqlarga zarar yetkazmagan holda), mahalliy nazorat organiga murojaat qilish huquqiga egasiz." }
+      ]
+    },
+    {
+      "heading": "Ma'lumotlarni saqlash",
+      "blocks": [
+        { "type": "paragraph", "text": "Amayasoft foydalanuvchilar haqidagi ma'lumotlarni quyidagi maqsadlarda saqlashi mumkin:" },
+        { "type": "list", "items": [
+          "Yangi funksiyalarni ishlab chiqish, shuningdek, O'yinlar va Veb-saytni takomillashtirish;",
+          "Kelgusidagi mijozlarni qo'llab-quvvatlash so'rovlariga javob berish;",
+          "O'yinlar va Veb-saytning xavfsizligi va himoyasini yaxshilash; yoki",
+          "Qonuniy majburiyatlarimizni bajarish"
+        ] },
+        { "type": "paragraph", "text": "Ma'lumotlaringizni ular to'plangan maqsadlar uchun zarur bo'lgan muddat davomida saqlaymiz. Ko'p hollarda ma'lumotlaringizni O'yinlar yoki Veb-saytdan foydalanishingiz uchun zarur bo'lgan vaqt davomida saqlaymiz. Bu O'yinlar yoki Veb-saytdan foydalanishni to'xtatganingizdan keyin ham ma'lumotlaringizni ma'lum vaqt davomida saqlashimiz mumkinligini anglatadi." }
+      ]
+    },
+    {
+      "heading": "Ushbu Maxfiylik siyosatiga kiritiladigan yangilanish",
+      "blocks": [
+        { "type": "paragraph", "text": "Ushbu Maxfiylik siyosati oxirgi marta ushbu hujjatning yuqori qismida ko'rsatilgan sanada yangilangan. Maxfiylik siyosatimiz vaqti-vaqti bilan o'zgarishi mumkin va biz unga o'zgartirishlar kiritish huquqini o'zimizda saqlab qolamiz. Siyosatimizga muhim o'zgartirishlar kiritsak, Veb-saytimiz yoki ilovalarimizda ko'zga tashlanadigan bildirishnoma joylashtiramiz. Agar ushbu Siyosatga kiritilgan o'zgartirishlar 13 yoshgacha bo'lgan foydalanuvchilarga nisbatan COPPA talablariga muvofiq ota-onaning oldindan roziligini olishni talab qiladigan bo'lsa, bunday rozilikni oldindan olamiz." }
+      ]
+    },
+    {
+      "heading": "ILOVA",
+      "blocks": [
+        { "type": "paragraph", "text": "AppsFlyer (AppsFlyer Inc.) O'yinlarimiz orqali quyidagi ma'lumotlarni to'playdi:" },
+        { "type": "list", "items": [
+          "IDFV — Identifier for Vendors (ishlab chiquvchilar identifikatori) — foydalanuvchilarga ilovalarda biriktiriladigan harf va raqamlardan iborat identifikator bo'lib, bitta ishlab chiquvchi (kompaniya)ga tegishli barcha ilovalarda umumiy ishlatilishi mumkin.",
+          "IP manzil (O'yin internetga ulanish uchun foydalanadigan internet manzili; ushbu ma'lumot qurilma qaysi mamlakatda ekanini aniqlash uchun ishlatiladi va keyin AppsFlyer tizimlaridan o'chirib tashlanadi);",
+          "Qurilma turi (masalan, iPad 2, Galaxy S3 va boshqalar);",
+          "Operatsion tizim versiyasi (operatsion tizim turi va uning versiyasi);",
+          "O'yin versiyasi (muayyan O'yin(lar) va ularning versiyalari); va",
+          "O'yin seansi davomiyligi.",
+          "Qurilmada standart sifatida o'rnatilgan til"
+        ] },
+        { "type": "paragraph", "text": "Mixpanel O'yinlarimiz orqali quyidagi ma'lumotlarni to'playdi:" },
+        { "type": "list", "items": [
+          "IP manzil (O'yin internetga ulanish uchun foydalanadigan internet manzili; ushbu ma'lumot qurilma qaysi mamlakatda ekanini aniqlash uchun ishlatiladi va keyin Mixpanel tizimlaridan o'chirib tashlanadi);",
+          "Qurilma turi (masalan, iPad 2, Galaxy S3 va boshqalar);",
+          "Operatsion tizim versiyasi (operatsion tizim turi va uning versiyasi);",
+          "O'yin versiyasi (muayyan O'yin(lar) va ularning versiyalari); va",
+          "O'yin seansi davomiyligi.",
+          "Qurilmada standart sifatida o'rnatilgan til"
+        ] }
+      ]
+    }
+  ]
+}

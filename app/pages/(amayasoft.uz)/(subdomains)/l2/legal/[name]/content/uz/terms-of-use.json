@@ -1,0 +1,349 @@
+{
+  "title": "Foydalanish shartlari",
+  "subtitle": "Oxirgi yangilanish: 2026-08-19",
+  "intro": [
+    "MUHIM — DIQQAT BILAN O‘QING: Ushbu Foydalanish shartlari (keyingi o‘rinlarda “Shartlar” deb yuritiladi) siz va Amayasoft MChJ (keyingi o‘rinlarda “Amayasoft” deb yuritiladi) o‘rtasida tuziladigan huquqiy kelishuv bo’lib, Amayasoft veb-sayti, xizmatlari, forumlari, o‘yinlari va ilovalaridan (birgalikda “Xizmatlar” deb yuritiladi) foydalanishingizni tartibga soladi. Xizmatlardan foydalanish orqali siz mazkur Shartlarga to‘liq roziligingizni bildirasiz. Agar ushbu Shartlarga rozi bo‘lmasangiz, Xizmatlardan foydalanmang va Xizmatlar doirasida hech qanday xaridni amalga oshirmang."
+  ],
+  "warnings": [
+    "XIZMATLARDAN FOYDALANISH ORQALI SIZ USHBU KELISHUVNI O‘QIB CHIQQANINGIZNI VA UNING SHARTLARIGA RIOYA QILISHGA ROZI EKANINGIZNI TASDIQLAYSIZ.",
+    "ILTIMOS, USHBU SHARTLARNING AJRALMAS QISMI HISOBLANGAN AMAYASOFT MAXFIYLIK SIYOSATI BILAN TANISHIB CHIQING."
+  ],
+  "sections": [
+    {
+      "heading": "Litsenziya va cheklovlar.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ushbu Shartlarga muvofiq, Amayasoft sizga Xizmatlardan shaxsiy va notijorat maqsadlarda foydalanish uchun eksklyuziv bo‘lmagan, cheklangan, bekor qilinishi mumkin bo‘lgan va boshqa shaxsga o‘tkazib bo‘lmaydigan litsenziya beradi. Siz quyida belgilangan harakatlarni amalga oshira olmaysiz:"
+        },
+        {
+          "type": "list",
+          "items": [
+            "(a) Xizmatlarni o‘zgartirish, tarjima qilish, teskari muhandislik qilish, teskari kompilyatsiya yoki dekompilyatsiya qilish, qismlarga ajratish, ular asosida hosila asarlar yaratish, shuningdek Xizmatlardan ma’lumotlarni yig‘ish yoki ajratib olish uchun mo‘ljallangan vositalardan foydalanish;",
+            "(b) Amayasoftning yozma roziligisiz Xizmatlarni to‘liq yoki qisman har qanday maqsadda ko‘paytirish, nusxalash, sotish, qayta sotish yoki ulardan boshqa tarzda tijorat maqsadida foydalanish;",
+            "(c) Tegishli huquq egasining oldindan berilgan yozma roziligisiz har qanday savdo belgisi, logotip yoki boshqa mulkiy ma’lumotlarni (shu jumladan tasvirlar, matn, sahifa tuzilishi yoki dizaynini) ramkaga joylashtirish yoki ramkalash (framing) usullaridan foydalanish;",
+            "(d) ma’lumotlarni avtomatik ravishda tahlil qilish vositalari, spider, crawler, skript, bot kabi avtomatlashtirilgan vositalardan yoki ma’lumotlarni avtomatik tarzda yig‘ishning boshqa usullaridan foydalanish;",
+            "(e) Amayasoftning yozma roziligisiz  “Amayasoft”, uning affillangan shaxslari, hamkorlari yoki ijodkorlari nomidan foydalanuvchi meta-teglar yoki boshqa “yashirin matn”lardan foydalanish; yoki",
+            "(f) Xizmatlardan foydalanish bilan bog‘liq holda noqonuniy yoki huquqbuzarlik deb hisoblanishi mumkin bo‘lgan har qanday xatti-harakatni amalga oshirish, shu jumladan Xizmatlarni “buzish” (“hacking”) yoki Amayasoft yoxud uchinchi shaxslarning intellektual mulkiga yoki boshqa mulkiy huquqlariga tajovuz qilish."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Bundan tashqari, agar Xizmat yuklab olinadigan o‘yin va/yoki ilova («Ilova») bo‘lsa, agar boshqacha tartib alohida ko‘rsatilmagan bo‘lsa, Amayasoft Sizga Ilova qo‘llab-quvvatlaydigan qurilmalarda shaxsiy va notijorat maqsadlarda foydalanish uchun eksklyuziv bo‘lmagan, boshqa shaxsga o‘tkazilishi mumkin bo‘lmagan, bekor qilinishi mumkin bo‘lgan va cheklangan litsenziyani taqdim etadi. Ilovani nusxalash, qayta sotish yoki unga nisbatan sublitsenziya berish taqiqlanadi. Ushbu Shartlar Ilovaning barcha versiyalari va yangilanishlariga, shu jumladan uning bepul va pulli versiyalariga nisbatan qo‘llaniladi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Ilovada unga kirishni nazorat qilish (jumladan yosh bo‘yicha cheklovlarni nazorat qilish), ruxsatsiz nusxalanishining oldini olish yoki ushbu Shartlarga muvofiq berilgan cheklangan huquq va litsenziyalar doirasidan chiqishga yo‘l qo‘ymaslikka qaratilgan texnik himoya choralari bo‘lishi mumkin. Siz bunday xavfsizlik choralarini chetlab o‘tish yoki ularni samarasizlantirishga qaratilgan har qanday harakatni amalga oshira olmaysiz. Agar siz texnik himoya choralarini o‘chirib qo‘ysangiz yoki ularga boshqa tarzda aralashsangiz, Ilova yoki boshqa Xizmatlardan foydalanish litsenziyangiz avtomatik ravishda bekor qilingan deb hisoblanadi."
+        }
+      ]
+    },
+    {
+      "heading": "Uchinchi tomon mahsulotlari, xizmatlari va havolalari.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Amayasoft Xizmatlar orqali uchinchi tomon mahsulotlarini taklif qilishi mumkin. Bunday uchinchi tomon mahsulotlaridan foydalanish bilan bog‘liq xavflarni o‘zingiz baholaysiz va qonunchilikda ruxsat etilgan doirada ular bilan bog‘liq javobgarlikni o‘z zimmangizga olasiz. Bundan tashqari, bunday mahsulotlar yoki xizmatlarga nisbatan huquq va majburiyatlaringiz tegishli uchinchi tomonning alohida foydalanish shartlari va maxfiylik siyosati bilan tartibga solinadi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Xizmatlarda Amayasoft nazorat qilmaydigan boshqa veb-saytlarga olib boruvchi giperhavolalar bo‘lishi mumkin. Amayasoft bunday tashqi saytlar yoki resurslarning mavjudligi uchun javobgar emas va ularda joylashtirilgan yoki ular orqali taqdim etiladigan kontent, reklama, mahsulotlar yoki boshqa materiallar uchun javobgar bo‘lmaydi."
+        }
+      ]
+    },
+    {
+      "heading": "Xizmatlardan foydalanish.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Xizmatlarimizdan foydalanish orqali siz kamida 18 yoshga to‘lganingizni (yoki yashash joyingiz qonunchiligiga ko’ra voyaga yetish yoshi 18 dan farq qilsa, tegishli voyaga yetish yoshiga yetganingizni) yoki ushbu Shartlarni ota-onangiz yoki vasiyingiz bilan birgalikda ko‘rib chiqqaningizni, u/ular sizning nomingizdan ushbu Shartlarga rozilik berganini  va ularga rioya qilishingiz uchun to‘liq javobgarlikni o‘z zimmasiga olganini tasdiqlaysiz. Agar siz 13 yoshga to‘lmagan bo‘lsangiz, Xizmatlardan foydalanish uchun ota-onangiz yoki vasiyingizning ruxsatini olishingiz kerak. Agar bunday ruxsat bo‘lmasa, Xizmatlarning ayrim funksiyalari va imkoniyatlaridan foydalanish cheklanishi yoki ular o‘chirib qo‘yilishi mumkin. Shaxsiy ma’lumotlaringizdan qanday foydalanilishi haqida Amayasoft Maxfiylik siyosatida ma’lumot olishingiz mumkin."
+        },
+        {
+          "type": "paragraph",
+          "text": "Ayrim Xizmatlardan foydalanishdan oldin Akkaunt yaratishingiz talab qilinishi mumkin. Shuningdek, Xizmatlarga ijtimoiy tarmoq xizmati (“SNS”) orqali kirishingiz talab qilinishi, yoki bunday imkoniyat taqdim etilishi mumkin. Akkaunt shaxsiy hisoblanadi va uni boshqa shaxsga o‘tkazish, sotish, ijaraga berish, hadya qilish yoki boshqa tarzda tasarruf etish mumkin emas. Akkauntni ro‘yxatdan o‘tkazishda o‘zingiz haqingizda to‘g‘ri va to‘liq ma’lumot taqdim etishga hamda ushbu ma’lumotlarni doimo yangilab borishga rozilik bildirasiz. Bir vaqtning o‘zida bittadan ortiq Akkauntga ega bo‘lishingiz yoki Xizmatlarga bittadan ortiq SNS orqali kirishingiz mumkin emas. Parolingiz va foydalanuvchi nomingizning maxfiyligini saqlash, shuningdek, Akkauntingiz orqali amalga oshirilgan barcha harakatlar uchun faqat siz javobgarsiz. Amayasoft Akkauntlarni avtomatlashtirilgan usullar yordamida yaratishga yo‘l qo‘ymaydi va ushbu Shartlarni yoki sizning yurisdiksiyangizda amal qiladigan qonunlar, qoidalar yoki talablardan birortasini buzgan taqdiringizda, Xizmatlarga yoki Akkauntingizga kirishingizni darhol bekor qilish huquqini o‘zida saqlab qoladi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Xizmatlarga kirish va/yoki ulardan foydalanish bilan bog‘liq internetga ulanish va/yoki mobil aloqa xarajatlari uchun siz javobgarsiz."
+        }
+      ]
+    },
+    {
+      "heading": "Ilova ichidagi xaridlar.",
+      "blocks": [
+        {
+          "type": "subheading",
+          "text": "O‘yindagi virtual valyuta va virtual buyumlar"
+        },
+        {
+          "type": "paragraph",
+          "text": "Xizmat sizga o‘yindagi raqamli mahsulotlar yoki buyumlarga (“Virtual buyumlar”) kirish imkonini beruvchi o‘yin ichidagi valyutani (“Virtual valyuta”) ishlab topish, sotib olish yoki boshqa yo‘l bilan olish imkonini berishi mumkin. Virtual valyutani olish usullari faqat Amayasoftning ixtiyoriga ko‘ra belgilanadi. Virtual valyuta va Virtual buyumlar haqiqiy pul hisoblanmaydi, pul qiymatiga ega emas hamda ularni qonuniy to‘lov vositasiga yoki Xizmatlardan tashqarida qiymatga ega bo‘lgan boshqa buyum yoki vositalarga almashtirish mumkin emas."
+        },
+        {
+          "type": "paragraph",
+          "text": "Xizmat orqali olingan Virtual valyuta va Virtual buyumlar sizga faqat Xizmat ichida foydalanish uchun cheklangan, shaxsiy, bekor qilinishi mumkin bo‘lgan, boshqa shaxsga o‘tkazib bo‘lmaydigan va sublitsenziya berish mumkin bo‘lmagan litsenziya asosida taqdim etiladi. Xizmatda paydo bo‘ladigan yoki undan kelib chiqadigan Virtual valyuta yoki Virtual buyumlarga nisbatan sizda mulkiy manfaat, huquq yoki mulk huquqi mavjud emas va ularni hech qanday usulda, jumladan to‘g‘ridan-to‘g‘ri sotish yoki auksion xizmatlari orqali boshqa shaxsga o‘tkazish yoki qayta sotish mumkin emas."
+        },
+        {
+          "type": "paragraph",
+          "text": "Amayasoft Virtual valyuta yoki Virtual buyumlarning xakerlik hujumi natijasida yo‘qolishi, boshqa bir tarzda yo‘qotilishi yoki Virtual valyuta orqali olingan tovar va xizmatlar uchun javobgar emas. Amayasoft Virtual valyuta yoki Virtual valyuta orqali olingan Virtual buyumlar uchun sizga kompensatsiya to‘lashga majbur emas va bunday kompensatsiya to‘lamaydi. Amayasoft o‘z ixtiyoriga ko‘ra va oldindan ogohlantirmasdan istalgan Virtual valyuta yoki Virtual buyumning narxi, mavjudligi, yoki buyurtma miqdorini o‘zgartirish yoki cheklash hamda ularni sizga taqdim etishni rad etish huquqini saqlab qoladi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Virtual valyutaning amal qilish muddati bo‘lishi mumkin. Agar Virtual valyuta yoki Virtual buyumlaringizning amal qilish muddati tugasa va Akkauntingiz hali ham faol bo‘lsa, Amayasoft o‘z ixtiyoriga ko‘ra bunday Virtual valyutani Virtual buyumlarga aylantirish imkonini taklif qilishi mumkin, biroq bunga majbur emas. Virtual valyuta va Virtual buyumlar quyidagi hollarda bekor qilinishi mumkin: (a) Akkauntingiz yoki Xizmatlarga kirishingiz har qanday sababga ko‘ra bekor qilinsa yoki to‘xtatib turilsa; (b) ushbu Shartlarni buzsangiz; (c) Amayasoft Xizmatni taqdim etishni to‘xtatsa; yoki (d) Xizmat bilan aloqangizni uzsangiz."
+        },
+        {
+          "type": "subheading",
+          "text": "Obunalar"
+        },
+        {
+          "type": "paragraph",
+          "text": "Obunani xarid qilganingizda quyidagilarga rozilik bildirasiz:"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Obuna uchun to‘lov qurilmangiz platformasining ilovalarida  (“App Store”) tanlagan to‘lov usulingizdan yechib olinadi. Sizdan xarid paytida ko‘rsatilgan Obuna narxi undiriladi; va",
+            "Obunangiz siz yoki Amayasoft tomonidan bekor qilinmaguncha, tegishli Obuna muddatiga avtomatik ravishda uzaytiriladi. Masalan, agar 3 oylik Obunani xarid qilsangiz, siz yoki Amayasoft Obunani bekor qilmaguningizcha, Obuna har 3 oyda avtomatik ravishda keyingi 3 oylik muddatga uzaytiriladi."
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": "Obunani bekor qilish:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Obunaning avtomatik uzaytirilishini va Obuna to‘lovlarining avtomatik tarzda yechib olinishini to‘xtatish uchun keyingi davrga uzaytirilishidan kamida 24 soat oldin Obunani bekor qilishingiz kerak. App Store’dagi obuna sozlamalarini boshqarish orqali Obunani istalgan vaqtda bekor qilishingiz mumkin."
+        },
+        {
+          "type": "paragraph",
+          "text": "Google Play’da Obunani bekor qilish bo‘yicha ko‘rsatmalar: https://support.google.com/googleplay/answer/7018481"
+        },
+        {
+          "type": "paragraph",
+          "text": "Apple App Store’da Obunani bekor qilish bo‘yicha ko‘rsatmalar: https://support.apple.com/en-us/HT202039"
+        },
+        {
+          "type": "subheading",
+          "text": "Obunaga oid boshqa shartlar:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Obuna doirasidagi kundalik mukofotlarni olish uchun Obunaga tegishli bo‘lgan o‘yinni ochishingiz kerak. O‘yinni ochmagan kunlaringiz uchun mukofot olmaysiz."
+        },
+        {
+          "type": "subheading",
+          "text": "Obunalar, virtual valyuta va virtual buyumlar uchun to‘lovlar"
+        },
+        {
+          "type": "paragraph",
+          "text": "Obuna, Virtual valyuta va/yoki Virtual buyumlar uchun to‘lov qilganingizda, barcha to‘lovlar App Store (masalan, Google Play yoki Apple App Store) orqali undiriladi va qayta ishlanadi. Shu sababli, sizga tatbiq etilishi mumkin bo‘lgan qo‘shimcha to‘lov shartlari bilan tanishish uchun tegishli ilovalarning  to‘lov shartlarini ko‘rib chiqing."
+        },
+        {
+          "type": "paragraph",
+          "text": "Virtual valyuta, Virtual buyumlar va Obunalar uchun amalga oshirilgan barcha to‘lovlar yakuniy hisoblanadi. Amayasoft mutlaq o’z ixtiyoriga ko‘ra mablag‘larni qaytarishga qaror qilgan hollar bundan mustasno, to‘lovlar qaytarilmaydi."
+        }
+      ]
+    },
+    {
+      "heading": "Onlayn kontent va xulq-atvor.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Xizmatlar Akkauntingiz yoki SNS orqali suhbatlashish yoki bloglar, xabarlar taxtalari, onlayn forumlar va sizga havolalar, matnlar, fotosuratlar, grafikalar yoki boshqa materiallarni (“Forum kontenti”) yaratish, yuborish, joylashtirish, namoyish etish, uzatish, ijro etish, e’lon qilish yoki ommaga tarqatish imkonini beradigan boshqa funksiyalarda (“Forum(lar)”) ishtirok etish imkoniyatini taqdim etishi mumkin. Istalgan Forumga siz tomonidan joylashtirilgan barcha Forum kontenti uchun faqat siz javobgarsiz."
+        },
+        {
+          "type": "paragraph",
+          "text": "Forumlar faqat notijorat maqsadlarda ishlatilishi kerak. Amayasoft haqoratli yoki ushbu Shartlarni boshqa tarzda buzadi deb hisoblagan Forum kontentini olib tashlash huquqiga ega, biroq bunga majbur emas va bunday harakatlar uchun sizning oldingizda javobgar bo‘lmaydi. Amayasoft o‘z ixtiyoriga ko‘ra Forumlardan foydalanishingizni cheklash yoki o‘chirib qo‘yish huquqini saqlab qoladi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Forum kontentini istalgan Forumga yuborish orqali siz bunday Forum kontentini hech qanday cheklovlarsiz taqdim etish uchun barcha zarur huquqlarga ega ekaningizni kafolatlaysiz, hamda Amayasoftga bunday Forum kontentidan hozirda ma’lum bo‘lgan yoki kelgusida yaratiladigan barcha ommaviy axborot vositalarida foydalanish, uni ko‘paytirish, o‘zgartirish, ommaga namoyish etish va ijro etish, undan hosila asarlar yaratish, sublitsenziya berish va tarqatish, shuningdek, bunday materiallarni hozirda ma’lum bo‘lgan yoki kelgusida yaratiladigan har qanday shakl, vosita yoki texnologiyadagi boshqa asarlarga kiritish uchun to‘liq haq to‘langan, royalti to‘lashni talab qilmaydigan, eksklyuziv bo‘lmagan, qaytarib olinmaydigan, butun dunyo bo‘ylab amal qiladigan, shartsiz va muddatsiz huquq va litsenziya berasiz."
+        },
+        {
+          "type": "paragraph",
+          "text": "Forumlarda uchinchi shaxslar tomonidan bildirilgan yoki taqdim etilgan har qanday fikr, maslahat, bayonot, xizmat, taklif yoki boshqa ma’lumot yoxud kontent tegishli mualliflariga tegishli bo‘lib, Amayasoft yoki uning affillangan shaxslarining fikrini ifodalamaydi. Amayasoft bunday ma’lumotlar yoki kontentning aniqligi yoki ishonchliligi uchun javobgar emas. Amayasoft Forumlar yuzasidan hech qanday bayonot yoki kafolat bermaydi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Istalgan Forumga joylashtirgan barcha Forum kontenti uchun faqat siz javobgarsiz. Siz quyidagilarni amalga oshira olmaysiz:"
+        },
+        {
+          "type": "list",
+          "items": [
+            "a) Xizmatlar yoki Forumlardan amaldagi qonunlar yoki qoidalarni buzadigan tarzda foydalanish;",
+            "b) quyidagi xususiyatlarga ega Forum kontentini joylashtirish yoki uzatish:"
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            "(i) uchinchi shaxslarning huquqlari yoki qadr-qimmatini, jumladan shartnoma bo‘yicha huquqlarini, maxfiylik huquqini, shaxsning tasviridan foydalanish huquqini yoki intellektual mulk huquqlarini buzadigan;",
+            "(ii) aldamchi, yolg‘on, ta’qib qiluvchi, tuhmat qiluvchi, haqoratli, zo‘ravonlikka undovchi, huquqbuzarlikka oid, tahdidli, zararli, odobsiz, nomaqbul, nafrat uyg‘otuvchi, kamsituvchi, irqchilikni targ‘ib qiluvchi yoki pornografik bo‘lgan;",
+            "(iii) jinoyat hisoblanadigan yoki jinoyat sodir etishga undaydigan;",
+            "(iv) viruslar, “qurtlar” yoki shunga o‘xshash dasturlarni o‘z ichiga oladigan; yoki",
+            "(v) boshqa shaxsning roziligisiz uning shaxsiy ma’lumotlarini o‘z ichiga oladigan;"
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            "c) boshqa shaxs nomidan ish ko‘rish yoki o‘zingiz haqingizda yolg‘on ma’lumot taqdim etish;",
+            "d) so‘ralmagan ommaviy xabarlarni yuborish yoki “spam” tarqatish bilan shug‘ullanish yoxud bunga ko‘maklashish;",
+            "e) tovarlar yoki xizmatlarni taklif qilish, targ‘ib qilish yoki reklama qilishga oid materiallarni tarqatish yoki boshqa tarzda e’lon qilish;",
+            "f) boshqa shaxslarning shaxsiy ma’lumotlarini noqonuniy, tijorat maqsadlarida yoki boshqa ruxsat etilmagan maqsadlarda to‘plash;",
+            "g) boshqa foydalanuvchining Akkauntiga ruxsatsiz kirish yoki unga kirishga urinish;",
+            "h) xakerlik (“hacking”), fishing (“phishing”), zaifliklardan yoki cheatlardan foydalanish va/yoki qalbaki dasturiy ta’minot yoxud qalbaki Virtual valyuta/Virtual buyumlarni tarqatish bilan bog‘liq faoliyatni targ‘ib qilish, rag‘batlantirish yoki unda ishtirok etish;",
+            "i) o‘yinlarni buzish, o‘zgartirish yoki aldash uchun mo‘ljallangan dasturiy ta’minot yoki vositalardan foydalanish;",
+            "j) Xizmatlarga zarar yetkazishi yoki ularning ishlashiga xalaqit berishi mumkin bo‘lgan viruslar, “qurtlar”, josuslik dasturlari, “vaqtli bombalar”, buzilgan ma’lumotlar yoki boshqa kompyuter dasturlarini o‘z ichiga olgan fayllarni yuklash;",
+            "k) Xizmatning istalgan qismini teskari muhandislik qilish, dekompilyatsiya qilish yoki o‘zgartirish yoxud bunday harakatlarni amalga oshirishga urinish."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Siz boshqa foydalanuvchilarning odobsiz, ochiq-sochiq, haqoratli yoki ushbu Shartlarni boshqa tarzda buzadigan Forum kontenti va xatti-harakatlariga (“Nomaqbul kontentt”) duch kelishingiz mumkinligini tushunasiz. Haqiqiy yoki taxmin qilinayotgan Nomaqbul kontent haqida info@amayasoft.uz manziliga xabar berishingiz mumkin. Amayasoft zararli, haqoratli yoki ushbu Shartlarni boshqa tarzda buzadi deb hisoblagan Nomaqbul kontentga nisbatan o‘z ixtiyoriga ko‘ra tegishli deb topgan har qanday chorani ko‘rish huquqini o‘zida saqlab qoladi. Forum kontenti, Nomaqbu lkontent yoki ulardan kelib chiqadigan har qanday zarar yoxud yo‘qotishlar uchun Amayasoft siz yoki uchinchi shaxslar oldida hech qanday tarzda javobgar emasligiga rozilik bildirasiz."
+        }
+      ]
+    },
+    {
+      "heading": "Mulk huquqlari.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ushbu Shartlarda boshqacha qoida nazarda tutilmagan bo‘lsa, Xizmatlar va ulardagi barcha kontentiga (birgalikda “Amayasoft kontenti”) bo‘lgan barcha mulkiy huquqlar, egalik huquqi va intellektual mulk huquqlari Amayasoft va/yoki uning yetkazib beruvchilariga tegishli bo‘lib qoladi hamda Buyuk Britaniya, AQSh va dunyoning boshqa yurisdiksiyalarining mualliflik huquqi to‘g‘risidagi qonunlari va xalqaro mualliflik huquqi shartnomalari bilan himoyalanadi. Amayasoft kontentiga oid nomlar va logotiplar, shuningdek boshqa grafikalar, ikonalar va xizmat nomlari Amayasoft yoki uning litsenziya beruvchilarining tovar belgilari, ro‘yxatdan o‘tkazilgan tovar belgilari yoki tovar ko‘rinishi  hisoblanadi. Amayasoftning oldindan yozma roziligisiz Xizmatlar yoki Amayasoft kontentidan foydalanish, ularni nusxalash, uzatish, o‘zgartirish, tarqatish yoki ular asosida hosila asarlar yaratish mumkin emas."
+        },
+        {
+          "type": "paragraph",
+          "text": "Xizmatlar sizga Amayasoft kontentini o‘z ichiga olgan kontentni (“Sizning kontentingiz”), jumladan o‘yin elementlari yoki grafikalarini o‘z ichiga olgan fotosuratlar, skrinshotlar yoki o‘yin jarayoni videolarini yaratish imkonini berishi mumkin. Amayasoft Amayasoft kontentiga nisbatan barcha huquqlar, egalik huquqi va manfaatlarini saqlab qoladi. Siz Sizning kontentingizga bo‘lgan barcha huquqlaringizni saqlab qolasiz; biroq Amayasoft Sizning kontentingizdan istalgan maqsadda foydalanish, jumladan uni ko‘paytirish, nusxalash, moslashtirish, o‘zgartirish, ijro etish, namoyish etish, e’lon qilish, efirga uzatish, uzatish yoki hozirda ma’lum bo‘lgan yoxud kelgusida yaratiladigan har qanday usul orqali jamoatchilikka yetkazish, shuningdek, Sizning kontentingizni sizga qo‘shimcha xabar bermasdan yoki kompensatsiya to‘lamasdan tarqatish huquqini o‘z ichiga olgan eksklyuziv, muddatsiz, qaytarib olinmaydigan, to‘liq o‘tkazilishi va sublitsenziya berilishi mumkin bo‘lgan, butun dunyo bo‘ylab amal qiladigan huquq va litsenziyaga ega bo‘ladi. Qonun bilan taqiqlanmagan hollarda, Siz Amayasoftning Sizning kontentingizdan foydalanishi bilan bog‘liq mualliflik, e’lon qilish, obro‘ yoki muallif sifatida ko‘rsatilish huquqi kabi ma’naviy huquqlardan voz kechasiz."
+        }
+      ]
+    },
+    {
+      "heading": "Kafolatlardan voz kechish va javobgarlikni cheklash.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "AMAYASOFT XIZMATLARNING SIZNING EHTIYOJLARINGIZGA MOS KELISHI YOKI ULARDAN FOYDALANISH XAVFSIZ, UZLUKSIZ VA XATOLARSIZ BO‘LISHI, ULARDA VIRUSLAR YOKI BOSHQA ZARARLI KOMPONENTLAR MAVJUD BO‘LMASLIGI YOXUD XIZMATLARNING UCHINCHI TOMON TEXNOLOGIYALARI, QURILMALARI, DASTURIY TA’MINOTI, TIZIMLARI YOKI MA’LUMOTLARI BILAN BIRGALIKDA TO‘G‘RI ISHLASHIGA HECH QANDAY BAYONOT VA/YOKI KAFOLAT BERMAYDI."
+        },
+        {
+          "type": "paragraph",
+          "text": "XIZMATLAR “MAVJUD BO‘LGAN HOLATDA” TAQDIM ETILADI VA AMALDAGI QONUNCHILIK RUXSAT ETGAN ENG KATTA DARAJADA BARCHA SHARTLAR, BAYONOTLAR VA KAFOLATLAR, XOH ANIQ, XOH NAZARDA TUTILGAN, XOH QONUNDA BELGILANGAN BO‘LSIN, JUMLADAN TOVAR XUSUSIYATLARIGA MOSLIK, MULK HUQUQI, MUAYYAN MAQSADGA MUVOFIQLIK VA HUQUQLARNI BUZMASLIKKA OID NAZARDA TUTILGAN HAR QANDAY KAFOLATLAR INKOR ETILADI. BUNDAN TASHQARI, AMAYASOFT XIZMATLARNING ISHLASHI YOKI ULARDAGI MA’LUMOTLAR, KONTENT, ALOQA MATERIALLARI, BOSHQA MATERIALLAR, MAHSULOTLAR VA XIZMATLAR XUSUSIDA HECH QANDAY ANIQ YOKI NAZARDA TUTILGAN BAYONOT YOKI KAFOLAT BERMAYDI. AMAYASOFT XIZMATLARIDAN FOYDALANISH BILAN BOG‘LIQ BARCHA XAVFNI O‘Z ZIMMANGIZGA OLASIZ."
+        },
+        {
+          "type": "paragraph",
+          "text": "AMAYASOFT XIZMATLARDAN FOYDALANISHINGIZ NATIJASIDA YUZAGA KELADIGAN HECH QANDAY ZARAR, JUMLADAN BEVOSITA, BILVOSITA, TASODIFIY, JARIMA HUSUSIYATIDAGI ZARAR YOKI OQIBATDA YUZAGA KELADIGAN ZARARLAR UCHUN JAVOBGAR BO‘LMAYDI. AYRIM YURISDIKSIYALAR QONUNLARI NAZARDA TUTILGAN KAFOLATLARNI CHEKLASHGA YOKI AYRIM ZARARLARNI ISTISNO QILISH YOXUD CHEKLASHGA YO‘L QO‘YMASLIGI MUMKIN. AGAR BUNDAY QONUNLAR SIZGA NISBATAN QO‘LLANILSA, YUQORIDAGI RAD ETISHLAR, ISTISNOLAR YOKI CHEKLOVLARNING AYRIMLARI YOXUD BARCHASI SIZGA NISBATAN QO‘LLANILMASLIGI MUMKIN VA SIZ QO‘SHIMCHA HUQUQLARGA EGA BO‘LISHINGIZ MUMKIN."
+        },
+        {
+          "type": "paragraph",
+          "text": "SHUNINGDEK, SIZ UCHINCHI SHAXSLARNING, JUMLADAN XIZMATLARNING BOSHQA FOYDALANUVCHILARI VA UCHINCHI TOMON SAYTLARINING XATTI-HARAKATLARI UCHUN AMAYASOFT JAVOBGAR EMASLIGINI TAN OLASIZ VA AMAYASOFTNI BUNING UCHUN JAVOBGAR DEB HISOBLAMASLIKKA ROZILIK BILDIRASIZ. XIZMATLARDAN FOYDALANISH YOKI ULARGA KIRISH BILAN BOG‘LIQ, SHUNINGDEK, YUQORIDA KO‘RSATILGAN HOLATLAR NATIJASIDA ZARAR KO‘RISH XAVFI TO‘LIQ SIZNING ZIMMANGIZDA."
+        }
+      ]
+    },
+    {
+      "heading": "8. Zararlarni qoplash.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Siz Amayasoftni, uning litsenziya beruvchilarini, affillangan shaxslarini va yetkazib beruvchilarini, shuningdek ularning tegishli mansabdor shaxslari, direktorlari va xodimlarini quyidagilar sababli yuzaga kelgan yoki ular bilan bog‘liq har qanday yo‘qotishlar, zararlar, jarimalar va xarajatlardan (jumladan advokatlarning haqlari va xarajatlaridan) himoya qilishga, ularning zararlarini qoplashga va javobgarlikdan ozod etishga rozilik bildirasiz: Forumlar yoki Xizmatlar orqali taqdim etgan, joylashtirgan, uzatgan yoki boshqa tarzda ommaga taqdim etgan har qanday ma’lumot yoki material, jumladan Sizning kontentingiz, Forum kontenti va/yoki Nomaqbul kontent; Forumlar yoki Xizmatlardan foydalanishingiz; Forumlar yoki Xizmatlarga ulanishingiz; ushbu Shartlarni buzishingiz; yoki har qanday qonun, qoida yoxud uchinchi shaxsning huquqlarini buzishingiz."
+        },
+        {
+          "type": "paragraph",
+          "text": "Yuqorida ko‘rsatilgan zararlarni qoplash majburiyatlaringizni cheklamagan holda, Amayasoft o‘z hisobidan siz tomonidan qoplanishi lozim bo‘lgan har qanday masala bo‘yicha himoyani tashkil etish va nizoni yuritish ustidan nazoratni o‘z zimmasiga olish."
+        }
+      ]
+    },
+    {
+      "heading": "Bekor qilish.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Agar siz ushbu Shartlarning biror talabiga rioya qilmasangiz, ushbu Shartlar avtomatik ravishda bekor qilinadi. Siz ham, Amayasoft ham istalgan vaqtda, istalgan sababga ko‘ra va oldindan ogohlantirmasdan Akkauntingizni tugatish yoki bekor qilish huquqiga ega. Shartlar bekor qilingandan so‘ng Xizmatlardan foydalanishni darhol to‘xtatishingiz kerak. 5, 6, 11, 13 va 14-bo‘limlarda nazarda tutilgan majburiyatlaringiz Shartlar bekor qilingandan keyin ham o‘z kuchida qoladi."
+        }
+      ]
+    },
+    {
+      "heading": "Huquqlarni o‘tkazish taqiqlanadi.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ushbu Shartlar va ular asosida sizga berilgan litsenziyalar shaxsan sizga tegishli bo‘lib, Amayasoft’ning yozma roziligisiz boshqa shaxsga o‘tkazish mumkin emas."
+        }
+      ]
+    },
+    {
+      "heading": "Arbitraj va nizolarni hal qilish.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ushbu Shartlar, shuningdek ushbu Shartlar, Xizmatlar, Forumlar, Forum kontenti, Nomaqbul kontent, Sizning kontentingiz yoki Dasturiy ta’minot yoxud Forumlardan foydalanishingiz bilan har qanday tarzda bog‘liq bo‘lgan yoki ulardan kelib chiqadigan barcha nizolar va talablar Angliya va Uels qonunlari bilan tartibga solinadi. Siz va Amayasoft ushbu Shartlar, Xizmatlar, Forumlar yoki Xizmatlar yoxud Forumlardan foydalanishingiz bilan har qanday tarzda bog‘liq bo‘lgan yoki ulardan kelib chiqadigan barcha nizolar va talablarni hal qilishning yagona usuli yakuniy va majburiy arbitraj ekaniga rozilik bildirasiz. Arbitraj Xalqaro arbitraj sudi qoidalariga muvofiq o‘tkaziladi. Qonun ruxsat etgan eng katta darajada: (a) ushbu Shartlarga oid hech bir arbitraj boshqa arbitraj bilan birlashtirilmaydi; (b) jamoaviy arbitrajga yo‘l qo‘yilmaydi; (c) boshqa arbitraj, sud yoki shunga o‘xshash jarayonda aniqlangan fakt yoki kelishilgan holat ushbu arbitrajda prekluziv yoki collateral estoppel ta’siriga ega bo‘lmaydi (agar bunday fakt yoki holat siz va Amayasoft o‘rtasidagi boshqa jarayonda aniqlanmagan bo‘lsa); va (d) boshqa arbitrajdagi huquqiy xulosa ushbu arbitrajda hech qanday prekluziv ta’sirga ega bo‘lmaydi (agar u siz va Amayasoft o‘rtasidagi boshqa jarayonda aniqlanmagan bo‘lsa)."
+        },
+        {
+          "type": "paragraph",
+          "text": "Siz va Amayasoft arbitrajni talabni ilgari surayotgan tomon talabga sabab bo‘lgan harakat, harakatsizlik yoki buzilish haqida birinchi marta bilgan yoki oqilona ravishda bilishi kerak bo‘lgan sanadan boshlab BIR (1) YIL ichida Xalqaro arbitraj sudiga arbitraj talabi berish orqali boshlashingiz kerak. Ushbu muddat ichida ilgari surilmagan talab bo‘yicha hech qanday huquqiy himoya vositasidan foydalanish huquqi mavjud bo‘lmaydi (agar amaldagi qonun talablarni ilgari surish uchun bir yillik da’vo muddatini belgilashni taqiqlasa, talab amaldagi qonun ruxsat etgan bir yildan ortiq bo‘lgan eng qisqa muddat ichida ilgari surilishi kerak). Har bir tomon o‘z arbitraj xarajatlarini o‘zi qoplaydi."
+        }
+      ]
+    },
+    {
+      "heading": "Huquqbuzarlik haqida bildirishnoma.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Xizmatlar bilan bog‘liq har qanday talablar va/yoki mualliflik huquqi buzilishi haqidagi da’volar bo‘yicha bildirishnomalar quyidagi manzilga yuborilishi kerak:"
+        },
+        {
+          "type": "address",
+          "lines": [
+            "AMAYASOFT MChJ",
+            "O‘zbekiston, Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76-xonadon",
+            "100004"
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Fikr-mulohazalar.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Amayasoft Xizmatlar yoki o‘z faoliyatining boshqa jihatlariga so‘ralmagan fikr-mulohazalar, takliflar yoki boshqa ma’lumotlarni qabul qilmaydi. Agar Amayasoftga fikr-mulohazalar yoki boshqa g‘oyalarni taqdim etsangiz, Amayasoft siz taqdim etgan bunday fikr-mulohazalar va g‘oyalardan istalgan maqsadda, jumladan o‘z mahsulot va xizmatlarini takomillashtirish hamda hosila mahsulotlar yaratish uchun, sizga hech qanday kompensatsiya to‘lamagan holda erkin foydalanishiga rozilik bildirasiz."
+        }
+      ]
+    },
+    {
+      "heading": "Umumiy qoidalar.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ushbu Shartlar, Maxfiylik siyosati hamda siz foydalanayotgan muayyan Xizmatlarga tatbiq etiladigan boshqa maxfiylik siyosatlari bilan birgalikda, Xizmatlardan foydalanishingizga oid siz va Amayasoft o‘rtasidagi to‘liq va yakuniy kelishuvni tashkil etadi. Siz ushbu kelishuvga faqat siz va Amayasoftning vakolatli vakili tomonidan tegishli ravishda imzolangan yozma hujjat orqali o‘zgartirish kiritishingiz mumkin."
+        },
+        {
+          "type": "paragraph",
+          "text": "Siz ushbu Shartlarni buzishingiz Amayasoftga darhol va qoplab bo‘lmaydigan zarar yetkazishi mumkinligiga hamda Amayasoft yuqoridagi 11-bo‘limda nazarda tutilgan arbitraj kelishuviga qaramay, garov ta’minotini taqdim etish talabisiz taqiqlovchi sud choralarini so‘rash huquqiga ega ekaniga rozilik bildirasiz."
+        },
+        {
+          "type": "paragraph",
+          "text": "Amayasoft va siz mustaqil tomonlar hisoblanasiz va ushbu Shartlarning hech bir qoidasi mehnat munosabatlari yoki agentlik munosabatlarini vujudga keltirmaydi. Agar ushbu Shartlarning biror qoidasi ijro etib bo‘lmaydigan deb topilsa, mazkur qoida uni ijro etish mumkin bo‘lishi uchun zarur bo‘lgan eng kam darajada o‘zgartiriladi va bu Shartlarning qolgan qoidalarining haqiqiyligi yoki ijro etilishiga ta’sir qilmaydi. Tomonlardan birining ushbu Shartlarda nazarda tutilgan biror huquq yoki qoidani ijro etmasligi yoki undan foydalanmasligi ushbu huquq yoki qoidadan voz kechish deb hisoblanmaydi."
+        },
+        {
+          "type": "paragraph",
+          "text": "Amayasoft vaqti-vaqti bilan Xizmatlarga, ushbu Shartlarga yoki Maxfiylik siyosatiga o‘zgartirishlar kiritishi mumkin. Amayasoft muhim o‘zgartirishlar haqida sizni xabardor qilish uchun oqilona sa’y-harakatlarni amalga oshiradi. Bunday barcha o‘zgartirishlar sizga xabar berilgan va/yoki e’lon qilingan paytdan boshlab kuchga kiradi. Agar bunday o‘zgartirishlarning birortasi haqiqiy emas, yuridik kuchga ega emas yoki biror sababga ko‘ra ijro etib bo‘lmaydigan deb topilsa, u ajratiladigan qoida hisoblanadi va Xizmatlar, ushbu Shartlar yoki Maxfiylik siyosatining o‘zgartirilmagan qismlarining haqiqiyligi va ijro etilishiga ta’sir qilmaydi. Amayasoft o‘z ixtiyoriga ko‘ra Xizmatlar, ushbu Shartlar yoki Maxfiylik siyosini to‘liq yoki qisman istalgan uchinchi shaxsga o‘tkazishi yoki topshirishi mumkin. Ushbu Shartlar Amayasoftning tegishli huquqiy vorislari va huquq oluvchilari uchun ham amal qiladi hamda ular uchun majburiy hisoblanadi."
+        }
+      ]
+    },
+    {
+      "heading": null,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "BIZ BILAN BOG‘LANISH. Ushbu Shartlar bo‘yicha savollaringiz bo‘lsa, quyidagi manzil orqali biz bilan bog‘laning:"
+        },
+        {
+          "type": "address",
+          "lines": [
+            "Amayasoft MChJ",
+            "Mavzu: Foydalanish shartlari bo‘yicha",
+            "Email: info@amayasoft.uz"
+          ]
+        }
+      ]
+    }
+  ]
+}
