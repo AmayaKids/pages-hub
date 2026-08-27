@@ -3,9 +3,9 @@ import '~/assets/css/fonts/nunito.css'
 import '~/assets/css/fonts/open-sans.css'
 
 import logoSvg from '~/assets/images/l2/svg/logo.svg'
-import carPng from '~/assets/images/l2/png/car.png'
-import robotPng from '~/assets/images/l2/png/robot.png'
-import starPng from '~/assets/images/l2/png/star.png'
+import headPicPng from '~/assets/images/l2/png/head-pic.png'
+import congratsPopupBgPng from '~/assets/images/l2/png/congrats-popup-bg.png'
+import appStoreBadgeSvg from '~/assets/images/l2/svg/appstore-badge.svg'
 
 useSeoMeta({
   title: 'Ro‘yxatdan o‘tish — Amaya Kids'
@@ -34,17 +34,21 @@ useSeoMeta({
  *  узбекского контура бэк отдал my.amayasoft.uz. */
 const API_BASE = 'https://my.amayasoft.uz/api/public'
 
-/** cars2 (`com.amayasoft.cars.kids.racing.toddlers.garage.game`) —
- *  см. `bundleIdToGameId` в appDataStore приложения. */
-const GAME_ID = 15
+/** cars2. Значение пришло от бэка — оно НЕ совпадает с `bundleIdToGameId`
+ *  из appDataStore приложения (там у cars2 стоит 15); для лендинга нужен 14. */
+const GAME_ID = 14
 
 const LANGUAGE = 'uz'
 const COUNTRY = 'Uzbekistan'
+const EXPERIMENT = 'UA_Cars2_var1'
 
-/** Аналог `experiment` из sc-giftflow (там — 'UA_Cars1_var1'): метка
- *  источника регистрации для аналитики бэка. */
-const EXPERIMENT = 'UZ_Cars2_L2_web'
+/** Хост биллинга cars2 (CARS2_AGS_HOST) — шаг 3, выдача покупки. */
+const AGS_HOST = 'https://cars2.ags.amayakids.com'
 
+/** Бесплатный пожизненный доступ, который лендинг выдаёт после входа. */
+const PRODUCT_ID = 'com.amayasoft.cars2.ua.lifetimefree'
+
+/** Уходит в `appstore_link` шага 3 и стоит на бейдже финального экрана. */
 const APP_STORE_URL = 'https://apps.apple.com/app/kids-car-games-police-car-fun/id1442848046'
 
 type Step
@@ -59,10 +63,8 @@ type Step
 const step = ref<Step>('auth')
 const processing = ref(false)
 
-/** Ответ `/login`. На вебе он пока никуда не уходит, но нужен для
- *  будущего запроса на выдачу доступа — см. TODO в `signIn()`. */
+/** AJWT из ответа `/login` — с ним уходит запрос на выдачу покупки. */
 const ajwt = ref('')
-const accountId = ref<number | null>(null)
 
 /* ---------------------------- поля ---------------------------- */
 
@@ -325,18 +327,49 @@ async function signIn() {
     })
 
     ajwt.value = response?.AJWT ?? ''
-    accountId.value = response?.id ?? null
 
-    // TODO(бэк): здесь должен быть запрос на выдачу доступа. `grantAuthPurchase`
-    // из sc-giftflow не подходит — он требует deviceId, которого на вебе нет;
-    // бэк обещал отдельный запрос на создание покупки. AJWT/accountId выше
-    // сохранены как раз под него.
+    await grantPurchase(ajwt.value)
 
     step.value = 'congrats'
   } catch (error) {
     handleApiError(error)
   } finally {
     processing.value = false
+  }
+}
+
+/**
+ * Шаг 3 — выдача бесплатного пожизненного доступа. Отдельный лендинговый
+ * эндпоинт: в отличие от `grantAuthPurchase` из sc-giftflow, он не требует
+ * deviceId (на вебе устройства нет) и авторизуется AJWT из `/login`.
+ *
+ * Успех — и `purchase_granted`, и `purchase_already_claimed`: второй означает,
+ * что доступ уже выдавали раньше, для пользователя это тот же результат.
+ *
+ * Ошибку намеренно не показываем: аккаунт на этот момент уже создан и вход
+ * выполнен, так что упереть человека в экран пароля было бы хуже — он всё
+ * равно может скачать приложение и войти. Возвращаем флаг, чтобы вызывающий
+ * код мог отреагировать, если это поведение решат поменять.
+ */
+async function grantPurchase(token: string) {
+  if (!token) return false
+
+  try {
+    const response = await $fetch<{ ok?: boolean, status?: string }>(
+      `${AGS_HOST}/api/client/billing/landing/grantPurchase`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: {
+          productId: PRODUCT_ID,
+          appstore_link: APP_STORE_URL
+        }
+      }
+    )
+
+    return response?.status === 'purchase_granted' || response?.status === 'purchase_already_claimed'
+  } catch {
+    return false
   }
 }
 
@@ -363,23 +396,75 @@ async function resetPassword() {
     processing.value = false
   }
 }
-
-/* --------------------------- congrats --------------------------- */
-
-// Декоративные искры вокруг плашки — расставлены вручную, как в ../success.
-const sparkles = [
-  { top: '6%', left: '4%', size: 30, kind: 'spark' as const },
-  { top: '22%', left: '14%', size: 16, kind: 'spark' as const },
-  { top: '58%', left: '2%', size: 26, kind: 'spark' as const },
-  { top: '84%', left: '16%', size: 18, kind: 'star' as const },
-  { top: '4%', right: '10%', size: 22, kind: 'star' as const },
-  { top: '38%', right: '2%', size: 34, kind: 'star' as const },
-  { top: '70%', right: '12%', size: 22, kind: 'spark' as const }
-]
 </script>
 
 <template>
-  <div class="auth-page">
+  <!--
+    Финальный экран регистрации — самостоятельная вёрстка по макету
+    congrats-download: картинка с гонкой во всю ширину и лучевой поп-ап
+    поверх неё. Хедера и футера здесь нет — так в макете.
+  -->
+  <div
+    v-if="step === 'congrats'"
+    class="cgd"
+  >
+    <div class="cgd__pic">
+      <img
+        class="cgd__pic-bg"
+        :src="headPicPng"
+        alt=""
+      >
+    </div>
+
+    <div class="cgd__popup">
+      <!-- Лучевая подложка. В макете она разложена на две картинки
+           (desktop/mobile), но файлы побайтово одинаковые — держим одну. -->
+      <img
+        class="cgd__popup-bg"
+        :src="congratsPopupBgPng"
+        alt=""
+      >
+
+      <div class="cgd__content">
+        <h1 class="cgd__title">
+          Tabriklaymiz!
+        </h1>
+
+        <p class="cgd__subtitle">
+          Siz muvaffaqiyatli ro‘yxatdan o‘tdingiz. Endi faqat ilovani yuklab olib, o‘yindan zavqlanish qoldi!
+        </p>
+
+        <!-- В макете бейдж тоже разложен на desktop/mobile — это один и тот
+             же рисунок, экспортированный в двух размерах; размер задаёт CSS. -->
+        <a
+          class="cgd__badge"
+          :href="APP_STORE_URL"
+          target="_blank"
+          rel="noopener"
+        >
+          <img
+            class="cgd__badge-img"
+            :src="appStoreBadgeSvg"
+            alt="App Store"
+          >
+        </a>
+
+        <div class="cgd__instruction">
+          <p class="cgd__instruction-title">
+            Yo‘riqnoma:
+          </p>
+          <p>Ilovani yuklab oling.</p>
+          <p>Email va parolingiz orqali tizimga kiring.</p>
+          <p>Bepul o‘ynang!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    v-else
+    class="auth-page"
+  >
     <!-- Header -->
     <header class="header">
       <NuxtLink
@@ -395,14 +480,8 @@ const sparkles = [
       </NuxtLink>
     </header>
 
-    <main
-      class="auth"
-      :class="{ 'auth--congrats': step === 'congrats' }"
-    >
-      <div
-        v-if="step !== 'congrats'"
-        class="card-wrapper"
-      >
+    <main class="auth">
+      <div class="card-wrapper">
         <div class="card">
           <!-- Индикатор шагов: 1 — email, 2 — пароль/доступ -->
           <div
@@ -702,83 +781,6 @@ const sparkles = [
           </svg>
         </button>
       </div>
-
-      <!-- Финал: доступ выдан -->
-      <template v-else>
-        <div
-          class="sparkles"
-          aria-hidden="true"
-        >
-          <svg
-            v-for="(s, i) in sparkles"
-            :key="i"
-            class="sparkle"
-            :style="{ top: s.top, left: s.left, right: s.right, width: `${s.size}px`, height: `${s.size}px` }"
-            viewBox="0 0 24 24"
-          >
-            <path
-              v-if="s.kind === 'spark'"
-              fill="#ffffff"
-              d="M12 0c0 6.6-5.4 12-12 12 6.6 0 12 5.4 12 12 0-6.6 5.4-12 12-12-6.6 0-12-5.4-12-12Z"
-            />
-            <image
-              v-else
-              :href="starPng"
-              width="24"
-              height="24"
-            />
-          </svg>
-        </div>
-
-        <div class="plaque">
-          <h1 class="plaque__title">
-            Tabriklaymiz!
-          </h1>
-
-          <p
-            class="plaque__text"
-            v-html="'<b>Mashinalar</b> ilovasiga to‘liq kirish huquqiga ega bo‘ldingiz!'"
-          />
-
-          <!--
-            Бейдж — английская артворка Apple, которая уже лежит в репозитории;
-            русифицированного варианта из макета в репозитории нет.
-            См. тот же комментарий в ../success/index.vue.
-          -->
-          <a
-            class="plaque__appstore"
-            :href="APP_STORE_URL"
-            target="_blank"
-            rel="noopener"
-          >
-            <img
-              src="/assets/images/a/letter/farm/appstore.png"
-              width="200"
-              height="67"
-              alt="App Store"
-            >
-          </a>
-
-          <p class="plaque__hint">
-            Ilovani yuklab oling va o‘yindan zavqlaning!
-          </p>
-
-          <img
-            class="plaque__robot"
-            :src="robotPng"
-            width="90"
-            height="53"
-            alt=""
-          >
-          <img
-            class="plaque__car"
-            :src="carPng"
-            width="104"
-            height="84"
-            alt=""
-          >
-        </div>
-      </template>
     </main>
 
     <!-- Footer -->
@@ -820,10 +822,13 @@ const sparkles = [
   justify-content: space-between;
   padding: 24px 0;
 
+  /* Без `height: auto`: в макете этот сброс — правило на голом `img`
+     (специфичность 0,0,1) и проигрывает `.cgd__pic-bg { height: 100% }`.
+     Вложенный в `.cgd`, он бы, наоборот, выиграл и сломал object-fit,
+     поэтому высоту здесь не трогаем — её задают конкретные правила. */
   img {
     display: block;
     max-width: 100%;
-    height: auto;
     border: 0;
   }
 
@@ -932,19 +937,6 @@ const sparkles = [
 
   @include md-tablet {
     padding: 64px 56px;
-  }
-
-  &--congrats {
-    position: relative;
-    overflow: hidden;
-    padding: 56px 24px;
-    background:
-      repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.07) 0deg 8deg, transparent 8deg 20deg),
-      radial-gradient(circle at 50% 45%, #3fd1ff 0%, #05b8f6 55%, #0596d1 100%);
-
-    @include md-tablet {
-      padding: 88px 56px;
-    }
   }
 }
 
@@ -1242,120 +1234,181 @@ const sparkles = [
   }
 }
 
-/* ---------- congrats plaque (как в ../success/index.vue) ---------- */
+/* ---------- финальный экран (порт congrats-download.css) ----------
+   Все размеры — в пикселях, как в макете: базовый кадр 375px, второй — 768px
+   (совпадает с `md-tablet`). Картинка не тянется по высоте — меняется только
+   кроп по ширине; поп-ап шире 375px и центрируется через left/translateX,
+   поэтому у экрана отключён горизонтальный скролл. */
 
-.sparkles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.sparkle {
-  position: absolute;
-}
-
-.plaque {
+.cgd {
   position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 360px;
-  padding: 32px 24px 44px;
-  background: #fdf2d6;
-  border: 3px solid #f0c988;
-  border-radius: 40px;
-  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.08);
+  overflow-x: hidden;
+  background: #ffffff;
+  font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
+  /* Место под поп-ап: он позиционирован абсолютно и вылезает за картинку. */
+  padding-bottom: 208px;
 
   @include md-tablet {
-    max-width: 460px;
-    padding: 40px 40px 56px;
+    padding-bottom: 363px;
   }
 
-  &__title {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 900;
-    font-size: 26px;
-    line-height: 30px;
-    color: #079d27;
+  /* Без `height: auto`: в макете этот сброс — правило на голом `img`
+     (специфичность 0,0,1) и проигрывает `.cgd__pic-bg { height: 100% }`.
+     Вложенный в `.cgd`, он бы, наоборот, выиграл и сломал object-fit,
+     поэтому высоту здесь не трогаем — её задают конкретные правила. */
+  img {
+    display: block;
+    max-width: 100%;
+    border: 0;
+  }
+
+  &__pic {
+    position: relative;
+    width: 100%;
+    height: 319px;
+    overflow: hidden;
+    background: #05b8f6;
 
     @include md-tablet {
-      font-size: 34px;
-      line-height: 38px;
+      height: 338px;
     }
   }
 
-  &__text {
-    max-width: 420px;
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
+  &__pic-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 68% 55%;
+
+    @include md-tablet {
+      object-position: 50% 64%;
+    }
+  }
+
+  &__popup {
+    position: absolute;
+    left: 50%;
+    top: 90px;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 577px;
+    height: 437px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include md-tablet {
+      top: 37px;
+      width: 873px;
+      height: 664px;
+    }
+  }
+
+  &__popup-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    width: 232px;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    color: #3b4256;
 
     @include md-tablet {
-      max-width: 560px;
-      font-size: 19px;
-      line-height: 26px;
+      width: 342px;
+      padding-top: 32px;
     }
-  }
 
-  &__appstore {
-    display: inline-flex;
-
-    img {
-      width: 160px;
-      height: auto;
+    > * + * {
+      margin-top: 6px;
 
       @include md-tablet {
-        width: 200px;
+        margin-top: 16px;
       }
     }
   }
 
-  &__hint {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 800;
+  &__title {
+    width: 100%;
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 28px;
+    color: #00bf73;
+
+    @include md-tablet {
+      font-size: 32px;
+      line-height: 32px;
+    }
+  }
+
+  &__subtitle {
+    width: 100%;
+    font-weight: 600;
     font-size: 14px;
-    line-height: 18px;
-    text-align: center;
-    color: #3b4256;
+    line-height: 16px;
+    color: #595959;
+
+    @include md-tablet {
+      font-size: 18px;
+      line-height: 24px;
+    }
+  }
+
+  &__badge {
+    display: block;
+  }
+
+  &__badge-img {
+    width: 130px;
+    height: 43.455px;
+
+    @include md-tablet {
+      width: 160px;
+      height: 53.483px;
+    }
+  }
+
+  &__instruction {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #595959;
+
+    > * + * {
+      margin-top: 4px;
+    }
+
+    p {
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 12px;
+
+      @include md-tablet {
+        font-size: 14px;
+        line-height: 14px;
+      }
+    }
+  }
+
+  &__instruction-title {
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 14px;
 
     @include md-tablet {
       font-size: 16px;
-      line-height: 20px;
-    }
-  }
-
-  &__robot {
-    position: absolute;
-    left: -18px;
-    bottom: -20px;
-    width: 72px;
-    height: auto;
-    transform: rotate(-8deg);
-
-    @include md-tablet {
-      left: -26px;
-      bottom: -26px;
-      width: 90px;
-    }
-  }
-
-  &__car {
-    position: absolute;
-    right: -20px;
-    bottom: -16px;
-    width: 84px;
-    height: auto;
-
-    @include md-tablet {
-      right: -28px;
-      bottom: -22px;
-      width: 104px;
+      line-height: 16px;
     }
   }
 }
