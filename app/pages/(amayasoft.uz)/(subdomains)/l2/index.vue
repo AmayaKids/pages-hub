@@ -23,6 +23,12 @@ useSeoMeta({
   title: 'Mashinalar — Amaya Kids'
 })
 
+// `landing_opened` — человек попал на лендинг. Только на клиенте: на SSR
+// composable ничего не шлёт, иначе событие дублировалось бы на гидрации.
+const { track } = useL2Mixpanel()
+
+onMounted(() => track('landing_opened'))
+
 const utpItems = [
   {
     icon: utpAgeSvg,

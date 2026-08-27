@@ -33,6 +33,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  runtimeConfig: {
+    // Только сервер: подставляется из NUXT_CARS2_MIXPANEL_TOKEN и используется
+    // в server/api/l2/mixpanel/track.post.ts. В браузер не попадает —
+    // именно поэтому события лендинга идут через свой роут, а не напрямую.
+    cars2MixpanelToken: ''
+  },
+
   routeRules: {
     // `/` must NOT be prerendered: its content and locale-redirect behaviour
     // depend on the request's Host header (see shared/hostLandings.ts), and a

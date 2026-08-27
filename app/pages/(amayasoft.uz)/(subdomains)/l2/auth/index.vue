@@ -267,6 +267,34 @@ async function handleNext(to?: 'reset') {
   }
 }
 
+/* --------------------------- аналитика --------------------------- */
+
+const { track, identify } = useL2Mixpanel()
+
+/**
+ * Шаг флоу → событие показа экрана. Шаги без события (`reset`, `check-email`)
+ * в карту не входят и ничего не шлют.
+ *
+ * `landing_password_screen` висит на всех трёх экранах с паролем: и там, где
+ * пароль пришёл на почту (`signup`, `reset-signin`), и там, где человек вводит
+ * свой (`clean-signin`).
+ */
+const SCREEN_EVENTS: Partial<Record<Step, L2MixpanelEvent>> = {
+  'auth': 'landing_email_screen',
+  'clean-signin': 'landing_password_screen',
+  'signup': 'landing_password_screen',
+  'reset-signin': 'landing_password_screen',
+  'congrats': 'landing_congratulation_screen'
+}
+
+// `immediate` — чтобы стартовый экран тоже попал в аналитику. Дедупликации
+// нет намеренно: событие означает «экран показан», поэтому возврат по стрелке
+// «назад» или повторный заход после ошибки шлются заново.
+watch(step, (current) => {
+  const event = SCREEN_EVENTS[current]
+  if (event) track(event)
+}, { immediate: true })
+
 /* ----------------------------- API ----------------------------- */
 
 function statusOf(error: unknown) {
@@ -331,6 +359,10 @@ async function signIn() {
     })
 
     ajwt.value = response?.AJWT ?? ''
+
+    // Склеиваем анонимного посетителя лендинга с аккаунтом — дальше события
+    // уходят уже от его имени.
+    if (response?.id) identify(response.id)
 
     await grantPurchase(ajwt.value)
 
@@ -450,11 +482,14 @@ async function resetPassword() {
             Mashinalar ilovasiga to‘liq kirish huquqiga ega bo‘ldingiz!
           </p>
 
+          <!-- Ссылка открывается в новой вкладке, текущая страница остаётся
+               живой — поэтому обычного fetch хватает, sendBeacon не нужен. -->
           <a
             class="congrats__badge"
             :href="APP_STORE_URL"
             target="_blank"
             rel="noopener"
+            @click="track('landing_appstore_button_tap')"
           >
             <img
               :src="appStoreBadgeSvg"
