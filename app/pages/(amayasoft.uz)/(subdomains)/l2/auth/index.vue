@@ -270,6 +270,7 @@ async function handleNext(to?: 'reset') {
 /* --------------------------- аналитика --------------------------- */
 
 const { track, identify } = useL2Mixpanel()
+const { trackStandard, trackCustom } = useMetaPixel()
 
 /**
  * Шаг флоу → событие показа экрана. Шаги без события (`reset`, `check-email`)
@@ -293,6 +294,33 @@ const SCREEN_EVENTS: Partial<Record<Step, L2MixpanelEvent>> = {
 watch(step, (current) => {
   const event = SCREEN_EVENTS[current]
   if (event) track(event)
+}, { immediate: true })
+
+const META_PASSWORD_STEPS: Step[] = ['clean-signin', 'signup', 'reset-signin']
+
+/** `Lead` — конверсионное событие Meta, влияет на CPL и оптимизацию бюджета
+ *  кампании. В отличие от `landing_password_screen` в Mixpanel, слать его
+ *  при каждом повторном попадании на этот экран (ошибся паролем, вернулся
+ *  назад и снова вперёд) нельзя — иначе один человек даст 2-3 лида. Флаг живёт
+ *  до полной перезагрузки страницы: новый визит — новая попытка, снова может
+ *  прислать `Lead`. */
+let metaLeadSent = false
+
+watch(step, (current) => {
+  if (META_PASSWORD_STEPS.includes(current)) {
+    // Свой ивент для воронки в Events Manager — как и `landing_password_screen`
+    // в Mixpanel, шлётся при каждом показе, не только один раз.
+    trackCustom('LandingPasswordScreen')
+
+    if (!metaLeadSent) {
+      metaLeadSent = true
+      trackStandard('Lead')
+    }
+  } else if (current === 'congrats') {
+    // Точное имя из таксономии Meta — под него кампания оптимизируется на
+    // «Sign up» в Ads Manager. Произвольное имя туда не подставить.
+    trackStandard('CompleteRegistration')
+  }
 }, { immediate: true })
 
 /* ----------------------------- API ----------------------------- */
@@ -489,7 +517,7 @@ async function resetPassword() {
             :href="APP_STORE_URL"
             target="_blank"
             rel="noopener"
-            @click="track('landing_appstore_button_tap')"
+            @click="track('landing_appstore_button_tap'); trackCustom('LandingAppstoreButtonTap')"
           >
             <img
               :src="appStoreBadgeSvg"
