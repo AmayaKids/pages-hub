@@ -24,12 +24,46 @@ const ALLOWED_EVENTS = new Set([
   '$identify'
 ])
 
+/**
+ * Пропускаем только UTM-метки рекламных ссылок. Всё прочее из `properties`
+ * отбрасывается — иначе роут стал бы способом писать в проект Mixpanel
+ * произвольные свойства.
+ */
+const ALLOWED_PROPERTIES = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
+
+/** Названия кампаний и креативов приходят из адресной строки — ограничиваем. */
+const PROPERTY_MAX_LENGTH = 255
+
+/** Чем заполняется метка, если её нет ни в запросе, ни (значит) в адресе
+ *  посетителя — буквальная строка, а не отсутствие свойства: событие всегда
+ *  приходит в Mixpanel с одним и тем же набором из четырёх колонок,
+ *  «не размечено рекламой» видно явно, а не как пропущенное поле. Держим эту
+ *  гарантию на сервере, а не только в composable — это последняя точка перед
+ *  Mixpanel, и она не должна зависеть от того, что именно прислал клиент. */
+const PROPERTY_UNDEFINED = 'undefined'
+
 interface TrackBody {
   event?: unknown
   /** Для обычных событий — анонимный id, для `$identify` — id аккаунта. */
   distinctId?: unknown
   /** Только для `$identify`: анонимный id, который склеиваем с аккаунтом. */
   anonId?: unknown
+  /** UTM-метки перехода; всё, чего нет в белом списке, игнорируется. */
+  properties?: unknown
+}
+
+function pickAllowedProperties(raw: unknown) {
+  const source = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {}
+  const picked: Record<string, string> = {}
+
+  for (const key of ALLOWED_PROPERTIES) {
+    const value = source[key]
+    picked[key] = typeof value === 'string' && value.length > 0
+      ? value.slice(0, PROPERTY_MAX_LENGTH)
+      : PROPERTY_UNDEFINED
+  }
+
+  return picked
 }
 
 function asNonEmptyString(value: unknown, maxLength = 255) {
@@ -54,7 +88,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid analytics payload' })
   }
 
-  const token = useRuntimeConfig(event).cars2MixpanelToken
+  const config = useRuntimeConfig(event)
+  const token = config.cars2MixpanelToken
 
   // Без токена (локальная разработка, забытая переменная) просто ничего не
   // отправляем: аналитика не должна ронять страницу.
@@ -77,8 +112,10 @@ export default defineEventHandler(async (event) => {
       $insert_id: crypto.randomUUID(),
       ...(clientIp ? { ip: clientIp } : {}),
       ...(name === '$identify'
+        // `$identify` — служебное событие склейки личностей, метки в нём
+        // ничего не дают, поэтому туда они не идут.
         ? { $identified_id: distinctId, $anon_id: anonId }
-        : {})
+        : pickAllowedProperties(body?.properties))
     }
   }]
 
@@ -86,7 +123,10 @@ export default defineEventHandler(async (event) => {
     // `verbose=1` заставляет Mixpanel вернуть причину отказа вместо голого `0`.
     const response = await $fetch<{ status?: number, error?: string }>(MIXPANEL_ENDPOINT, {
       method: 'POST',
-      query: { verbose: 1 },
+      query: {
+        verbose: 1,
+        ...(config.cars2MixpanelProjectId ? { project_id: config.cars2MixpanelProjectId } : {})
+      },
       body: payload
     })
 
