@@ -29,6 +29,51 @@ const { track } = useL2Mixpanel()
 
 onMounted(() => track('landing_opened'))
 
+/**
+ * Meta Pixel. Пока подключён только здесь, на «/», и шлёт единственное
+ * событие `PageView` — как заход на лендинг.
+ *
+ * Id пикселя не секрет (он и так виден в исходнике страницы у любого
+ * посетителя), поэтому лежит константой, а не в runtimeConfig — в отличие от
+ * серверного токена Mixpanel.
+ */
+const META_PIXEL_ID = '1444729859450432'
+
+// Загрузчик — дословный сниппет Meta. Единственное отличие: `init`/`track`
+// обёрнуты флагом, потому что при возврате на «/» клиентским роутингом
+// (например, по логотипу со страницы регистрации) компонент монтируется
+// заново и PageView улетал бы повторно. Сам загрузчик у Meta уже
+// идемпотентен — он выходит по `if (f.fbq) return`.
+useHead({
+  script: [
+    {
+      key: 'meta-pixel',
+      tagPriority: 'high',
+      innerHTML: `!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+if(!window.__metaPixelStarted){window.__metaPixelStarted=!0;
+fbq('init', '${META_PIXEL_ID}');
+fbq('track', 'PageView');}`
+    }
+  ],
+  // Фолбэк для выключенного JS — из того же сниппета Meta. Через useHead,
+  // а не разметкой, чтобы id пикселя не дублировался в файле.
+  noscript: [
+    {
+      key: 'meta-pixel-noscript',
+      tagPosition: 'bodyOpen',
+      innerHTML: `<img height="1" width="1" style="display:none" `
+        + `src="https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1" alt="" />`
+    }
+  ]
+})
+
 const utpItems = [
   {
     icon: utpAgeSvg,
