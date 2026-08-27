@@ -34,9 +34,11 @@ useSeoMeta({
  *  узбекского контура бэк отдал my.amayasoft.uz. */
 const API_BASE = 'https://my.amayasoft.uz/api/public'
 
-/** cars2. Значение пришло от бэка — оно НЕ совпадает с `bundleIdToGameId`
- *  из appDataStore приложения (там у cars2 стоит 15); для лендинга нужен 14. */
-const GAME_ID = 14
+/** cars2 (`com.amayasoft.cars.kids.racing.toddlers.garage.game`) — как в
+ *  `bundleIdToGameId` из appDataStore приложения. В спеке бэка на регистрацию
+ *  стоял 14, но выбрано 15 — если начнут сыпаться ошибки на /signup-via-only-email
+ *  или /login, проверять надо в первую очередь это значение. */
+const GAME_ID = 15
 
 const LANGUAGE = 'uz'
 const COUNTRY = 'Uzbekistan'
