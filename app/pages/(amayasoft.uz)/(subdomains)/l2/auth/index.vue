@@ -3,9 +3,11 @@ import '~/assets/css/fonts/nunito.css'
 import '~/assets/css/fonts/open-sans.css'
 
 import logoSvg from '~/assets/images/l2/svg/logo.svg'
-import headPicPng from '~/assets/images/l2/png/head-pic.png'
 import congratsPopupBgPng from '~/assets/images/l2/png/congrats-popup-bg.png'
 import appStoreBadgeSvg from '~/assets/images/l2/svg/appstore-badge.svg'
+import checkboxSvg from '~/assets/images/l2/svg/checkbox.svg'
+import stepsArrowMobileSvg from '~/assets/images/l2/svg/steps-arrow-mobile.svg'
+import stepsArrowTabletSvg from '~/assets/images/l2/svg/steps-arrow-tablet.svg'
 
 useSeoMeta({
   title: 'Ro‘yxatdan o‘tish — Amaya Kids'
@@ -164,7 +166,7 @@ const meta = computed(() => {
     case 'auth':
       return {
         title: 'Ro‘yxatdan o‘ting, yuklab oling va o‘ynang!',
-        subtitle: 'Emailingizni kiriting.'
+        subtitle: 'Emailni kiriting.'
       }
     case 'clean-signin':
       return {
@@ -402,75 +404,22 @@ async function resetPassword() {
 
 <template>
   <!--
-    Финальный экран регистрации — самостоятельная вёрстка по макету
-    congrats-download: картинка с гонкой во всю ширину и лучевой поп-ап
-    поверх неё. Хедера и футера здесь нет — так в макете.
+    Разметка по макету Figma «Cars 2 Amaya» — фреймы `mobile auth` / `tablet auth`
+    и `mobile congrats` / `tablet congrats`. Базовое состояние = mobile (375),
+    планшетное = `md-tablet` (768), как и во всём остальном l2.
+
+    Логика (шаги, валидация, запросы) не менялась — только разметка и стили.
+    В макете нарисовано одно состояние формы (ввод email), поэтому элементы,
+    которых там нет — пароль с «глазом», текст ошибки, стрелка «назад»,
+    «Parolni unutdingizmi?», конверт — стилизованы теми же токенами макета.
   -->
-  <div
-    v-if="step === 'congrats'"
-    class="cgd"
-  >
-    <div class="cgd__pic">
-      <img
-        class="cgd__pic-bg"
-        :src="headPicPng"
-        alt=""
-      >
-    </div>
-
-    <div class="cgd__popup">
-      <!-- Лучевая подложка. В макете она разложена на две картинки
-           (desktop/mobile), но файлы побайтово одинаковые — держим одну. -->
-      <img
-        class="cgd__popup-bg"
-        :src="congratsPopupBgPng"
-        alt=""
-      >
-
-      <div class="cgd__content">
-        <h1 class="cgd__title">
-          Tabriklaymiz!
-        </h1>
-
-        <p class="cgd__subtitle">
-          Siz muvaffaqiyatli ro‘yxatdan o‘tdingiz. Endi faqat ilovani yuklab olib, o‘yindan zavqlanish qoldi!
-        </p>
-
-        <!-- В макете бейдж тоже разложен на desktop/mobile — это один и тот
-             же рисунок, экспортированный в двух размерах; размер задаёт CSS. -->
-        <a
-          class="cgd__badge"
-          :href="APP_STORE_URL"
-          target="_blank"
-          rel="noopener"
-        >
-          <img
-            class="cgd__badge-img"
-            :src="appStoreBadgeSvg"
-            alt="App Store"
-          >
-        </a>
-
-        <div class="cgd__instruction">
-          <p class="cgd__instruction-title">
-            Yo‘riqnoma:
-          </p>
-          <p>Ilovani yuklab oling.</p>
-          <p>Email va parolingiz orqali tizimga kiring.</p>
-          <p>Bepul o‘ynang!</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div
-    v-else
-    class="auth-page"
-  >
-    <!-- Header -->
-    <header class="header">
+  <div class="page">
+    <div
+      class="page__wrapper"
+      :class="{ 'page__wrapper--congrats': step === 'congrats' }"
+    >
       <NuxtLink
-        class="header__logo"
+        class="page__logo"
         to="/"
       >
         <img
@@ -480,10 +429,50 @@ async function resetPassword() {
           alt="Amaya Kids"
         >
       </NuxtLink>
-    </header>
 
-    <main class="auth">
-      <div class="card-wrapper">
+      <!-- Финальный экран: лучевой поп-ап во всю ширину макета -->
+      <div
+        v-if="step === 'congrats'"
+        class="congrats"
+      >
+        <img
+          class="congrats__bg"
+          :src="congratsPopupBgPng"
+          alt=""
+        >
+
+        <div class="congrats__content">
+          <h1 class="congrats__title">
+            Tabriklaymiz!
+          </h1>
+
+          <p class="congrats__text">
+            Mashinalar ilovasiga to‘liq kirish huquqiga ega bo‘ldingiz!
+          </p>
+
+          <a
+            class="congrats__badge"
+            :href="APP_STORE_URL"
+            target="_blank"
+            rel="noopener"
+          >
+            <img
+              :src="appStoreBadgeSvg"
+              alt="App Store"
+            >
+          </a>
+
+          <p class="congrats__hint">
+            Ilovani yuklab oling va o‘yindan zavqlaning!
+          </p>
+        </div>
+      </div>
+
+      <!-- Форма -->
+      <div
+        v-else
+        class="auth"
+      >
         <div class="card">
           <!-- Индикатор шагов: 1 — email, 2 — пароль/доступ -->
           <div
@@ -491,21 +480,23 @@ async function resetPassword() {
             class="steps"
           >
             <div :class="['steps__item', { 'steps__item--active': step === 'auth' }]">
-              <span class="steps__number">1</span>
+              <span class="steps__point">1</span>
               <span class="steps__text">Akkaunt yaratish</span>
             </div>
-            <svg
-              class="steps__arrow"
-              viewBox="0 0 21 8"
-              fill="none"
+
+            <img
+              class="steps__arrow steps__arrow--mobile"
+              :src="stepsArrowMobileSvg"
+              alt=""
             >
-              <path
-                d="M16.9648 0.146447C17.1601 -0.0488155 17.4766 -0.0488155 17.6719 0.146447L20.8535 3.32809C21.0488 3.52335 21.0488 3.83986 20.8535 4.03512L17.6719 7.21676C17.4766 7.41202 17.1601 7.41202 16.9648 7.21676C16.7696 7.0215 16.7696 6.70499 16.9648 6.50973L19.293 4.1816H0.5C0.223858 4.1816 0 3.95775 0 3.6816C0 3.40546 0.223858 3.1816 0.5 3.1816H19.293L16.9648 0.853478C16.7696 0.658216 16.7696 0.341709 16.9648 0.146447Z"
-                fill="currentColor"
-              />
-            </svg>
+            <img
+              class="steps__arrow steps__arrow--tablet"
+              :src="stepsArrowTabletSvg"
+              alt=""
+            >
+
             <div :class="['steps__item', { 'steps__item--active': step !== 'auth' }]">
-              <span class="steps__number">2</span>
+              <span class="steps__point">2</span>
               <span class="steps__text">Bepul kirish</span>
             </div>
           </div>
@@ -545,217 +536,217 @@ async function resetPassword() {
             v-html="meta.title"
           />
 
-          <p
-            class="card__subtitle"
-            v-html="meta.subtitle"
-          />
-
-          <!-- Шаг 1 / восстановление: email -->
-          <template v-if="step === 'auth' || step === 'reset'">
-            <div
-              class="field"
-              :class="{ 'field--error': fieldHasError('email') }"
-            >
-              <input
-                v-model="fields.email.value"
-                type="email"
-                class="field__input"
-                placeholder="Email"
-                autocomplete="email"
-                inputmode="email"
-                :disabled="processing"
-                @input="onFieldInput('email')"
-                @change="onFieldChange('email')"
-              >
-            </div>
-
+          <div class="form">
             <p
-              v-if="fieldHasError('email')"
-              class="field__error"
-            >
-              {{ fields.email.errorMessage }}
-            </p>
+              class="form__label"
+              v-html="meta.subtitle"
+            />
 
-            <label
-              v-if="step === 'auth'"
-              class="legal"
-              :class="{ 'legal--error': legalError }"
-            >
-              <input
-                v-model="legal"
-                type="checkbox"
-                class="legal__checkbox"
-                @change="legal ? (legalError = false) : null"
+            <!-- Шаг 1 / восстановление: email -->
+            <template v-if="step === 'auth' || step === 'reset'">
+              <div
+                class="field"
+                :class="{ 'field--error': fieldHasError('email') }"
               >
-              <span class="legal__box">
-                <svg
+                <input
+                  v-model="fields.email.value"
+                  type="email"
+                  class="field__input"
+                  placeholder="Email"
+                  autocomplete="email"
+                  inputmode="email"
+                  :disabled="processing"
+                  @input="onFieldInput('email')"
+                  @change="onFieldChange('email')"
+                >
+              </div>
+
+              <p
+                v-if="fieldHasError('email')"
+                class="field__error"
+              >
+                {{ fields.email.errorMessage }}
+              </p>
+
+              <label
+                v-if="step === 'auth'"
+                class="legal"
+                :class="{ 'legal--error': legalError }"
+              >
+                <input
+                  v-model="legal"
+                  type="checkbox"
+                  class="legal__checkbox"
+                  @change="legal ? (legalError = false) : null"
+                >
+                <img
                   v-if="legal"
-                  viewBox="0 0 11 9"
-                  fill="none"
+                  class="legal__box"
+                  :src="checkboxSvg"
+                  alt=""
                 >
-                  <path
-                    d="M8.35048 0.536005C8.88261 -0.0985801 9.82893 -0.181494 10.4638 0.350458C11.0983 0.882596 11.1813 1.82891 10.6493 2.46374L5.62196 8.46374C5.09017 9.09808 4.14461 9.18139 3.50966 8.65026L0.536999 6.16394C-0.0980227 5.63241 -0.181742 4.68693 0.349499 4.05163C0.881023 3.4162 1.82735 3.33163 2.46278 3.86315L4.28407 5.38659L8.35048 0.536005Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </span>
-              <span class="legal__text">
-                Men
-                <NuxtLink
-                  to="/legal/privacy-policy"
-                  target="_blank"
-                >Maxfiylik siyosatiga</NuxtLink>
-                hamda
-                <NuxtLink
-                  to="/legal/terms-of-use"
-                  target="_blank"
-                >Foydalanish shartlariga</NuxtLink>
-                roziman.
-              </span>
-            </label>
-
-            <button
-              class="btn card__btn"
-              type="button"
-              :disabled="processing || (step === 'auth' ? !canSubmitEmail : fieldBlocksSubmit('email'))"
-              @click="handleNext()"
-            >
-              Yuborish
-              <span
-                v-if="processing"
-                class="btn__spinner"
-                aria-hidden="true"
-              />
-            </button>
-          </template>
-
-          <!-- Шаг 2: пароль (из письма — для нового аккаунта и после
-               восстановления; свой — для существующего) -->
-          <template v-else-if="isPasswordStep">
-            <div
-              class="field"
-              :class="{ 'field--error': fieldHasError('password') }"
-            >
-              <input
-                v-model="fields.password.value"
-                :type="passwordHidden ? 'password' : 'text'"
-                class="field__input"
-                placeholder="Parol"
-                :autocomplete="step === 'clean-signin' ? 'current-password' : 'one-time-code'"
-                :disabled="processing"
-                @input="onFieldInput('password')"
-                @change="onFieldChange('password')"
-              >
-
-              <button
-                class="field__eye"
-                type="button"
-                :aria-label="passwordHidden ? 'Parolni ko‘rsatish' : 'Parolni yashirish'"
-                :disabled="processing"
-                @click="passwordHidden = !passwordHidden"
-              >
-                <svg
-                  v-if="passwordHidden"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M2.09697 6.23785C2.5555 5.91418 3.1896 6.02351 3.51327 6.48204C6.52916 10.7546 13.029 10.8337 16.5212 6.4361C16.8703 5.99658 17.5095 5.92322 17.9491 6.27226C18.3886 6.62129 18.4619 7.26055 18.1129 7.70008C13.8577 13.0585 5.72349 13.1377 1.85278 7.65415C1.52911 7.19562 1.63844 6.56152 2.09697 6.23785Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M14.566 8.38213C14.9628 7.98525 15.6063 7.98525 16.0032 8.38213L17.6292 10.0081C18.026 10.405 18.026 11.0485 17.6292 11.4453C17.2323 11.8422 16.5888 11.8422 16.192 11.4453L14.566 9.81932C14.1691 9.42245 14.1691 8.779 14.566 8.38213Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M5.4341 8.38213C5.83097 8.779 5.83097 9.42245 5.4341 9.81932L3.80809 11.4453C3.41122 11.8422 2.76777 11.8422 2.3709 11.4453C1.97402 11.0485 1.97402 10.405 2.3709 10.0081L3.9969 8.38213C4.39377 7.98525 5.03723 7.98525 5.4341 8.38213Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M11.6009 10.1515C12.1431 10.0063 12.7003 10.328 12.8456 10.8701L13.2664 12.4407C13.4117 12.9829 13.09 13.5401 12.5478 13.6854C12.0057 13.8306 11.4485 13.5089 11.3032 12.9668L10.8823 11.3962C10.7371 10.854 11.0588 10.2968 11.6009 10.1515Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M8.39911 10.1515C7.85698 10.0063 7.29973 10.328 7.15446 10.8701L6.73362 12.4407C6.58836 12.9829 6.91008 13.5401 7.45222 13.6854C7.99436 13.8306 8.55161 13.5089 8.69687 12.9668L9.11771 11.3962C9.26298 10.854 8.94125 10.2968 8.39911 10.1515Z"
-                    fill="currentColor"
-                  />
-                </svg>
-
-                <svg
+                <span
                   v-else
-                  viewBox="0 0 20 20"
-                  fill="none"
+                  class="legal__box legal__box--empty"
+                />
+                <span class="legal__text">
+                  <span>Men</span>
+                  <NuxtLink
+                    to="/legal/privacy-policy"
+                    target="_blank"
+                  >Maxfiylik siyosatiga</NuxtLink>
+                  <span>hamda</span>
+                  <NuxtLink
+                    to="/legal/terms-of-use"
+                    target="_blank"
+                  >Foydalanish shartlariga</NuxtLink>
+                  <span>roziman.</span>
+                </span>
+              </label>
+            </template>
+
+            <!-- Шаг 2: пароль (из письма — для нового аккаунта и после
+                 восстановления; свой — для существующего) -->
+            <template v-else-if="isPasswordStep">
+              <div
+                class="field"
+                :class="{ 'field--error': fieldHasError('password') }"
+              >
+                <input
+                  v-model="fields.password.value"
+                  :type="passwordHidden ? 'password' : 'text'"
+                  class="field__input"
+                  placeholder="Parol"
+                  :autocomplete="step === 'clean-signin' ? 'current-password' : 'one-time-code'"
+                  :disabled="processing"
+                  @input="onFieldInput('password')"
+                  @change="onFieldChange('password')"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M1.66669 9.9999C1.66684 10.1711 1.71037 10.3396 1.79225 10.4891C3.6585 14.0044 6.65865 15.8941 9.83864 15.8941C13.0059 15.8941 16.0986 14.02 18.1791 10.5383C18.2798 10.3767 18.3332 10.1896 18.3334 9.9999C18.3332 9.81017 18.2798 9.62313 18.1791 9.46155C16.0986 5.97982 13.0059 4.10571 9.83864 4.10571C6.65864 4.10571 3.65849 5.99536 1.79224 9.51073C1.77895 9.53499 1.76667 9.55976 1.75541 9.58497C1.69523 9.71917 1.66657 9.86043 1.66669 9.9999ZM16.1165 9.9999C14.3543 7.35114 12.0157 6.13819 9.83864 6.13819C7.66136 6.13819 5.41912 7.35085 3.84777 9.9999C5.41912 12.6489 7.66136 13.8616 9.83864 13.8616C12.0157 13.8616 14.3543 12.6487 16.1165 9.9999Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M10 11.0161C10.5613 11.0161 11.0162 10.5611 11.0162 9.99989C11.0162 9.43863 10.5613 8.98365 10 8.98365C9.43876 8.98365 8.98377 9.43863 8.98377 9.99989C8.98377 10.5611 9.43876 11.0161 10 11.0161ZM10 13.0486C11.6838 13.0486 13.0487 11.6836 13.0487 9.99989C13.0487 8.31613 11.6838 6.95117 10 6.95117C8.31625 6.95117 6.95129 8.31613 6.95129 9.99989C6.95129 11.6836 8.31625 13.0486 10 13.0486Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </button>
-            </div>
 
-            <p
-              v-if="fieldHasError('password')"
-              class="field__error"
-            >
-              {{ fields.password.errorMessage }}
-            </p>
+                <button
+                  class="field__eye"
+                  type="button"
+                  :aria-label="passwordHidden ? 'Parolni ko‘rsatish' : 'Parolni yashirish'"
+                  :disabled="processing"
+                  @click="passwordHidden = !passwordHidden"
+                >
+                  <svg
+                    v-if="passwordHidden"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M2.09697 6.23785C2.5555 5.91418 3.1896 6.02351 3.51327 6.48204C6.52916 10.7546 13.029 10.8337 16.5212 6.4361C16.8703 5.99658 17.5095 5.92322 17.9491 6.27226C18.3886 6.62129 18.4619 7.26055 18.1129 7.70008C13.8577 13.0585 5.72349 13.1377 1.85278 7.65415C1.52911 7.19562 1.63844 6.56152 2.09697 6.23785Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M14.566 8.38213C14.9628 7.98525 15.6063 7.98525 16.0032 8.38213L17.6292 10.0081C18.026 10.405 18.026 11.0485 17.6292 11.4453C17.2323 11.8422 16.5888 11.8422 16.192 11.4453L14.566 9.81932C14.1691 9.42245 14.1691 8.779 14.566 8.38213Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M5.4341 8.38213C5.83097 8.779 5.83097 9.42245 5.4341 9.81932L3.80809 11.4453C3.41122 11.8422 2.76777 11.8422 2.3709 11.4453C1.97402 11.0485 1.97402 10.405 2.3709 10.0081L3.9969 8.38213C4.39377 7.98525 5.03723 7.98525 5.4341 8.38213Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M11.6009 10.1515C12.1431 10.0063 12.7003 10.328 12.8456 10.8701L13.2664 12.4407C13.4117 12.9829 13.09 13.5401 12.5478 13.6854C12.0057 13.8306 11.4485 13.5089 11.3032 12.9668L10.8823 11.3962C10.7371 10.854 11.0588 10.2968 11.6009 10.1515Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M8.39911 10.1515C7.85698 10.0063 7.29973 10.328 7.15446 10.8701L6.73362 12.4407C6.58836 12.9829 6.91008 13.5401 7.45222 13.6854C7.99436 13.8306 8.55161 13.5089 8.69687 12.9668L9.11771 11.3962C9.26298 10.854 8.94125 10.2968 8.39911 10.1515Z"
+                      fill="currentColor"
+                    />
+                  </svg>
 
-            <button
-              class="btn card__btn"
-              type="button"
-              :disabled="processing || !canSubmitPassword"
-              @click="handleNext()"
-            >
-              Davom etish
-              <span
-                v-if="processing"
-                class="btn__spinner"
-                aria-hidden="true"
-              />
-            </button>
+                  <svg
+                    v-else
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M1.66669 9.9999C1.66684 10.1711 1.71037 10.3396 1.79225 10.4891C3.6585 14.0044 6.65865 15.8941 9.83864 15.8941C13.0059 15.8941 16.0986 14.02 18.1791 10.5383C18.2798 10.3767 18.3332 10.1896 18.3334 9.9999C18.3332 9.81017 18.2798 9.62313 18.1791 9.46155C16.0986 5.97982 13.0059 4.10571 9.83864 4.10571C6.65864 4.10571 3.65849 5.99536 1.79224 9.51073C1.77895 9.53499 1.76667 9.55976 1.75541 9.58497C1.69523 9.71917 1.66657 9.86043 1.66669 9.9999ZM16.1165 9.9999C14.3543 7.35114 12.0157 6.13819 9.83864 6.13819C7.66136 6.13819 5.41912 7.35085 3.84777 9.9999C5.41912 12.6489 7.66136 13.8616 9.83864 13.8616C12.0157 13.8616 14.3543 12.6487 16.1165 9.9999Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 11.0161C10.5613 11.0161 11.0162 10.5611 11.0162 9.99989C11.0162 9.43863 10.5613 8.98365 10 8.98365C9.43876 8.98365 8.98377 9.43863 8.98377 9.99989C8.98377 10.5611 9.43876 11.0161 10 11.0161ZM10 13.0486C11.6838 13.0486 13.0487 11.6836 13.0487 9.99989C13.0487 8.31613 11.6838 6.95117 10 6.95117C8.31625 6.95117 6.95129 8.31613 6.95129 9.99989C6.95129 11.6836 8.31625 13.0486 10 13.0486Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
 
-            <!-- Восстановление доступно только там, где пароль — «свой»,
-                 то есть на экране существующего аккаунта. -->
-            <button
-              v-if="step === 'clean-signin'"
-              class="forgot"
-              type="button"
-              :disabled="processing"
-              @click="handleNext('reset')"
-            >
-              Parolni unutdingizmi?
-            </button>
-          </template>
+              <p
+                v-if="fieldHasError('password')"
+                class="field__error"
+              >
+                {{ fields.password.errorMessage }}
+              </p>
+            </template>
+          </div>
 
-          <!-- Подтверждение отправки нового пароля -->
-          <template v-else>
-            <button
-              class="btn card__btn"
-              type="button"
-              @click="handleNext()"
-            >
-              OK
-            </button>
-          </template>
+          <!-- Кнопка шага -->
+          <button
+            v-if="step === 'auth' || step === 'reset'"
+            class="btn"
+            type="button"
+            :disabled="processing || (step === 'auth' ? !canSubmitEmail : fieldBlocksSubmit('email'))"
+            @click="handleNext()"
+          >
+            <span class="btn__label">Yuborish</span>
+            <span
+              v-if="processing"
+              class="btn__spinner"
+              aria-hidden="true"
+            />
+          </button>
+
+          <button
+            v-else-if="isPasswordStep"
+            class="btn"
+            type="button"
+            :disabled="processing || !canSubmitPassword"
+            @click="handleNext()"
+          >
+            <span class="btn__label">Davom etish</span>
+            <span
+              v-if="processing"
+              class="btn__spinner"
+              aria-hidden="true"
+            />
+          </button>
+
+          <button
+            v-else
+            class="btn"
+            type="button"
+            @click="handleNext()"
+          >
+            <span class="btn__label">OK</span>
+          </button>
+
+          <!-- Восстановление доступно только там, где пароль «свой» -->
+          <button
+            v-if="step === 'clean-signin'"
+            class="forgot"
+            type="button"
+            :disabled="processing"
+            @click="handleNext('reset')"
+          >
+            Parolni unutdingizmi?
+          </button>
         </div>
 
         <button
@@ -783,136 +774,476 @@ async function resetPassword() {
           </svg>
         </button>
       </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer__company">
-        <p>2026, Amaya Kids</p>
-        <p>Barcha huquqlar himoyalangan</p>
-      </div>
+      <!-- Футер: тексты и ссылки оставлены как были, оформление — по макету -->
+      <footer class="footer">
+        <div class="footer__legacy">
+          <p class="footer__legacy-title">
+            2026, Amaya Kids
+          </p>
+          <p>Barcha huquqlar himoyalangan</p>
+        </div>
 
-      <nav class="footer__links">
-        <NuxtLink to="/legal/terms-of-use">
-          Foydalanish shartlari
-        </NuxtLink>
-        <NuxtLink to="/legal/privacy-policy">
-          Maxfiylik siyosati
-        </NuxtLink>
-      </nav>
-    </footer>
+        <nav class="footer__links">
+          <NuxtLink to="/legal/terms-of-use">
+            Foydalanish shartlari
+          </NuxtLink>
+          <NuxtLink to="/legal/privacy-policy">
+            Maxfiylik siyosati
+          </NuxtLink>
+        </nav>
+      </footer>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-/* Визуальный язык — как в l1/l2 (Nunito, синий хедер/футер), см. ../index.vue.
-   Брейкпойнт-миксины приходят из app/assets/css/breakpoints.scss и
-   подставляются глобально через nuxt.config.ts. */
+/* Все значения — из макета Figma «Cars 2 Amaya» (фреймы mobile/tablet auth и
+   mobile/tablet congrats). Базовое состояние = mobile (375), `md-tablet`
+   (768) = планшетный фрейм (1024). Брейкпойнты проекта не менялись. */
 
-/* Рамки-карточки `.page` здесь намеренно нет: в отличие от l1/l2, эта
-   страница — сплошное синее поле сверху донизу (хедер, карточка и футер на
-   одном фоне), а не белая карточка на светлой подложке. */
-.auth-page {
+.page {
   min-height: 100vh;
   background: #05b8f6;
   font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
-  color: #3c4267;
   -webkit-font-smoothing: antialiased;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 0;
 
-  /* Без `height: auto`: в макете этот сброс — правило на голом `img`
-     (специфичность 0,0,1) и проигрывает `.cgd__pic-bg { height: 100% }`.
-     Вложенный в `.cgd`, он бы, наоборот, выиграл и сломал object-fit,
-     поэтому высоту здесь не трогаем — её задают конкретные правила. */
-  img {
-    display: block;
-    max-width: 100%;
-    border: 0;
-  }
-
+  /* Общего сброса для `img` здесь намеренно нет: правило `.page img`
+     (0,1,1) выигрывает у одноклассовых `.steps__arrow--tablet { display:
+     none }` (0,1,0) и ломает переключение картинок по брейкпойнту.
+     Поэтому display/размеры задаются каждой картинке явно. */
   a {
-    text-decoration: none;
     color: inherit;
   }
-}
 
-/* ---------- header ---------- */
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Поп-ап поздравления шире мобильного вьюпорта (529px при 375) —
+       обрезаем его здесь, чтобы не появлялся горизонтальный скролл. */
+    overflow: hidden;
+    min-height: 100vh;
+    gap: 12px;
+    padding: 24px 0;
 
-.header {
-  display: flex;
-  padding: 16px 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 0 !important;
+    @include md-tablet {
+      gap: 32px;
+      padding: 32px;
+    }
 
-  @include md-tablet {
-    padding: 24px 56px;
-    align-items: flex-start;
-  }
+    /* На финальном экране логотип и поп-ап наезжают на следующий блок —
+       в макете это отрицательные нижние отступы, а не gap. */
+    &--congrats {
+      gap: 0;
 
-  @include md-desktop {
-    padding: 28px 64px;
+      .page__logo,
+      .congrats {
+        margin-bottom: -16px;
+
+        @include md-tablet {
+          margin-bottom: -40px;
+        }
+      }
+    }
   }
 
   &__logo {
-    display: block;
-    width: 120px;
-    height: 38px;
+    flex-shrink: 0;
+    width: 165.75px;
+    height: 52px;
     line-height: 0;
 
     img {
       display: block;
       width: 100%;
       height: 100%;
-    }
-
-    @include md-tablet {
-      width: 166px;
-      height: 52px;
+      border: 0;
     }
   }
 }
 
-/* ---------- shared button ---------- */
+/* ---------- форма ---------- */
 
-.btn {
+.auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* popup-wrapper из макета */
+  padding: 0 24px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 40px 24px;
+  background: #eefbff;
+  border-bottom: 8px solid #5cb0cf;
+  border-radius: 32px;
+  box-shadow:
+    0 2px 1px 0 rgba(0, 0, 0, 0.25),
+    0 19px 14px 0 rgba(0, 88, 119, 0.25),
+    0 34px 25px 0 rgba(0, 88, 119, 0.25),
+    0 44px 50px 0 rgba(0, 88, 119, 0.2);
+
+  @include md-tablet {
+    gap: 22px;
+    width: auto;
+    max-width: 100%;
+    padding: 40px 56px 72px;
+  }
+
+  &__envelope {
+    flex-shrink: 0;
+    width: 110px;
+    height: auto;
+
+    @include md-tablet {
+      width: 133px;
+    }
+  }
+
+  &__title {
+    width: 100%;
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 28px;
+    text-align: center;
+    color: #00bf73;
+
+    @include md-tablet {
+      font-size: 32px;
+      line-height: 32px;
+      max-width: 434px;
+    }
+  }
+}
+
+/* ---------- индикатор шагов ---------- */
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  @include md-tablet {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 14px;
+    color: #05b8f6;
+
+    .steps__point {
+      background: #05b8f6;
+      color: #ffffff;
+    }
+
+    /* Активный шаг — синяя «таблетка» с белой точкой */
+    &--active {
+      padding: 8px 12px 8px 8px;
+      border-radius: 99px;
+      background: #05b8f6;
+      color: #ffffff;
+
+      .steps__point {
+        background: #ffffff;
+        color: #05b8f6;
+      }
+    }
+  }
+
+  &__point {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 99px;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 14px;
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    height: 24px;
+    border: 0;
+
+    &--mobile {
+      display: block;
+      width: 14.7279px;
+
+      @include md-tablet {
+        display: none;
+      }
+    }
+
+    &--tablet {
+      display: none;
+      width: 17.7261px;
+
+      @include md-tablet {
+        display: block;
+      }
+    }
+  }
+}
+
+/* ---------- поля ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+
+  @include md-tablet {
+    width: 434px;
+    max-width: 100%;
+  }
+
+  &__label {
+    width: 100%;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: #595959;
+  }
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 2px solid #b8b5c8;
+  border-radius: 99px;
+  background: #fbfaff;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: #9c99ab;
+  }
+
+  &--error {
+    border-color: #ef2d74;
+  }
+
+  &__input {
+    flex: 1 0 0;
+    min-width: 0;
+    height: 100%;
+    appearance: none;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    text-align: center;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 36px;
+    color: #3c4267;
+
+    &::placeholder {
+      color: #b8b5c8;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  /* Компенсирует ширину «глаза», чтобы значение оставалось по центру поля */
+  &__input:not(:last-child) {
+    padding-left: 26px;
+  }
+
+  &__eye {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 100%;
+    padding: 0;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: #b8b5c8;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+  }
+
+  &__error {
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    color: #ef2d74;
+  }
+}
+
+/* ---------- согласие ---------- */
+
+.legal {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 48px;
-  padding: 0 28px;
+  cursor: pointer;
+
+  @include md-tablet {
+    gap: 4px;
+  }
+
+  &__checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  &__box {
+    flex-shrink: 0;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 0;
+
+    /* Незаполненное состояние в макете не нарисовано — повторяем геометрию
+       самой иконки (rect 18×18, rx 3, обводка 2px), только без галочки. */
+    &--empty {
+      border: 2px solid #b8b5c8;
+      border-radius: 4px;
+      background: #fbfaff;
+      box-sizing: border-box;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 205px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center;
+    color: #767676;
+    white-space: nowrap;
+
+    @include md-tablet {
+      flex-wrap: nowrap;
+      width: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+
+  &--error {
+    .legal__box--empty {
+      border-color: #ef2d74;
+    }
+
+    .legal__text {
+      color: #ef2d74;
+    }
+  }
+}
+
+/* ---------- кнопка ---------- */
+
+.btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 32px;
   appearance: none;
   border: 0;
-  border-bottom: 6px solid #017c2e;
-  border-radius: 120px;
-  background-color: #079d27;
-  background-image: linear-gradient(to top, #079d27 0%, #00a846 12%, #14ef6f 100%);
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.4), 0 19px 14px -5px rgba(0, 0, 0, 0.25), 0 34px 25px -11px rgba(0, 0, 0, 0.25), 0 44px 50px rgba(0, 0, 0, 0.2);
+  border-bottom: 5px solid #017c2e;
+  border-radius: 157px;
+  background-image: linear-gradient(to top, #079d27 0%, #00a846 12.019%, #14ef6f 100%);
+  box-shadow:
+    0 2px 1px 0 rgba(0, 0, 0, 0.4),
+    0 19px 14px -5px rgba(0, 0, 0, 0.25),
+    0 34px 25px -11px rgba(0, 0, 0, 0.25),
+    0 44px 50px 0 rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  font-family: "Nunito", Arial, sans-serif;
-  font-weight: 900;
-  font-size: 18px;
-  line-height: 24px;
-  text-align: center;
-  color: #ffffff;
-  text-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+
+  @include md-tablet {
+    height: 64px;
+    padding: 0 40px;
+    border-bottom-width: 8px;
+  }
 
   &:disabled {
     opacity: 0.7;
     cursor: default;
   }
 
+  /* Заливка надписи — вертикальный градиент из макета (белый → #c3ffdc) */
+  &__label {
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+    color: #ffffff;
+    background-image: linear-gradient(to bottom, #ffffff, #c3ffdc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 1px rgba(0, 0, 0, 0.01);
+
+    @include md-tablet {
+      font-size: 24px;
+      line-height: 24px;
+    }
+  }
+
   &__spinner {
     flex-shrink: 0;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border: 2px solid #ffffff;
     border-bottom-color: transparent;
     border-radius: 50%;
@@ -926,292 +1257,22 @@ async function resetPassword() {
   }
 }
 
-/* ---------- auth section ---------- */
-
-.auth {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-
-  @include md-tablet {
-    padding: 64px 56px;
-  }
-}
-
-/* ---------- card ---------- */
-
-.card-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.card {
-  width: 100%;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  padding: 28px 24px;
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-
-  @include md-tablet {
-    max-width: 360px;
-    padding: 36px 32px;
-    gap: 18px;
-  }
-
-  &__envelope {
-    align-self: center;
-    width: 110px;
-    height: auto;
-
-    @include md-tablet {
-      width: 133px;
-    }
-  }
-
-  &__title {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    line-height: 23px;
-    text-align: center;
-    color: #079d27;
-
-    @include md-tablet {
-      font-size: 20px;
-      line-height: 25px;
-    }
-  }
-
-  &__subtitle {
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 19px;
-    text-align: center;
-    color: #3c4267;
-  }
-
-  &__btn {
-    align-self: center;
-    margin-top: 4px;
-  }
-}
-
-.steps {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #9aa3b8;
-
-    &--active {
-      color: #05b8f6;
-    }
-  }
-
-  &__number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 99px;
-    background: currentColor;
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 800;
-    font-size: 11px;
-    color: #ffffff;
-  }
-
-  &__text {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-  }
-
-  &__arrow {
-    width: 14px;
-    height: 6px;
-    transform: rotate(90deg);
-    color: #9aa3b8;
-  }
-}
-
-/* ---------- fields ---------- */
-
-.field {
-  display: flex;
-  align-items: center;
-  height: 44px;
-  border: 2px solid #d7dbe8;
-  border-radius: 14px;
-  background: #fbfaff;
-  transition: border-color 0.15s;
-
-  &:focus-within {
-    border-color: #9c99ab;
-  }
-
-  &--error {
-    border-color: #ef2d74;
-  }
-
-  &__input {
-    flex: 1;
-    min-width: 0;
-    height: 100%;
-    padding: 0 16px;
-    appearance: none;
-    border: 0;
-    background: transparent;
-    text-align: center;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    color: #3c4267;
-
-    &::placeholder {
-      color: #b8b5c8;
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  /* Компенсирует ширину «глаза», чтобы текст оставался по центру поля. */
-  &__input:not(:last-child) {
-    padding-left: 42px;
-    padding-right: 0;
-  }
-
-  &__eye {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 100%;
-    padding: 0;
-    appearance: none;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    color: #ff8d24;
-
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    &:disabled {
-      cursor: default;
-      opacity: 0.6;
-    }
-  }
-
-  &__error {
-    margin-top: -8px;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 16px;
-    text-align: center;
-    color: #ef2d74;
-  }
-}
-
 .forgot {
-  align-self: center;
   padding: 0;
   appearance: none;
   border: 0;
   background: transparent;
   cursor: pointer;
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: inherit;
   font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 14px;
   color: #767676;
   text-decoration: underline;
 
   &:disabled {
     cursor: default;
     opacity: 0.6;
-  }
-}
-
-.legal {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  cursor: pointer;
-
-  &__checkbox {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-  }
-
-  &__box {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    margin-top: 1px;
-    border: 2px solid #b8b5c8;
-    border-radius: 4px;
-    background: #fbfaff;
-
-    svg {
-      width: 10px;
-      height: 8px;
-      color: #05b8f6;
-    }
-  }
-
-  &__text {
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 11px;
-    line-height: 15px;
-    color: #767676;
-
-    a {
-      color: #767676;
-      text-decoration: underline;
-    }
-  }
-
-  &--error {
-    .legal__box {
-      border-color: #ef2d74;
-    }
-
-    .legal__text {
-      color: #ef2d74;
-    }
   }
 }
 
@@ -1236,107 +1297,46 @@ async function resetPassword() {
   }
 }
 
-/* ---------- финальный экран (порт congrats-download.css) ----------
-   Все размеры — в пикселях, как в макете: базовый кадр 375px, второй — 768px
-   (совпадает с `md-tablet`). Картинка не тянется по высоте — меняется только
-   кроп по ширине; поп-ап шире 375px и центрируется через left/translateX,
-   поэтому у экрана отключён горизонтальный скролл. */
+/* ---------- финальный экран ---------- */
 
-.cgd {
+.congrats {
   position: relative;
-  overflow-x: hidden;
-  background: #ffffff;
-  font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
-  /* Место под поп-ап: он позиционирован абсолютно и вылезает за картинку. */
-  padding-bottom: 208px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 529px;
+  height: 437px;
 
   @include md-tablet {
-    padding-bottom: 363px;
+    width: 734px;
+    height: 606px;
   }
 
-  /* Без `height: auto`: в макете этот сброс — правило на голом `img`
-     (специфичность 0,0,1) и проигрывает `.cgd__pic-bg { height: 100% }`.
-     Вложенный в `.cgd`, он бы, наоборот, выиграл и сломал object-fit,
-     поэтому высоту здесь не трогаем — её задают конкретные правила. */
-  img {
+  &__bg {
+    position: absolute;
+    inset: 0;
     display: block;
-    max-width: 100%;
+    width: 100%;
+    height: 100%;
     border: 0;
-  }
-
-  &__pic {
-    position: relative;
-    width: 100%;
-    height: 319px;
-    overflow: hidden;
-    background: #05b8f6;
-
-    @include md-tablet {
-      height: 338px;
-    }
-  }
-
-  &__pic-bg {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-    object-position: 68% 55%;
-
-    @include md-tablet {
-      object-position: 50% 64%;
-    }
-  }
-
-  &__popup {
-    position: absolute;
-    left: 50%;
-    top: 90px;
-    transform: translateX(-50%);
-    z-index: 1;
-    width: 577px;
-    height: 437px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    @include md-tablet {
-      top: 37px;
-      width: 873px;
-      height: 664px;
-    }
-  }
-
-  &__popup-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+    pointer-events: none;
   }
 
   &__content {
     position: relative;
-    z-index: 1;
-    width: 232px;
-    padding-top: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    gap: 8px;
+    width: 201px;
 
     @include md-tablet {
-      width: 342px;
+      gap: 16px;
+      width: 244px;
       padding-top: 32px;
-    }
-
-    > * + * {
-      margin-top: 6px;
-
-      @include md-tablet {
-        margin-top: 16px;
-      }
     }
   }
 
@@ -1345,6 +1345,7 @@ async function resetPassword() {
     font-weight: 900;
     font-size: 28px;
     line-height: 28px;
+    text-align: center;
     color: #00bf73;
 
     @include md-tablet {
@@ -1353,11 +1354,12 @@ async function resetPassword() {
     }
   }
 
-  &__subtitle {
+  &__text {
     width: 100%;
     font-weight: 600;
     font-size: 14px;
     line-height: 16px;
+    text-align: center;
     color: #595959;
 
     @include md-tablet {
@@ -1367,10 +1369,8 @@ async function resetPassword() {
   }
 
   &__badge {
+    flex-shrink: 0;
     display: block;
-  }
-
-  &__badge-img {
     width: 130px;
     height: 43.455px;
 
@@ -1378,101 +1378,69 @@ async function resetPassword() {
       width: 160px;
       height: 53.483px;
     }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   }
 
-  &__instruction {
+  &__hint {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #595959;
-
-    > * + * {
-      margin-top: 4px;
-    }
-
-    p {
-      font-weight: 600;
-      font-size: 12px;
-      line-height: 12px;
-
-      @include md-tablet {
-        font-size: 14px;
-        line-height: 14px;
-      }
-    }
-  }
-
-  &__instruction-title {
     font-weight: 900;
     font-size: 14px;
     line-height: 14px;
-
-    @include md-tablet {
-      font-size: 16px;
-      line-height: 16px;
-    }
+    text-align: center;
+    color: #595959;
   }
 }
 
-/* ---------- footer ----------
-   Отдельного фона (полосы #33cbff, как в l1/l2) здесь нет — футер лежит на
-   той же сплошной синей заливке, как в макете. */
+/* ---------- футер ----------
+   Тексты и ссылки — прежние; оформление подтянуто под макет: по центру,
+   Nunito, белый 12px. */
 
 .footer {
-  width: 100%;
-  padding: 28px 20px;
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 20px;
-  padding-top: 0 !important;
-  padding-bottom: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 24px;
+  font-size: 12px;
+  line-height: 12px;
+  color: #ffffff;
 
-  @include md-tablet {
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 32px 44px;
-  }
-
-  &__company,
+  &__legacy,
   &__links {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
   }
 
-  &__company p,
-  &__links a {
-    font-family: "Open Sans", Arial, sans-serif;
+  &__legacy {
+    gap: 4px;
     font-weight: 600;
-    font-size: 12px;
-    line-height: 12px;
-    color: #ffffff;
-
-    @include md-tablet {
-      font-size: 18px;
-      line-height: 26px;
-    }
   }
 
-  &__company p + p {
-    margin-top: 8px;
-
-    @include md-tablet {
-      margin-top: 10px;
-    }
+  &__legacy-title {
+    font-weight: 900;
   }
 
-  &__links a {
-    text-decoration: underline;
-  }
+  &__links {
+    gap: 6px 14px;
+    font-weight: 600;
 
-  &__links a + a {
-    margin-top: 12px;
-
-    @include md-tablet {
-      margin-top: 14px;
+    a {
+      text-decoration: underline;
+      text-decoration-skip-ink: none;
     }
   }
 }
