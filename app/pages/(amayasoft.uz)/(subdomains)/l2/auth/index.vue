@@ -270,7 +270,9 @@ async function handleNext(to?: 'reset') {
 /* --------------------------- аналитика --------------------------- */
 
 const { track, identify } = useL2Mixpanel()
-const { trackStandard, trackCustom } = useMetaPixel()
+const { trackStandard, trackCustom, trackPageView } = useMetaPixel()
+
+onMounted(() => trackPageView())
 
 /**
  * Шаг флоу → событие показа экрана. Шаги без события (`reset`, `check-email`)
@@ -307,7 +309,12 @@ const META_PASSWORD_STEPS: Step[] = ['clean-signin', 'signup', 'reset-signin']
 let metaLeadSent = false
 
 watch(step, (current) => {
-  if (META_PASSWORD_STEPS.includes(current)) {
+  if (current === 'auth') {
+    // Свой ивент — заход на самый первый экран /auth, ещё до ввода email.
+    // Как и остальные custom-события воронки, шлётся при каждом показе:
+    // в том числе при возврате сюда стрелкой «назад» с шага пароля.
+    trackCustom('LandingEmailScreen')
+  } else if (META_PASSWORD_STEPS.includes(current)) {
     // Свой ивент для воронки в Events Manager — как и `landing_password_screen`
     // в Mixpanel, шлётся при каждом показе, не только один раз.
     trackCustom('LandingPasswordScreen')

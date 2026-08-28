@@ -28,10 +28,11 @@ useSeoMeta({
 // попал на лендинг. Только на клиенте: на SSR оба composable ничего не шлют,
 // иначе событие задублировалось бы на гидрации.
 const { track } = useL2Mixpanel()
-const { trackCustom } = useMetaPixel()
+const { trackCustom, trackPageView } = useMetaPixel()
 
 onMounted(() => {
   track('landing_opened')
+  trackPageView()
   trackCustom('LandingOpened')
 })
 

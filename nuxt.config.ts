@@ -43,7 +43,21 @@ export default defineNuxtConfig({
     // подставляем, если задан. Не секрет — виден в любой ссылке на проект в
     // самом Mixpanel, но лежит рядом с токеном, а не в public, поскольку
     // используется только на сервере.
-    cars2MixpanelProjectId: ''
+    cars2MixpanelProjectId: '',
+
+    // Meta Conversions API — серверное дублирование тех же событий, что уже
+    // шлёт браузерный пиксель (см. app/composables/useMetaPixel.ts). Токен
+    // получают в Meta Business Settings → Events Manager → Web2wave →
+    // Settings → Conversions API → Set up manually (System User token,
+    // не личный — переживёт смену пароля/сессии того, кто его выпустил).
+    // Даёт право писать конверсии в рекламный кабинет — чувствительнее
+    // Mixpanel-токена, храним так же: только на сервере.
+    cars2MetaCapiToken: '',
+    // Опционально: пока идёт тест через Events Manager → Test Events, сюда
+    // можно положить код вида TEST78125 — тогда серверные события будут
+    // видны в Test Events с ЛЮБОГО компьютера, не только залогиненного в
+    // Meta (см. предыдущее обсуждение). Перед реальным трафиком — убрать.
+    cars2MetaCapiTestEventCode: ''
   },
 
   routeRules: {
