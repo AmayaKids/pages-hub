@@ -157,6 +157,13 @@
           "Qurilmada standart sifatida o'rnatilgan til"
         ] }
       ]
+    },
+    {
+      "heading": "Meta Pixel",
+      "blocks": [
+        { "type": "paragraph", "text": "Biz reklama kampaniyalarimizning samaradorligini baholash, foydalanuvchilarning Saytimizdagi faoliyatini tahlil qilish va reklama  kampaniyalarini takomillashtirish uchun Meta Pixeldan foydalanamiz. Meta Pixel Saytimizda foydalanuvchilarning harakatlariga oid ma'lumotlarni to'plashi va bu ma'lumotlarni Meta kompaniyasiga yuborishi mumkin. Olingan ma'lumotlar reklama auditoriyasini shakllantirish, reklama ko'rsatish va uni takomillashtirishn maqsadida ishlatilishi mumkin." },
+        { "type": "paragraph", "text": "Meta kompaniyasi ma'lumotlaringiz qanday qayta ishlanishi haqida batafsil ma'lumot: https://developers.facebook.com/documentation/meta-pixel" }
+      ]
     }
   ]
 }
