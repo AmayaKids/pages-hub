@@ -27,7 +27,7 @@ declare global {
 /** Id пикселя не секрет (виден в исходнике страницы у любого посетителя),
  *  поэтому лежит константой, а не в runtimeConfig — в отличие от серверного
  *  токена Conversions API. */
-const META_PIXEL_ID = '1444729859450432'
+const META_PIXEL_ID = '1335375415064544'
 
 const CAPI_ENDPOINT = '/api/l2/meta-capi/track'
 
