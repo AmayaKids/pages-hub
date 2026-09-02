@@ -25,7 +25,10 @@ const KNOWN_TESTERS: Record<string, string> = {
   fedor: 'Фёдор',
   ruslan: 'Руслан',
   sergey: 'Сергей',
-  lev: 'Лев'
+  lev: 'Лев',
+  // Общая ссылка без привязки к конкретному человеку — когда нужно быстро
+  // дать кому-то ещё доступ на тест, не заводя для него отдельное имя.
+  test: 'Тестировщик'
 }
 
 function readTesterIdFromUrl(): string | null {

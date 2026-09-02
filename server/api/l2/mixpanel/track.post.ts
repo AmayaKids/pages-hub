@@ -34,7 +34,7 @@ const ALLOWED_PROPERTIES = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_con
 /** Тот же список, что и в useQaTester.ts — держим на сервере независимую
  *  копию проверки: даже если кто-то соберёт запрос к роуту в обход клиента,
  *  в Mixpanel не попадёт произвольное значение `tester`. */
-const KNOWN_TESTER_IDS = new Set(['kirill', 'fedor', 'ruslan', 'sergey', 'lev'])
+const KNOWN_TESTER_IDS = new Set(['kirill', 'fedor', 'ruslan', 'sergey', 'lev', 'test'])
 const NOT_A_TESTER = 'none'
 
 /** Названия кампаний и креативов приходят из адресной строки — ограничиваем. */
