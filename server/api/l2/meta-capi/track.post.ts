@@ -11,7 +11,15 @@
  * на iOS резко режет время жизни cookie, которыми браузерный пиксель
  * идентифицирует посетителя; сервер не зависит от этих cookie так же сильно
  * (IP + User-Agent + fbp/fbc, когда они ещё живы).
+ *
+ * `email` — отдельно: IP/UA/fbp/fbc Meta не засчитывает как основание для
+ * атрибуции (см. предупреждение Events Manager про отсутствующий `user_data`
+ * — там явно перечислены только identity-параметры: email, телефон, имя и
+ * т.п.). Хэшируем здесь же, на сервере: сама почта дальше этого файла (и уж
+ * тем более в Meta) в открытом виде не уходит.
  */
+
+import { createHash } from 'node:crypto'
 
 // Без версии в пути: Graph API маршрутизирует такие вызовы на самую старую
 // ещё поддерживаемую версию автоматически — так не нужно вручную обновлять
@@ -45,6 +53,22 @@ interface TrackBody {
   /** `_fbp`/`_fbc` из cookie браузера, когда они ещё живы. */
   fbp?: unknown
   fbc?: unknown
+  /** Email в открытом виде — только для хэширования здесь же на сервере.
+   *  Передаётся лишь для событий, где на момент отправки email уже введён
+   *  (шаги после email-формы). */
+  email?: unknown
+}
+
+/** `em` у Meta — SHA-256 от email, приведённого к нижнему регистру и без
+ *  пробелов по краям (ровно так требует их документация по Advanced
+ *  Matching / Conversions API). */
+function hashEmail(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null
+
+  const normalized = raw.trim().toLowerCase()
+  if (!normalized || !normalized.includes('@')) return null
+
+  return createHash('sha256').update(normalized).digest('hex')
 }
 
 function asNonEmptyString(value: unknown, maxLength = 2048) {
@@ -79,6 +103,7 @@ export default defineEventHandler(async (event) => {
 
   const fbp = asNonEmptyString(body?.fbp, 256)
   const fbc = asNonEmptyString(body?.fbc, 256)
+  const emailHash = hashEmail(body?.email)
 
   const payload = {
     data: [{
@@ -91,7 +116,10 @@ export default defineEventHandler(async (event) => {
         ...(clientIp ? { client_ip_address: clientIp } : {}),
         ...(userAgent ? { client_user_agent: userAgent } : {}),
         ...(fbp ? { fbp } : {}),
-        ...(fbc ? { fbc } : {})
+        ...(fbc ? { fbc } : {}),
+        // Массив — так требует формат Meta (поддерживает несколько
+        // идентификаторов на одно событие), даже когда значение одно.
+        ...(emailHash ? { em: [emailHash] } : {})
       }
     }],
     ...(config.cars2MetaCapiTestEventCode ? { test_event_code: config.cars2MetaCapiTestEventCode } : {})

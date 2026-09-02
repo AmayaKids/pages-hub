@@ -87,10 +87,20 @@ function readCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[1]!) : undefined
 }
 
+interface FireDualOptions {
+  /** Только для CAPI-запроса на сервер — сервер сам хэширует перед отправкой
+   *  в Meta (см. server/api/l2/meta-capi/track.post.ts). В браузерный `fbq`
+   *  не идёт: там за это уже отвечает Automatic Advanced Matching, включённый
+   *  в настройках самого пикселя. Передаётся только там, где email на момент
+   *  события уже введён (шаги после email-формы) — на более ранних шагах
+   *  просто не с чем сюда прийти. */
+  email?: string
+}
+
 /** Один и тот же `event_id` уходит и в `fbq`, и на сервер — это и есть ключ
  *  дедупликации для Meta. Ошибки серверного вызова гасятся молча: аналитика
  *  не должна ронять страницу, если Conversions API недоступен. */
-function fireDual(method: 'track' | 'trackCustom', name: string) {
+function fireDual(method: 'track' | 'trackCustom', name: string, opts?: FireDualOptions) {
   if (import.meta.server) return
 
   const eventId = createEventId()
@@ -104,7 +114,8 @@ function fireDual(method: 'track' | 'trackCustom', name: string) {
       eventId,
       eventSourceUrl: window.location.href,
       fbp: readCookie('_fbp'),
-      fbc: readCookie('_fbc')
+      fbc: readCookie('_fbc'),
+      email: opts?.email
     }
   }).catch(() => {})
 }
@@ -118,14 +129,14 @@ export function useMetaPixel() {
    * Имя должно буквально совпадать с таксономией Meta, это не место для
    * своих названий.
    */
-  function trackStandard(name: string) {
-    fireDual('track', name)
+  function trackStandard(name: string, opts?: FireDualOptions) {
+    fireDual('track', name, opts)
   }
 
   /** Свой именованный ивент — для воронки в самом Events Manager, не для
    *  оптимизации кампании (Meta не даёт выбрать произвольное имя целью). */
-  function trackCustom(name: string) {
-    fireDual('trackCustom', name)
+  function trackCustom(name: string, opts?: FireDualOptions) {
+    fireDual('trackCustom', name, opts)
   }
 
   /**

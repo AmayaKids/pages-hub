@@ -317,16 +317,16 @@ watch(step, (current) => {
   } else if (META_PASSWORD_STEPS.includes(current)) {
     // Свой ивент для воронки в Events Manager — как и `landing_password_screen`
     // в Mixpanel, шлётся при каждом показе, не только один раз.
-    trackCustom('LandingPasswordScreen')
+    trackCustom('LandingPasswordScreen', { email: fields.email.value })
 
     if (!metaLeadSent) {
       metaLeadSent = true
-      trackStandard('Lead')
+      trackStandard('Lead', { email: fields.email.value })
     }
   } else if (current === 'congrats') {
     // Точное имя из таксономии Meta — под него кампания оптимизируется на
     // «Sign up» в Ads Manager. Произвольное имя туда не подставить.
-    trackStandard('CompleteRegistration')
+    trackStandard('CompleteRegistration', { email: fields.email.value })
   }
 }, { immediate: true })
 
@@ -481,6 +481,8 @@ async function resetPassword() {
     «Parolni unutdingizmi?», конверт — стилизованы теми же токенами макета.
   -->
   <div class="page">
+    <L2TesterBanner />
+
     <div
       class="page__wrapper"
       :class="{ 'page__wrapper--congrats': step === 'congrats' }"
@@ -524,7 +526,7 @@ async function resetPassword() {
             :href="APP_STORE_URL"
             target="_blank"
             rel="noopener"
-            @click="track('landing_appstore_button_tap'); trackCustom('LandingAppstoreButtonTap')"
+            @click="track('landing_appstore_button_tap'); trackCustom('LandingAppstoreButtonTap', { email: fields.email.value })"
           >
             <img
               :src="appStoreBadgeSvg"

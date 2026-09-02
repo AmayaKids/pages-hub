@@ -31,6 +31,12 @@ const ALLOWED_EVENTS = new Set([
  */
 const ALLOWED_PROPERTIES = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
 
+/** Тот же список, что и в useQaTester.ts — держим на сервере независимую
+ *  копию проверки: даже если кто-то соберёт запрос к роуту в обход клиента,
+ *  в Mixpanel не попадёт произвольное значение `tester`. */
+const KNOWN_TESTER_IDS = new Set(['kirill', 'fedor', 'ruslan', 'sergey', 'lev'])
+const NOT_A_TESTER = 'none'
+
 /** Названия кампаний и креативов приходят из адресной строки — ограничиваем. */
 const PROPERTY_MAX_LENGTH = 255
 
@@ -62,6 +68,11 @@ function pickAllowedProperties(raw: unknown) {
       ? value.slice(0, PROPERTY_MAX_LENGTH)
       : PROPERTY_UNDEFINED
   }
+
+  const tester = source.tester
+  picked.tester = typeof tester === 'string' && KNOWN_TESTER_IDS.has(tester)
+    ? tester
+    : NOT_A_TESTER
 
   return picked
 }

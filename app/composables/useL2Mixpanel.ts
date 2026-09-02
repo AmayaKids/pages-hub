@@ -157,7 +157,7 @@ export function useL2Mixpanel() {
     send({
       event,
       distinctId: identifiedId || getAnonId(),
-      properties: getUtmProps()
+      properties: { ...getUtmProps(), tester: getTesterProp() }
     })
   }
 

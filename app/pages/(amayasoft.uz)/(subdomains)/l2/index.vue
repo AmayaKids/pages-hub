@@ -91,6 +91,8 @@ onMounted(() => {
 
 <template>
   <div class="l2">
+    <L2TesterBanner />
+
     <div class="page">
       <!-- Header -->
       <header class="header">
