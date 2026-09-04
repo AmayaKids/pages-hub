@@ -70,12 +70,6 @@
       "blocks": [
         { "type": "paragraph", "text": "7.1. Operator Foydalanuvchining shaxsiy maʼlumotlarini ruxsatsiz kirish, o‘zgartirish, bloklash yoki yo‘q qilishdan himoya qilish uchun zarur choralarni ko‘radi." }
       ]
-    },
-    {
-      "heading": "8. Maxfiylik siyosatiga o‘zgartirishlar kiritish",
-      "blocks": [
-        { "type": "paragraph", "text": "8.1. Operator Siyosatga o‘zgartirish va/yoki to‘ldirish huquqiga ega. Siyosatning yangi tahriri Saytda e’lon qilingan paytdan e’tiboran kuchga kiradi." }
-      ]
     }
   ]
 }

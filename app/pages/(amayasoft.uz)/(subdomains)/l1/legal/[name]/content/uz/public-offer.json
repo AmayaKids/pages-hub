@@ -60,11 +60,18 @@
     {
       "heading": "6. Shartnomani bekor qilish tartibi",
       "blocks": [
-        { "type": "paragraph", "text": "6.1. Foydalanuvchi Ijrochining support@amayasoft.uz elektron pochta manziliga bildirishnoma yuborish orqali yoki Shaxsiy kabinet orqali Xizmatlardan voz kechish hamda Obunaning avtomatik uzaytirilishini o‘chirish huquqiga ega." }
+        { "type": "paragraph", "text": "6.1. Foydalanuvchi Ijrochining support@amayasoft.uz elektron pochta manziliga bildirishnoma yuborish orqali  Xizmatlardan foydalanishni to'xtatish huquqiga ega." }
       ]
     },
     {
-      "heading": "7. Rekvizitlar",
+      "heading": "7. Nizolarni hal qilish",
+      "blocks": [
+        { "type": "paragraph", "text": "7.1. Ushbu Shartnoma bo‘yicha yuzaga kelishi mumkin bo‘lgan barcha nizolar, muzokaralar yo‘li bilan hal qilinadi. Agar muzokaralar yo‘li bilan kelishuvga erishilmasa, nizolar O‘zbekiston Respublikasining amaldagi qonunchiligiga muvofiq sud tartibida hal etiladi." },
+        { "type": "paragraph", "text": "7.2. Ushbu Shartnoma bilan tartibga solinmagan barcha masalalar O‘zbekiston Respublikasining amaldagi qonunchiligiga muvofiq hal etiladi." }
+      ]
+    },
+    {
+      "heading": "8. Rekvizitlar",
       "blocks": [
         { "type": "paragraph", "text": "Ijrochi:" },
         { "type": "paragraph", "text": "«AMAYA SOFT» MChJ" },
