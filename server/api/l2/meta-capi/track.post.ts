@@ -1,5 +1,5 @@
 /**
- * Серверное дублирование событий Meta Pixel через Conversions API.
+ * Серверное дублирование событий Meta Pixel лендингов через Conversions API.
  *
  * Дублирует ровно то, что уже шлёт браузерный пиксель (см.
  * app/composables/useMetaPixel.ts) — та же связка `event_id` на обеих
@@ -41,7 +41,10 @@ const ALLOWED_EVENTS = new Set([
   'LandingPasswordScreen',
   'Lead',
   'CompleteRegistration',
-  'LandingAppstoreButtonTap'
+  'LandingAppstoreButtonTap',
+  // Только l1: подтверждённая покупка. Единственное событие с суммой —
+  // под него кампания оптимизируется на выручку.
+  'Purchase'
 ])
 
 interface TrackBody {
@@ -57,6 +60,9 @@ interface TrackBody {
    *  Передаётся лишь для событий, где на момент отправки email уже введён
    *  (шаги после email-формы). */
   email?: unknown
+  /** Сумма и код валюты покупки — только у `Purchase`. */
+  value?: unknown
+  currency?: unknown
 }
 
 /** `em` у Meta — SHA-256 от email, приведённого к нижнему регистру и без
@@ -105,6 +111,14 @@ export default defineEventHandler(async (event) => {
   const fbc = asNonEmptyString(body?.fbc, 256)
   const emailHash = hashEmail(body?.email)
 
+  // `value` + `currency` — строго парой и только у `Purchase`: половина пары
+  // Meta всё равно не засчитает, а у остальных событий суммы просто нет.
+  const value = typeof body?.value === 'number' && Number.isFinite(body.value) ? body.value : null
+  const currency = asNonEmptyString(body?.currency, 8)
+  const customData = eventName === 'Purchase' && value != null && currency
+    ? { custom_data: { value, currency } }
+    : {}
+
   const payload = {
     data: [{
       event_name: eventName,
@@ -120,7 +134,8 @@ export default defineEventHandler(async (event) => {
         // Массив — так требует формат Meta (поддерживает несколько
         // идентификаторов на одно событие), даже когда значение одно.
         ...(emailHash ? { em: [emailHash] } : {})
-      }
+      },
+      ...customData
     }],
     ...(config.cars2MetaCapiTestEventCode ? { test_event_code: config.cars2MetaCapiTestEventCode } : {})
   }

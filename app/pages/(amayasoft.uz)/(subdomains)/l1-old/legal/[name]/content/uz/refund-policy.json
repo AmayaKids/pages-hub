@@ -1,0 +1,31 @@
+{
+  "title": "BIR MARTALIK XARIDNI QAYTARISH VA OBUNANI BEKOR QILISH SHARTLARI",
+  "sections": [
+    {
+      "heading": "1. Obunani bekor qilish",
+      "blocks": [
+        { "type": "paragraph", "text": "1.1. Foydalanuvchi istalgan vaqtda Obunaning akseptsiz uzaytirilishidan voz kechish huquqiga ega. Bunday holda, Obuna Foydalanuvchiga avtomatik uzaytirish o‘chirilgunicha Obuna turiga qarab joriy to‘lov muddati tugaguniga qadar taqdim etiladi. Yangi hisob-kitob davri uchun pul mablag‘lari undirilmaydi. Foydalanuvchi Obunaning keyingi hisob-kitob davriga avtomatik uzaytirilishini keyingi to‘lov amalga oshirilishidan kamida 24 soat oldin bekor qilishi mumkin." },
+        { "type": "paragraph", "text": "1.2. Avvalgi hisob-kitob davrlari uchun Obuna bo‘yicha to‘langan pul mablag‘lari Foydalanuvchiga qaytarilmaydi, chunki Obuna bekor qilingan paytda ushbu davrlar uchun Xizmatlar Ijrochi tomonidan tegishli tarzda ko’rsatilgan." },
+        { "type": "paragraph", "text": "Obunani avtomatik ravishda uzaytirishni bekor qilish uchun Foydalanuvchi support@amayasoft.uz  qo‘llab-quvvatlash xizmatining elektron pochta manziliga buyurtma raqami, xarid sanasi va bekor qilish sababini ko‘rsatgan holda so‘rov yuborish kerak." }
+      ]
+    },
+    {
+      "heading": "2. Bir martalik xaridlarda mablag‘larni qaytarish",
+      "blocks": [
+        { "type": "paragraph", "text": "2.1. Ijrochining «Bir martalik xarid» xizmati Foydalanuvchiga mobil o‘yinlardan foydalanish imkoniyatini taqdim etishni nazarda tutadi. Foydalanuvchiga mobil o‘yinlarni yuklab olish va o‘rnatish imkoniyati yaratilgan paytdan boshlab  Ijrochi tomonidan Xizmat ko‘rsatilgan deb hisoblanadi. Umumiy qoidaga ko‘ra, Xizmat ko‘rsatilgandan so‘ng undan voz kechilgan taqdirda, to‘langan pul mablag‘lari qaytarilmaydi." },
+        { "type": "paragraph", "text": "2.2. Ijrochi bir martalik xarid uchun pul mablag‘larini ixtiyoriy ravishda qaytarishga haqli, biroq faqat quyidagi shartlarga bir vaqtning o‘zida rioya qilgan holda:" },
+        { "type": "list", "items": [
+          "Ushbu xizmat xarid qilingan kundan boshlab 3 kundan ortiq vaqt o‘tmagan bo‘lsa;",
+          "Foydalanuvchiga hech qanday imtiyoz, aksiya yoki chegirma taqdim etilmagan bo‘lsa."
+        ] }
+      ]
+    },
+    {
+      "heading": "3. Qaytarishni rasmiylashtirish tartibi",
+      "blocks": [
+        { "type": "paragraph", "text": "3.1. Bir martalik xarid uchun to‘langan pul mablag‘larini qaytarishi uchun Foydalanuvchi buyurtma raqami, xarid sanasi va qaytarish sababini ko‘rsatgan holda support@amayasoft.uz  qo‘llab-quvvatlash xizmatimizga murojaat qilish lozim." },
+        { "type": "paragraph", "text": "3.2. Pul mablag‘lari to‘lov amalga oshirilgan usul orqali qaytariladi. Qaytarish to‘g‘risidagi so‘rov ijobiy ko‘rib chiqilgan taqdirda, pul mablag‘lari 10 ish kuni ichida qaytariladi." }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import L1Auth from '~/pages/(amayasoft.uz)/(subdomains)/l1/auth/index.vue'
 import L2Auth from '~/pages/(amayasoft.uz)/(subdomains)/l2/auth/index.vue'
 
 // Host-scoped sub-page dispatcher, same pattern as HostLandingRouter.vue but
@@ -11,6 +12,7 @@ import L2Auth from '~/pages/(amayasoft.uz)/(subdomains)/l2/auth/index.vue'
 definePageMeta({ i18n: false })
 
 const Page = resolveHostPage({
+  'amayasoft-uz-l1': L1Auth,
   'amayasoft-uz-l2': L2Auth
 })
 </script>

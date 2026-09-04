@@ -1,5 +1,5 @@
 /**
- * Приём событий лендинга l2 и отправка их в Mixpanel.
+ * Приём событий лендингов (l2 и платного l1) и отправка их в Mixpanel.
  *
  * Токен живёт только здесь, на сервере (`NUXT_CARS2_MIXPANEL_TOKEN` →
  * `runtimeConfig.cars2MixpanelToken`), в браузер он не попадает — поэтому
@@ -17,6 +17,11 @@ const ALLOWED_EVENTS = new Set([
   'landing_opened',
   'landing_email_screen',
   'landing_password_screen',
+  // Только l1 (платный лендинг): уход на платёжный шлюз и подтверждённая
+  // покупка. `landing_billing_refund` сюда не входит — возврат случается,
+  // когда посетителя на сайте уже нет, и слать его может только биллинг.
+  'landing_payment_screen',
+  'landing_billing_purchase',
   'landing_congratulation_screen',
   'landing_appstore_button_tap',
   // Служебное событие Mixpanel: связывает анонимный id с id аккаунта
@@ -47,6 +52,39 @@ const PROPERTY_MAX_LENGTH = 255
  *  гарантию на сервере, а не только в composable — это последняя точка перед
  *  Mixpanel, и она не должна зависеть от того, что именно прислал клиент. */
 const PROPERTY_UNDEFINED = 'undefined'
+
+/**
+ * Свойства покупки — только у `landing_billing_purchase`. В отличие от UTM,
+ * они не строки и не подставляются заглушкой: если поля нет, его нет и в
+ * событии. Заполнить его «чем-нибудь» здесь было бы хуже, чем не заполнить:
+ * `Payment_count` и `Sandbox` считает биллинг, и выдуманное значение молча
+ * испортило бы отчёт по выручке.
+ */
+const PURCHASE_PROPERTIES = {
+  Price: 'number',
+  Currency: 'string',
+  Subscription_type: 'string',
+  Trial: 'boolean',
+  Sandbox: 'boolean',
+  Payment_count: 'number'
+} as const
+
+function pickPurchaseProperties(raw: unknown) {
+  const source = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {}
+  const picked: Record<string, string | number | boolean> = {}
+
+  for (const [key, expected] of Object.entries(PURCHASE_PROPERTIES)) {
+    const value = source[key]
+
+    if (typeof value !== expected) continue
+    if (typeof value === 'number' && !Number.isFinite(value)) continue
+    if (typeof value === 'string' && (!value || value.length > PROPERTY_MAX_LENGTH)) continue
+
+    picked[key] = value as string | number | boolean
+  }
+
+  return picked
+}
 
 interface TrackBody {
   event?: unknown
@@ -126,7 +164,10 @@ export default defineEventHandler(async (event) => {
         // `$identify` — служебное событие склейки личностей, метки в нём
         // ничего не дают, поэтому туда они не идут.
         ? { $identified_id: distinctId, $anon_id: anonId }
-        : pickAllowedProperties(body?.properties))
+        : {
+            ...pickAllowedProperties(body?.properties),
+            ...(name === 'landing_billing_purchase' ? pickPurchaseProperties(body?.properties) : {})
+          })
     }
   }]
 

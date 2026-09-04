@@ -3,23 +3,85 @@ import '~/assets/css/fonts/nunito.css'
 import '~/assets/css/fonts/open-sans.css'
 
 import logoSvg from '~/assets/images/l1/svg/logo.svg'
-import bgBlueRoundSvg from '~/assets/images/l1/svg/bg-blue-round.svg'
+import timerClockSvg from '~/assets/images/l1/svg/timer-clock.svg'
+import offerCardSvg from '~/assets/images/l1/svg/offer-card.svg'
+import offerCardDesktopSvg from '~/assets/images/l1/svg/offer-card-desktop.svg'
+import offerBadgeSvg from '~/assets/images/l1/svg/offer-badge.svg'
 import utpAgeSvg from '~/assets/images/l1/svg/utp-age.svg'
 import utpCarsSvg from '~/assets/images/l1/svg/utp-cars.svg'
 import utpMadeForKidsSvg from '~/assets/images/l1/svg/utp-made-for-kids.svg'
 import utpOfflineSvg from '~/assets/images/l1/svg/utp-offline.svg'
 
-import headPicPng from '~/assets/images/l1/png/head-pic.png'
-import carPng from '~/assets/images/l1/png/car.png'
-import robotPng from '~/assets/images/l1/png/robot.png'
+import offerCityPng from '~/assets/images/l1/png/offer-city.png'
+import offerPlanePng from '~/assets/images/l1/png/offer-plane.png'
+import offerCarPng from '~/assets/images/l1/png/offer-car.png'
+import checkSvg from '~/assets/images/l1/svg/check.svg'
+import starPng from '~/assets/images/l1/png/star.png'
 import videoPreviewPng from '~/assets/images/l1/png/video-preview.png'
 import cars2Video from '~/assets/videos/Cars2_1280x720.mp4'
-import commasPng from '~/assets/images/l1/png/commas.png'
-import starPng from '~/assets/images/l1/png/star.png'
 
 useSeoMeta({
   title: 'Mashinalar — Amaya Kids'
 })
+
+// `landing_opened` (Mixpanel) + `LandingOpened` (Meta, свой ивент рядом со
+// стандартным `PageView`) — человек попал на лендинг. Только на клиенте: на
+// SSR оба composable ничего не шлют, иначе событие задублировалось бы на
+// гидрации.
+const { track } = useL2Mixpanel()
+const { trackCustom, trackPageView } = useMetaPixel()
+
+onMounted(() => {
+  track('landing_opened')
+  trackPageView()
+  trackCustom('LandingOpened')
+})
+
+/* ------------------------- плашка со временем ------------------------- */
+
+/**
+ * Обратный отсчёт от 10:00. Дошёл до нуля — так и стоит на 00:00; ничего
+ * при этом не происходит, цена не меняется. Состояние намеренно не
+ * сохраняется: по договорённости перезагрузка страницы начинает отсчёт
+ * заново — плашка нужна, чтобы поторопить, а не чтобы что-то закрыть.
+ */
+const OFFER_SECONDS = 10 * 60
+
+const secondsLeft = ref(OFFER_SECONDS)
+
+const timeLeft = computed(() => {
+  const minutes = Math.floor(secondsLeft.value / 60)
+  const seconds = secondsLeft.value % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+})
+
+let ticker: ReturnType<typeof setInterval> | undefined
+
+onMounted(() => {
+  ticker = setInterval(() => {
+    if (secondsLeft.value > 0) secondsLeft.value -= 1
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  if (ticker) clearInterval(ticker)
+})
+
+const offerEl = ref<HTMLElement | null>(null)
+
+/** «Batafsil» — единственное действие плашки: подводит к самому предложению. */
+function scrollToOffer() {
+  offerEl.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+/* ------------------------------ контент ------------------------------ */
+
+const benefits = [
+  'Kichkina poygachilar uchun 75+ mashina',
+  'Mashinangizni tanlang, ranglar va g‘ildiraklarni o‘zgartiring, stikerlar bilan bezating va yo‘lga chiqing!',
+  '6 ta yorqin poyga trassasi',
+  'Ilovaga kirish imkoniyatini o‘z qurilmangizdan sotib oling — ilovani bolangizning iPhone yoki iPad‘iga qurilmasiga o‘rnating'
+]
 
 const utpItems = [
   {
@@ -40,7 +102,7 @@ const utpItems = [
   {
     icon: utpOfflineSvg,
     title: 'Oflayn o‘ynang',
-    text: 'Internet yo‘qmi? Hechqisi yo‘q!<br/>Oflayn o‘ynashingiz mumkin.'
+    text: 'Internet yo‘qmi? Hechqisi yo‘q! Oflayn o‘ynashingiz mumkin.'
   }
 ]
 
@@ -63,20 +125,39 @@ const reviews = [
   }
 ]
 
-const { isPending: isPaymentPending, error: paymentError, start: startPayment } = useMulticardCheckout()
+/* --------------------------- лента отзывов --------------------------- */
 
-// The same "Купить" CTA is repeated in three sections; `activeCta` keeps the
-// pending label and the error message on the button the user actually clicked.
-const activeCta = ref<string | null>(null)
+/**
+ * Отзывы листаются горизонтально, а под ними — индикатор прокрутки из
+ * макета. Нативный скроллбар для этого не годится: его вид не задать
+ * одинаково в Safari и Chrome, поэтому он спрятан, а полоска считается по
+ * позиции прокрутки.
+ */
+const reviewsEl = ref<HTMLElement | null>(null)
+const scrollThumb = reactive({ width: 100, offset: 0 })
 
-async function buy(cta: string) {
-  activeCta.value = cta
-  await startPayment()
+function updateScrollThumb() {
+  const el = reviewsEl.value
+  if (!el) return
+
+  const scrollable = el.scrollWidth - el.clientWidth
+
+  scrollThumb.width = Math.min(100, (el.clientWidth / el.scrollWidth) * 100)
+  // Ползунок ходит по остатку дорожки, поэтому смещение считается от того,
+  // сколько её остаётся свободной, а не от полной ширины.
+  scrollThumb.offset = scrollable > 0
+    ? (el.scrollLeft / scrollable) * (100 - scrollThumb.width)
+    : 0
 }
 
-function ctaLabel(cta: string) {
-  return isPaymentPending.value && activeCta.value === cta ? 'Yuklanmoqda…' : 'Ochish'
-}
+onMounted(() => {
+  updateScrollThumb()
+  window.addEventListener('resize', updateScrollThumb)
+})
+
+onBeforeUnmount(() => window.removeEventListener('resize', updateScrollThumb))
+
+/* ------------------------------- видео ------------------------------- */
 
 const gameplayVideo = ref<HTMLVideoElement | null>(null)
 
@@ -91,83 +172,7 @@ onMounted(() => {
 
 <template>
   <div class="l1">
-    <!--
-      Comic-style text outline, done as an SVG filter instead of
-      `-webkit-text-stroke`: dilating the alpha channel (feMorphology) and
-      flooding it white gives a clean, evenly-rounded ring. `-webkit-text-stroke`
-      draws a naive per-glyph outline that self-intersects and looks blobby at
-      sharp corners on bold display type — fine in Figma's renderer, ugly in
-      real browsers. Two radii (mobile/tablet+) so the ring keeps a sensible
-      weight as the type scales up; reused by both hero__title and
-      hero__subtitle for visual consistency.
-    -->
-    <svg
-      class="stroke-defs"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <filter
-          id="l1-text-stroke-sm"
-          x="-50%"
-          y="-50%"
-          width="200%"
-          height="200%"
-          primitiveUnits="userSpaceOnUse"
-        >
-          <feMorphology
-            in="SourceAlpha"
-            operator="dilate"
-            radius="2"
-            result="dilated"
-          />
-          <feFlood
-            flood-color="#ffffff"
-            result="white"
-          />
-          <feComposite
-            in="white"
-            in2="dilated"
-            operator="in"
-            result="outline"
-          />
-          <feMerge>
-            <feMergeNode in="outline" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-
-        <filter
-          id="l1-text-stroke-lg"
-          x="-50%"
-          y="-50%"
-          width="200%"
-          height="200%"
-          primitiveUnits="userSpaceOnUse"
-        >
-          <feMorphology
-            in="SourceAlpha"
-            operator="dilate"
-            radius="3"
-            result="dilated"
-          />
-          <feFlood
-            flood-color="#ffffff"
-            result="white"
-          />
-          <feComposite
-            in="white"
-            in2="dilated"
-            operator="in"
-            result="outline"
-          />
-          <feMerge>
-            <feMergeNode in="outline" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-    </svg>
+    <L2TesterBanner />
 
     <div class="page">
       <!-- Header -->
@@ -185,119 +190,9 @@ onMounted(() => {
         </NuxtLink>
       </header>
 
-      <!-- Hero -->
-      <section class="hero">
-        <div class="hero__pic">
-          <img
-            class="hero__pic-bg"
-            :src="headPicPng"
-            alt=""
-          >
-          <div class="hero__pic-text">
-            <div class="hero__title">
-              Mashinalar
-            </div>
-            <div class="hero__subtitle">
-              Noyob mashinalar yarating va sarguzashtlar sari yo‘l oling!
-            </div>
-          </div>
-        </div>
-
-        <div class="offer">
-          <img
-            class="offer__bg"
-            :src="bgBlueRoundSvg"
-            width="440"
-            height="324"
-            alt=""
-          >
-          <img
-            class="offer__car"
-            :src="carPng"
-            width="152"
-            height="123"
-            alt="Игрушечная машинка"
-          >
-          <img
-            class="offer__robot"
-            :src="robotPng"
-            width="144"
-            height="85"
-            alt="Робот-персонаж"
-          >
-
-          <div class="offer__content">
-            <div class="badge">
-              Eng yaxshi taklif
-            </div>
-            <div class="offer__price">
-              <p class="offer__price-title">
-                Umrbod
-              </p>
-              <p class="offer__price-now">
-                <span>Atigi </span><b>50 000 so‘m</b>
-              </p>
-            </div>
-            <button
-              class="btn"
-              type="button"
-              :disabled="isPaymentPending"
-              @click="buy('offer')"
-            >
-              {{ ctaLabel('offer') }}
-            </button>
-          </div>
-        </div>
-
-        <p
-          v-if="paymentError && activeCta === 'offer'"
-          class="pay-error"
-        >
-          {{ paymentError }}
-        </p>
-      </section>
-
-      <!-- UTP -->
-      <section class="utp">
-        <div class="utp__grid">
-          <div
-            v-for="item in utpItems"
-            :key="item.title"
-            class="utp__item"
-          >
-            <img
-              :src="item.icon"
-              width="200"
-              height="164"
-              alt=""
-            >
-            <div class="utp__text">
-              <h3>{{ item.title }}</h3>
-              <p v-html="item.text" />
-            </div>
-          </div>
-        </div>
-
-        <button
-          class="btn utp__btn"
-          type="button"
-          :disabled="isPaymentPending"
-          @click="buy('utp')"
-        >
-          {{ ctaLabel('utp') }}
-        </button>
-
-        <p
-          v-if="paymentError && activeCta === 'utp'"
-          class="pay-error"
-        >
-          {{ paymentError }}
-        </p>
-      </section>
-
-      <!-- Video -->
-      <section class="video">
-        <div class="video__frame">
+      <!-- Главный блок: геймплей, оффер и список того, что входит -->
+      <section class="main">
+        <div class="main__video">
           <video
             ref="gameplayVideo"
             :src="cars2Video"
@@ -312,1130 +207,793 @@ onMounted(() => {
             disablepictureinpicture
             controlslist="nodownload nofullscreen noremoteplayback"
             preload="auto"
-            aria-label="Видео игры Kids Cars 2"
+            aria-label="Kids Cars 2 o‘yini videosi"
           />
         </div>
+
+        <div class="sticky">
+          <div class="timer">
+            <span class="timer__label">Cheklangan taklif:</span>
+            <img
+              class="timer__clock"
+              :src="timerClockSvg"
+              alt=""
+            >
+            <span class="timer__value">{{ timeLeft }}</span>
+            <button
+              class="timer__cta"
+              type="button"
+              @click="scrollToOffer"
+            >
+              Batafsil
+            </button>
+          </div>
+        </div>
+
+        <h1 class="main__title">
+          Mashinalar va sarguzashtlar olamiga xush kelibsiz!
+        </h1>
+
+        <div
+          ref="offerEl"
+          class="offer"
+        >
+          <img
+            class="offer__city"
+            :src="offerCityPng"
+            alt=""
+          >
+          <img
+            class="offer__shape offer__shape--mobile"
+            :src="offerCardSvg"
+            alt=""
+          >
+          <img
+            class="offer__shape offer__shape--tablet"
+            :src="offerCardDesktopSvg"
+            alt=""
+          >
+          <img
+            class="offer__plane"
+            :src="offerPlanePng"
+            alt=""
+          >
+          <img
+            class="offer__car"
+            :src="offerCarPng"
+            alt=""
+          >
+
+          <div class="offer__badge">
+            <img
+              :src="offerBadgeSvg"
+              alt=""
+            >
+            <span>Eng yaxshi taklif</span>
+          </div>
+
+          <div class="offer__price">
+            <p class="offer__period">
+              Umrbod
+            </p>
+            <p class="offer__only">
+              Atigi
+            </p>
+            <p class="offer__amount">
+              50 000 so‘m
+            </p>
+            <p class="offer__old">
+              100 000 so‘m
+            </p>
+          </div>
+
+          <NuxtLink
+            class="btn offer__btn"
+            to="/auth"
+          >
+            Davom etish
+          </NuxtLink>
+        </div>
+
+        <ul class="benefits">
+          <li
+            v-for="benefit in benefits"
+            :key="benefit"
+            class="benefits__item"
+          >
+            <img
+              class="benefits__check"
+              :src="checkSvg"
+              alt=""
+            >
+            <span>{{ benefit }}</span>
+          </li>
+        </ul>
       </section>
 
-      <!-- Reviews -->
+      <!-- УТП -->
+      <section class="utp">
+        <h2 class="utp__title">
+          Kichkintoylar uchun qiziqarli va foydali o‘yin
+        </h2>
+
+        <div class="utp__grid">
+          <div
+            v-for="item in utpItems"
+            :key="item.title"
+            class="utp__item"
+          >
+            <img
+              :src="item.icon"
+              width="160"
+              height="131"
+              alt=""
+            >
+            <div class="utp__text">
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.text }}</p>
+            </div>
+          </div>
+        </div>
+
+        <NuxtLink
+          class="btn"
+          to="/auth"
+        >
+          Davom etish
+        </NuxtLink>
+      </section>
+
+      <!-- Отзывы -->
       <section class="reviews">
-        <div class="reviews__list">
+        <div
+          ref="reviewsEl"
+          class="reviews__track"
+          @scroll.passive="updateScrollThumb"
+        >
           <article
             v-for="review in reviews"
             :key="review.author"
             class="review"
           >
-            <div class="review__head">
-              <img
-                class="review__commas"
-                :src="commasPng"
-                width="38"
-                height="33"
-                alt=""
-              >
-              <div class="review__stars">
-                <img
-                  v-for="n in 5"
-                  :key="n"
-                  :src="starPng"
-                  width="23"
-                  height="22"
-                  alt=""
-                >
-              </div>
-            </div>
             <p class="review__text">
               {{ review.text }}
             </p>
+            <div class="review__stars">
+              <img
+                v-for="n in 5"
+                :key="n"
+                :src="starPng"
+                width="15"
+                height="14"
+                alt=""
+              >
+            </div>
             <p class="review__author">
               {{ review.author }}
             </p>
           </article>
         </div>
 
-        <button
+        <div
+          class="reviews__scrollbar"
+          aria-hidden="true"
+        >
+          <span
+            class="reviews__thumb"
+            :style="{ width: `${scrollThumb.width}%`, left: `${scrollThumb.offset}%` }"
+          />
+        </div>
+
+        <NuxtLink
           class="btn reviews__btn"
-          type="button"
-          :disabled="isPaymentPending"
-          @click="buy('reviews')"
+          to="/auth"
         >
-          {{ ctaLabel('reviews') }}
-        </button>
-
-        <p
-          v-if="paymentError && activeCta === 'reviews'"
-          class="pay-error"
-        >
-          {{ paymentError }}
-        </p>
-
-        <!-- Footer -->
-        <footer class="footer">
-          <div class="footer__company">
-            <p>«AMAYA SOFT», MChJ</p>
-            <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76 honadon</p>
-            <p>STIR 305210613</p>
-            <p>2026, Amaya Kids</p>
-            <p>Barcha huquqlar himoyalangan</p>
-          </div>
-
-          <nav class="footer__links">
-            <NuxtLink to="/legal/public-offer">
-              Ommaviy oferta
-            </NuxtLink>
-            <NuxtLink to="/legal/privacy-policy">
-              Maxfiylik siyosati
-            </NuxtLink>
-            <!-- <NuxtLink to="/legal/refund-policy">
-              To‘lovni qaytarish siyosati
-            </NuxtLink> -->
-          </nav>
-        </footer>
+          Davom etish
+        </NuxtLink>
       </section>
+
+      <L1Footer solid />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 /* =========================================================
-   Machinki — landing page
-   Mobile-first. Breakpoints: md-tablet (>=768px), md-desktop (>=1024px)
-   — see app/assets/css/breakpoints.scss for the mixins.
-   All sizes are in pixels. Vendor prefixes are kept for
-   older iOS Safari / Android WebKit browsers.
+   Лендинг l1 по макету Figma «Cars 1 / PW_locals_Cars1_UZ-3»,
+   фреймы Main Mobile (375) и Main Desktop (внутренняя страница 768).
+   Mobile-first; `md-tablet` (>=768px) соответствует десктопному фрейму.
    ========================================================= */
 
 .l1 {
   font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
-  background: #ebfaff;
-  color: #3c4267;
+  background: #e4f8ff;
+  color: #342673;
   -webkit-font-smoothing: antialiased;
   padding: 0;
 
   @include md-tablet {
-    padding: 24px;
+    padding: 0 24px;
   }
 
   @include md-desktop {
-    padding: 44px;
+    padding: 0 44px;
   }
 
+  /* Сброса `h1, h2, h3, p { font-weight: 400 }` здесь намеренно нет: в
+     scoped-стилях он превращается в `.l1 h1[data-v-…]`, что по
+     специфичности сильнее одноклассового `.main__title[data-v-…]`, и все
+     начертания молча съезжали на 400. Толщина задаётся каждому элементу
+     явно. По той же причине убраны общий сброс размеров у `img` и
+     `a { color: inherit }` — они точно так же перебивали цвет надписи на
+     кнопке. Размеры и цвета проставлены поэлементно. */
   img {
     display: block;
-    max-width: 100%;
-    height: auto;
     border: 0;
-  }
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  h1, h2, h3, p {
-    font-weight: 400;
   }
 }
 
 .page {
+  /* Городская панорама под оффером шире вьюпорта — обрезаем её здесь,
+     чтобы не появлялся горизонтальный скролл.
+     `clip` вместо `hidden` принципиально: `hidden` делает блок контейнером
+     прокрутки, и тогда плашка с таймером внутри перестаёт быть `sticky`
+     (ей не за что цепляться — этот контейнер сам не прокручивается).
+     `hidden` оставлен первой строкой как фолбэк для браузеров без `clip`:
+     там плашка просто не залипает, вёрстка при этом не ломается. */
   overflow: hidden;
+  overflow: clip;
   background: #ffffff;
-  border-radius: 0;
   margin: 0 auto;
+  box-shadow: 0 0 50px rgba(0, 57, 77, 0.2);
 
+  /* Ширина страницы в макете — 768 (фрейм Main Desktop), поэтому ограничение
+     стоит уже с планшетного брейкпойнта: иначе на 892 карточка растянулась бы
+     до 844 и все внутренние размеры разъехались бы с макетом. */
   @include md-tablet {
-    border-radius: 40px;
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.15);
-  }
-
-  @include md-desktop {
     max-width: 768px;
-    box-shadow: 0 40px 140px rgba(0, 0, 0, 0.18);
   }
 }
 
-/* ---------- eyebrow pill (section lead-in label) ---------- */
-
-.eyebrow {
-  display: inline-flex;
-  padding: 6px 16px;
-  border-radius: 99px;
-  background: #ff8800;
-  font-family: "Nunito", Arial, sans-serif;
-  font-weight: 900;
-  font-size: 13px;
-  line-height: 18px;
-  color: #ffffff;
-  text-align: center;
-
-  @include md-tablet {
-    padding: 8px 20px;
-    font-size: 16px;
-    line-height: 22px;
-  }
-}
-
-/* ---------- shared button ---------- */
+/* ---------- общая кнопка ----------
+   Figma: `button` 186×44, радиус 157, нижняя кромка 4px, надпись Nunito
+   Black 18/18 в верхнем регистре, сплошная белая (на экранах воронки она,
+   в отличие от этой, залита градиентом). */
 
 .btn {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
   align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
   justify-content: center;
-  height: 48px;
+  height: 44px;
   padding: 0 28px;
-  -webkit-appearance: none;
   appearance: none;
   border: 0;
-  border-bottom: 6px solid #017c2e;
-  border-radius: 120px;
-  -webkit-border-radius: 120px;
-  background-color: #079d27;
-  background-image: -webkit-linear-gradient(bottom, #079d27 0%, #00a846 12%, #14ef6f 100%);
+  border-bottom: 4px solid #017c2e;
+  border-radius: 157px;
   background-image: linear-gradient(to top, #079d27 0%, #00a846 12%, #14ef6f 100%);
-  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.4), 0 19px 14px -5px rgba(0, 0, 0, 0.25), 0 34px 25px -11px rgba(0, 0, 0, 0.25), 0 44px 50px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.4), 0 19px 14px -5px rgba(0, 0, 0, 0.25), 0 34px 25px -11px rgba(0, 0, 0, 0.25), 0 44px 50px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-
-  span,
-  & {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 900;
-    font-size: 18px;
-    line-height: 24px;
-    text-align: center;
-    color: #ffffff;
-    text-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: default;
-  }
-}
-
-/* Payment error notice under a "Купить" button. Sits on both the white hero
-   and the blue reviews background, hence the solid red pill. */
-.pay-error {
-  margin-top: 12px;
-  max-width: 280px;
-  padding: 8px 16px;
-  border-radius: 99px;
-  -webkit-border-radius: 99px;
-  background: #e5133a;
-  font-family: "Nunito", Arial, sans-serif;
-  font-weight: 800;
-  font-size: 13px;
+  box-shadow:
+    0 2px 1px 0 rgba(0, 0, 0, 0.4),
+    0 14px 14px -5px rgba(0, 0, 0, 0.25),
+    0 25px 25px -11px rgba(0, 0, 0, 0.25),
+    0 29px 50px 0 rgba(0, 0, 0, 0.2);
+  font-weight: 900;
+  font-size: 18px;
   line-height: 18px;
   text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: #ffffff;
-
-  @include md-tablet {
-    max-width: 360px;
-    font-size: 15px;
-    line-height: 20px;
-  }
+  text-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
-/* ---------- header ---------- */
+/* ---------- шапка ---------- */
 
 .header {
-  background: #05b8f6;
   display: flex;
-  padding: 16px 0;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
-  align-self: stretch;
+  justify-content: center;
+  padding: 8px 24px;
+  background: #05b8f6;
 
   @include md-tablet {
-    padding: 24px 56px;
-    align-items: flex-start;
-  }
-
-  @include md-desktop {
-    padding: 28px 64px;
+    padding: 12px 24px;
   }
 
   &__logo {
     display: block;
-    width: 120px;
-    height: 38px;
+    width: 83px;
+    height: 26px;
     line-height: 0;
     text-decoration: none;
 
     img {
-      display: block;
       width: 100%;
       height: 100%;
     }
 
     @include md-tablet {
-      width: 166px;
-      height: 52px;
+      width: 113px;
+      height: 35.5px;
     }
   }
 }
 
-/* ---------- hero ---------- */
+/* ---------- главный блок ---------- */
 
-.hero {
-  position: relative;
-  background: #ffffff;
-  display: -webkit-box;
-  display: -webkit-flex;
+.main {
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
   flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
   align-items: center;
+  padding-bottom: 56px;
+  background: #00ace8;
 
-  &__eyebrow {
-    margin-bottom: 16px;
-  }
-
-  &__pic {
-    position: relative;
+  &__video {
     width: 100%;
-    height: 0;
-    height: 256px;
-    padding-top: 44.01%; /* 338 / 768 — original Figma aspect ratio */
-    overflow: hidden;
-    background: #05b8f6;
-    margin-bottom: -60px;
+    line-height: 0;
 
-    @include md-tablet {
-      margin-bottom: -120px;
-    }
-
-    &-bg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 129.95%;
-      height: 256px;
-      max-width: none;
-      height: 100%!important;
-      object-fit: cover!important;
-    }
-
-    &-text {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding-top: 86px;
-      text-align: center;
-    }
-  }
-
-  &__title {
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 900;
-    font-size: 28px;
-    line-height: 30px;
-    color: #ff8800;
-    filter:
-      url(#l1-text-stroke-sm)
-      drop-shadow(0 6px 6px rgba(0, 0, 0, 0.45))
-      drop-shadow(0 4px 1px rgba(0, 0, 0, 0.8))
-      drop-shadow(0 3px 0 #84a5b1)
-      drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8));
-
-    @include md-tablet {
-      font-size: 44px;
-      line-height: 44px;
-      filter:
-        url(#l1-text-stroke-lg)
-        drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45))
-        drop-shadow(0 7px 2px rgba(0, 0, 0, 0.8))
-        drop-shadow(0 5px 0 #84a5b1)
-        drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
-    }
-
-    @include md-desktop {
-      font-size: 48px;
-      line-height: 48px;
-    }
-  }
-
-  &__subtitle {
-    margin-top: 6px;
-    width: 220px;
-    font-family: "Nunito", Arial, sans-serif;
-    font-weight: 900;
-    font-size: 13px;
-    line-height: 16px;
-    color: #ff8800;
-    filter:
-      url(#l1-text-stroke-sm)
-      drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45))
-      drop-shadow(0 3px 1px rgba(0, 0, 0, 0.8))
-      drop-shadow(0 2px 0 #84a5b1)
-      drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8));
-
-    @include md-tablet {
-      margin-top: 8px;
-      width: 311px;
-      font-size: 20px;
-      line-height: 24px;
-      filter:
-        url(#l1-text-stroke-lg)
-        drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45))
-        drop-shadow(0 5px 2px rgba(0, 0, 0, 0.8))
-        drop-shadow(0 3px 0 #84a5b1)
-        drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
-    }
-
-    @include md-desktop {
-      width: 340px;
-      font-size: 22px;
-      line-height: 26px;
-    }
-  }
-}
-
-.stroke-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-/* ---------- offer bubble ---------- */
-
-.offer {
-  position: relative;
-  width: 300px;
-  height: 222px;
-  padding: 20px 30px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-
-  @include md-tablet {
-    width: 440px;
-    height: 324px;
-    padding: 48px 80px;
-  }
-
-  @include md-desktop {
-    width: 460px;
-    height: 336px;
-    padding: 50px 84px;
-  }
-
-  &__bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-  }
-
-  &__car {
-    position: absolute;
-    z-index: 1;
-    width: 104px;
-    height: 84px;
-    left: -6px;
-    top: 155px;
-
-    @include md-tablet {
-      width: 152px;
-      height: 123px;
-      left: -8px;
-      top: 230px;
-    }
-
-    @include md-desktop {
-      width: 160px;
-      height: 129px;
-      left: -8px;
-      top: 240px;
-    }
-  }
-
-  &__robot {
-    position: absolute;
-    z-index: 1;
-    width: 98px;
-    height: 58px;
-    right: 6px;
-    top: 160px;
-
-    @include md-tablet {
-      width: 144px;
-      height: 85px;
-      right: -3px;
-      top: 236px;
-    }
-
-    @include md-desktop {
-      width: 151px;
-      height: 89px;
-      right: -6px;
-      top: 246px;
-    }
-  }
-
-  &__content {
-    position: relative;
-    z-index: 2;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-
-    > * {
-      margin-top: 12px;
-
-      @include md-tablet {
-        margin-top: 20px;
-      }
-
-      &:first-child {
-        margin-top: 0;
-      }
-    }
-  }
-
-  &__price {
-    text-align: center;
-    color: #ffffff;
-
-    &-title {
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 900;
-      font-size: 19px;
-      line-height: 24px;
-
-      @include md-tablet {
-        font-size: 26px;
-        line-height: 32px;
-      }
-    }
-
-    &-now {
-      margin-top: 4px;
-      font-size: 15px;
-
-      @include md-tablet {
-        font-size: 20px;
-      }
-
-      span {
-        font-family: "Nunito", Arial, sans-serif;
-        font-weight: 600;
-      }
-
-      b {
-        font-family: "Nunito", Arial, sans-serif;
-        font-weight: 900;
-      }
-    }
-
-    &-old {
-      margin-top: 2px;
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 16px;
-      color: #ffffff;
-      text-decoration: line-through;
-
-      @include md-tablet {
-        font-size: 18px;
-        line-height: 19px;
-      }
-    }
-  }
-
-  .btn {
-    height: 44px;
-    padding: 0 24px;
-
-    span,
-    & {
-      font-size: 17px;
-    }
-
-    @include md-tablet {
-      height: 64px;
-      padding: 0 40px;
-
-      span,
-      & {
-        font-size: 24px;
-      }
-    }
-  }
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 12px;
-  background: #cc00fe;
-  border-radius: 99px;
-  -webkit-border-radius: 99px;
-  font-family: "Nunito", Arial, sans-serif;
-  font-weight: 900;
-  font-size: 13px;
-  line-height: 20px;
-  color: #ffffff;
-  white-space: nowrap;
-
-  @include md-tablet {
-    padding: 4px 16px;
-    font-size: 18px;
-    line-height: 28px;
-  }
-}
-
-/* ---------- UTP ---------- */
-
-.utp {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  padding: 32px 16px 40px;
-
-  @include md-tablet {
-    padding: 0 56px 56px;
-  }
-
-  @include md-desktop {
-    padding: 0 64px 64px;
-  }
-
-  &__badges {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-
-  &__badge {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    padding: 8px 20px;
-    margin: 4px;
-    border-radius: 99px;
-    background: #ff8800;
-    color: #ffffff;
-
-    &-title {
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 900;
-      font-size: 16px;
-      line-height: 20px;
-    }
-
-    &-text {
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 700;
-      font-size: 12px;
-      line-height: 16px;
-    }
-  }
-
-  &__grid {
-    /* always a 2-column grid, from 375px up */
-    width: 100%;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-  }
-
-  &__item {
-    width: 158px;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    margin: 24px 6px 0;
-
-    @include md-tablet {
-      width: 240px;
-      margin: 16px 28px 0;
-    }
-
-    @include md-desktop {
-      width: 250px;
-      margin-left: 32px;
-      margin-right: 32px;
-    }
-
-    &:nth-child(1),
-    &:nth-child(2) {
-      margin-top: 0;
-
-      @include md-tablet {
-        margin-top: 0;
-      }
-    }
-
-    img {
-      width: 140px;
-      height: 115px;
-
-      @include md-tablet {
-        width: 200px;
-        height: 164px;
-      }
-    }
-  }
-
-  &__text {
-    width: 100%;
-    margin-top: 12px;
-    text-align: left;
-    color: #3c4267;
-
-    h3 {
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 800;
-      font-size: 15px;
-      line-height: 19px;
-
-      @include md-tablet {
-        font-size: 20px;
-        line-height: 24px;
-      }
-    }
-
-    p {
-      margin-top: 6px;
-      font-family: "Nunito", Arial, sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 17px;
-
-      @include md-tablet {
-        font-size: 16px;
-        line-height: 22px;
-      }
-    }
-  }
-
-  &__btn {
-    margin-top: 32px;
-    height: 52px;
-    padding: 0 32px;
-
-    span,
-    & {
-      font-size: 19px;
-    }
-
-    @include md-tablet {
-      margin-top: 40px;
-      height: 64px;
-      padding: 0 40px;
-
-      span,
-      & {
-        font-size: 24px;
-      }
-    }
-  }
-}
-
-/* ---------- video ---------- */
-
-.video {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  padding: 32px 16px 40px;
-
-  @include md-tablet {
-    padding: 80px 24px;
-  }
-
-  @include md-desktop {
-    padding: 96px 24px;
-  }
-
-  &__eyebrow {
-    margin-bottom: 16px;
-  }
-
-  &__frame {
-    width: 100%;
-    max-width: 720px;
-    overflow: hidden;
-    border-bottom: 5px solid #015b7c;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.4), 0 19px 14px rgba(0, 0, 0, 0.25), 0 34px 25px rgba(0, 0, 0, 0.25), 0 44px 50px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.4), 0 19px 14px rgba(0, 0, 0, 0.25), 0 34px 25px rgba(0, 0, 0, 0.25), 0 44px 50px rgba(0, 0, 0, 0.2);
-
-    @include md-tablet {
-      border-bottom-width: 8px;
-      border-radius: 32px;
-      -webkit-border-radius: 32px;
-    }
-
-    img,
     video {
       display: block;
       width: 100%;
       height: auto;
     }
   }
-}
 
-/* ---------- reviews ---------- */
-
-.reviews {
-  background: #05b8f6;
-  padding-top: 32px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-
-  @include md-tablet {
-    padding-top: 56px;
-  }
-
-  @include md-desktop {
-    padding-top: 64px;
-  }
-
-  &__list {
-    width: 100%;
-    padding: 0 20px;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    // align-items: flex-start;
+  &__title {
+    /* Между плашкой и заголовком — 20 (gap блока `left`), под заголовком —
+       16 собственного отступа плюс те же 20 до карточки. */
+    margin-bottom: 36px;
+    padding: 0;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 24px;
+    text-align: center;
+    color: #ffffff;
 
     @include md-tablet {
-      max-width: 768px;
-      -webkit-box-orient: horizontal;
-      -webkit-flex-direction: row;
-      flex-direction: row;
-      -webkit-flex-wrap: wrap;
-      flex-wrap: wrap;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      align-items: flex-start;
+      margin-bottom: 44px;
+      padding: 0 56px;
+      font-size: 32px;
+      line-height: 32px;
+    }
+  }
+}
+
+/* Плашка ограниченного предложения. `sticky` — как в макете: пока виден
+   главный блок, она держится у верхней кромки, дальше уезжает вместе с ним.
+   Своя подложка нужна именно для этого — под ней проезжает контент. */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+  margin-top: 24px;
+  margin-bottom: 20px;
+  background: #00ace8;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 28px);
+  padding: 2px 2px 2px 20px;
+  border-radius: 99px;
+  background: rgba(204, 0, 254, 0.16);
+
+  @include md-tablet {
+    padding: 6px 6px 6px 20px;
+  }
+
+  &__label {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 16px;
+    color: #ffffff;
+    white-space: nowrap;
+
+    @include md-tablet {
+      font-size: 14px;
+      line-height: 14px;
+    }
+  }
+
+  &__clock {
+    flex-shrink: 0;
+    width: 24px;
+    height: 22px;
+  }
+
+  &__value {
+    /* Моноширинные цифры: без них строка дёргается на каждой смене секунды. */
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 16px;
+    color: #ffffff;
+  }
+
+  &__cta {
+    flex-shrink: 0;
+    padding: 8px 15px;
+    appearance: none;
+    border: 0;
+    border-radius: 99px;
+    background: #cc00fe;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 12px;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+
+    @include md-tablet {
+      padding: 12px 20px;
+    }
+  }
+}
+
+/* ---------- оффер ----------
+   Карточка — фиксированный кадр из макета: панорама города, самолёт и
+   машинка расставлены относительно её краёв, поэтому размеры заданы в
+   пикселях. На планшете растёт только сама карточка (245×213 → 303×237),
+   украшения сохраняют размер и привязку к кромкам.
+ */
+
+.offer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 245px;
+  height: 213px;
+
+  @include md-tablet {
+    width: 303px;
+    height: 237px;
+  }
+
+  &__city {
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 1px);
+    z-index: 0;
+    width: 649.589px;
+    height: 210.274px;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+  }
+
+  &__shape {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+
+    &--mobile {
+      @include md-tablet {
+        display: none;
+      }
     }
 
-    @include md-desktop {
-      max-width: 900px;
+    /* Отдельный контур: у планшетной карточки другие пропорции, и растянутый
+       мобильный контур исказил бы скругления. */
+    &--tablet {
+      display: none;
+
+      @include md-tablet {
+        display: block;
+      }
     }
+  }
+
+  &__plane {
+    position: absolute;
+    left: -61.9px;
+    top: 18.4px;
+    z-index: 2;
+    width: 106.597px;
+    height: 75.101px;
+    max-width: none;
+  }
+
+  &__car {
+    position: absolute;
+    right: -98.5px;
+    bottom: -16.55px;
+    z-index: 2;
+    width: 140.287px;
+    height: 99.097px;
+    max-width: none;
+  }
+
+  &__badge {
+    position: absolute;
+    left: 50%;
+    top: -10.9px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 151.76px;
+    height: 36.13px;
+    transform: translateX(-50%);
+
+    img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    span {
+      position: relative;
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 16px;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+  }
+
+  &__price {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  &__period {
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 28px;
+    text-transform: uppercase;
+    color: #342673;
+  }
+
+  &__only,
+  &__amount {
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 20px;
+    color: #cc00ff;
+  }
+
+  &__old {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 18px;
+    color: #8b81b9;
+    text-decoration: line-through;
   }
 
   &__btn {
-    margin-top: 32px;
-    height: 52px;
-    padding: 0 32px;
-
-    span,
-    & {
-      font-size: 19px;
-    }
-
-    @include md-tablet {
-      margin-top: 40px;
-      height: 64px;
-      padding: 0 40px;
-
-      span,
-      & {
-        font-size: 24px;
-      }
-    }
+    position: absolute;
+    left: 50%;
+    bottom: -11px;
+    z-index: 3;
+    transform: translateX(-50%);
   }
 }
 
-.review {
-  width: 100%;
-  max-width: 327px;
-  margin-top: 16px;
-  padding: 20px;
-  background-color: #ffffff;
-  background-image: -webkit-linear-gradient(top, #ffffff 0%, #d2f8ff 100%);
-  background-image: linear-gradient(to bottom, #ffffff 0%, #d2f8ff 100%);
-  border-bottom: 5px solid #00819a;
-  border-radius: 24px;
-  -webkit-border-radius: 24px;
-  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.33), 0 10px 14px -5px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.33), 0 10px 14px -5px rgba(0, 0, 0, 0.1);
+/* ---------- что входит ---------- */
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 251px;
+  margin-top: 56px;
+  list-style: none;
 
   @include md-tablet {
-    width: 286px;
-    max-width: none;
-    margin-top: 16px;
-    margin-left: 8px;
-    margin-right: 8px;
-    padding: 24px 13px;
+    gap: 12px;
+    width: 374px;
+    margin-top: 72px;
   }
 
-  @include md-desktop {
-    width: 300px;
-    margin-left: 12px;
-    margin-right: 12px;
-  }
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &__head {
-    display: -webkit-box;
-    display: -webkit-flex;
+  &__item {
     display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    color: #ffffff;
   }
 
-  &__commas {
-    width: 30px;
-    height: 26px;
+  /* Иконка 16×16 с белой обводкой 2px, которая в макете выходит за её
+     границы, — отсюда 18px картинка с компенсирующим отрицательным полем:
+     занимаемое место остаётся 16. */
+  &__check {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: -1px -1px -1px -1px;
+  }
+}
+
+/* ---------- УТП ---------- */
+
+.utp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 24px 8px 44px;
+  background: #ffffff;
+
+  &__title {
+    max-width: 247px;
+    font-weight: 900;
+    font-size: 32px;
+    line-height: 32px;
+    text-align: center;
+    color: #342673;
 
     @include md-tablet {
-      width: 38px;
-      height: 33px;
+      max-width: 640px;
     }
   }
 
-  &__stars {
-    display: -webkit-box;
-    display: -webkit-flex;
+  &__grid {
     display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px 24px;
+    width: 100%;
+
+    @include md-tablet {
+      /* Сетка 2×2 и на планшете: в макете третья колонка не появляется,
+         поэтому ширина ограничена двумя колонками, а не отдана флексу. */
+      gap: 12px 56px;
+      max-width: 496px;
+      margin: 0 auto;
+    }
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 24px;
+    width: 160px;
+    text-align: center;
+    color: #342673;
+
+    @include md-tablet {
+      width: 220px;
+    }
 
     img {
-      width: 18px;
-      height: 17px;
-      margin-left: 3px;
-
-      @include md-tablet {
-        width: 23px;
-        height: 22px;
-        margin-left: 3px;
-      }
-
-      &:first-child {
-        margin-left: 0;
-      }
+      width: 160px;
+      height: 130.91px;
     }
   }
 
   &__text {
-    margin-top: 12px;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 19px;
-    color: #3c4267;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
 
-    @include md-tablet {
-      font-size: 16px;
+    h3 {
+      font-weight: 800;
+      font-size: 20px;
       line-height: 22px;
     }
-  }
 
-  &__author {
-    margin-top: 12px;
-    text-align: right;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 22px;
-    color: #3c4267;
-
-    @include md-tablet {
-      font-size: 20px;
-      line-height: 28px;
+    p {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
     }
   }
 }
 
-/* ---------- footer ---------- */
+/* ---------- отзывы ---------- */
 
-.footer {
-  width: 100%;
-  margin-top: 32px;
-  background: #33cbff;
-  padding: 28px 20px;
-  display: -webkit-box;
-  display: -webkit-flex;
+.reviews {
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
   flex-direction: column;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-  align-items: flex-start;
-  gap: 20px;
+  align-items: center;
+  padding: 0 0 32px;
+  background: #9fe6ff;
 
-  @include md-tablet {
-    margin-top: 56px;
-    -webkit-box-orient: horizontal;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-box-pack: justify;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    padding: 32px 44px;
-  }
-
-  &__company,
-  &__links {
-    display: -webkit-box;
-    display: -webkit-flex;
+  &__track {
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
+    /* Карточки разной высоты, выровненные по центру, — ровно та «лесенка»,
+       что нарисована в макете. */
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
-  &__company p,
-  &__links a {
-    font-family: "Open Sans", Arial, sans-serif;
+  &__scrollbar {
+    position: relative;
+    width: 300px;
+    max-width: calc(100% - 48px);
+    height: 16px;
+    padding: 4px;
+    border-radius: 24px;
+    background: #e5f8ff;
+    box-sizing: border-box;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 4px;
+    height: 8px;
+    min-width: 24px;
+    border-radius: 24px;
+    background: #00aeea;
+    transition: left 0.1s linear;
+  }
+
+  &__btn {
+    margin-top: 32px;
+  }
+}
+
+.review {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 248px;
+  padding: 20px;
+  border-radius: 24px;
+  background: #e5f8ff;
+  scroll-snap-align: center;
+
+  &__text {
     font-weight: 600;
     font-size: 14px;
-    line-height: 20px;
-    color: #ffffff;
+    line-height: 16px;
+    color: #342673;
+  }
 
-    @include md-tablet {
-      font-size: 18px;
-      line-height: 26px;
+  &__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    img {
+      width: 15px;
+      height: 14px;
     }
   }
 
-  &__company p + p {
-    margin-top: 8px;
-
-    @include md-tablet {
-      margin-top: 10px;
-    }
-  }
-
-  &__links a {
-    text-decoration: underline;
-  }
-
-  &__links a + a {
-    margin-top: 12px;
-
-    @include md-tablet {
-      margin-top: 14px;
-    }
+  &__author {
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 28px;
+    color: #342673;
   }
 }
 </style>

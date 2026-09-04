@@ -1,5 +1,9 @@
 /**
- * Отправка событий лендинга l2 в Mixpanel.
+ * Отправка событий лендингов в Mixpanel.
+ *
+ * Изначально писался под l2, отсюда имя; l1 (l1.amayasoft.uz) шлёт события
+ * тем же путём — набор свойств и склейка личностей у них общие, а домены
+ * разные, поэтому и localStorage у каждого свой.
  *
  * Токен проекта в браузер не отдаётся, поэтому composable ничего не знает про
  * Mixpanel напрямую — он только шлёт имя события на свой серверный роут
@@ -13,8 +17,26 @@ export type L2MixpanelEvent
   = | 'landing_opened'
     | 'landing_email_screen'
     | 'landing_password_screen'
+    // Только l1: экран, с которого человек уходит на платёжный шлюз, и сама
+    // подтверждённая покупка. У l2 доступ бесплатный, платежей нет.
+    | 'landing_payment_screen'
+    | 'landing_billing_purchase'
     | 'landing_congratulation_screen'
     | 'landing_appstore_button_tap'
+
+/**
+ * Свойства покупки для `landing_billing_purchase`. Имена — ровно как в
+ * требованиях аналитики (с заглавной буквы), Mixpanel различает регистр.
+ * Белый список на сервере повторяет этот же набор.
+ */
+export interface L1PurchaseProps {
+  Price: number
+  Currency: string
+  Subscription_type: string
+  Trial: boolean
+  Sandbox: boolean
+  Payment_count: number
+}
 
 const ENDPOINT = '/api/l2/mixpanel/track'
 const STORAGE_KEY = 'amaya_l2_distinct_id'
@@ -76,6 +98,24 @@ function getAnonId() {
  * на отдельных плейсментах — он приходит буквально, и такое значение только
  * мусорит отчёт, поэтому отбрасывается.
  */
+/** Некоторые клики доходят до лендинга через промежуточный редирект,
+ *  который сам ещё раз URL-кодирует уже закодированную строку — тогда
+ *  после штатного декодирования `URLSearchParams` в значении остаётся один
+ *  нераскрытый слой (`Cars2+%7C+Web...` вместо `Cars2 | Web...`). Из-за
+ *  этого в Mixpanel одна и та же кампания превращалась в два разных
+ *  значения свойства. Довскрываем вручную, если похоже, что слой кодировки
+ *  ещё остался. */
+function decodeExtraLayer(value: string): string {
+  if (!/%[0-9A-Fa-f]{2}/.test(value)) return value
+
+  try {
+    return decodeURIComponent(value.replace(/\+/g, ' '))
+  } catch {
+    // Битая последовательность — оставляем как есть, лучше так, чем упасть.
+    return value
+  }
+}
+
 function readUtmFromUrl(): Record<string, string> | null {
   const params = new URLSearchParams(window.location.search)
   const found: Record<string, string> = {}
@@ -83,7 +123,7 @@ function readUtmFromUrl(): Record<string, string> | null {
   for (const key of UTM_KEYS) {
     const raw = params.get(key)?.trim()
     if (!raw || /^\{\{.*\}\}$/.test(raw)) continue
-    found[key] = raw.slice(0, UTM_MAX_LENGTH)
+    found[key] = decodeExtraLayer(raw).slice(0, UTM_MAX_LENGTH)
   }
 
   return Object.keys(found).length > 0 ? found : null
@@ -149,16 +189,38 @@ function send(body: Record<string, unknown>) {
 }
 
 export function useL2Mixpanel() {
-  /** Событие показа экрана/тапа. Шлётся при каждом показе — в том числе при
-   *  возврате на экран по стрелке «назад». */
-  function track(event: L2MixpanelEvent) {
+  /**
+   * Событие показа экрана/тапа. Шлётся при каждом показе — в том числе при
+   * возврате на экран по стрелке «назад».
+   *
+   * `extra` — свойства сверх общих (UTM + tester); сейчас это только данные
+   * покупки для `landing_billing_purchase`. Сервер всё равно пропускает
+   * только известные ему ключи, так что лишнее сюда не просочится.
+   */
+  function track(event: L2MixpanelEvent, extra?: Partial<L1PurchaseProps>) {
     if (import.meta.server) return
 
     send({
       event,
       distinctId: identifiedId || getAnonId(),
-      properties: { ...getUtmProps(), tester: getTesterProp() }
+      properties: { ...getUtmProps(), tester: getTesterProp(), ...extra }
     })
+  }
+
+  /**
+   * Подставляет id аккаунта как distinct_id, не отправляя `$identify`.
+   *
+   * Нужно там, где вход произошёл на прошлой загрузке страницы: l1
+   * возвращается с платёжного шлюза на `/payment-result`, память модуля к
+   * этому моменту уже пуста, а событие покупки должно уйти от имени
+   * аккаунта, а не анонима. Склейка личностей при этом уже сделана — второй
+   * `$identify` только задублировал бы её.
+   */
+  function adoptIdentity(accountId: string | number) {
+    if (import.meta.server) return
+
+    const id = String(accountId ?? '')
+    if (id) identifiedId = id
   }
 
   /** Склеивает анонимный id с аккаунтом после успешного входа, чтобы события
@@ -175,5 +237,5 @@ export function useL2Mixpanel() {
     send({ event: '$identify', distinctId: id, anonId })
   }
 
-  return { track, identify }
+  return { track, identify, adoptIdentity }
 }

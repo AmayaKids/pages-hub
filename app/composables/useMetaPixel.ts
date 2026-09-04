@@ -1,5 +1,5 @@
 /**
- * Meta Pixel для лендинга l2 — общий для «/» и «/auth».
+ * Meta Pixel лендингов — общий для «/» и «/auth» (l2 и платного l1).
  *
  * Раньше загрузчик жил только в l2/index.vue, но события воронки
  * (`LandingPasswordScreen`, `CompleteRegistration`) происходят уже на
@@ -95,6 +95,11 @@ interface FireDualOptions {
    *  события уже введён (шаги после email-формы) — на более ранних шагах
    *  просто не с чем сюда прийти. */
   email?: string
+  /** Сумма и код валюты покупки — только для стандартного `Purchase`
+   *  платного лендинга l1. Без этой пары Meta не считает выручку и ROAS, и
+   *  оптимизация кампании на покупки работать не будет. */
+  value?: number
+  currency?: string
 }
 
 /** Один и тот же `event_id` уходит и в `fbq`, и на сервер — это и есть ключ
@@ -105,7 +110,13 @@ function fireDual(method: 'track' | 'trackCustom', name: string, opts?: FireDual
 
   const eventId = createEventId()
 
-  window.fbq?.(method, name, {}, { eventID: eventId })
+  // Пустой объект, когда суммы нет: у Meta `value` и `currency` идут только
+  // парой, одиночное значение она отбрасывает вместе с предупреждением.
+  const params = opts?.value != null && opts?.currency
+    ? { value: opts.value, currency: opts.currency }
+    : {}
+
+  window.fbq?.(method, name, params, { eventID: eventId })
 
   void $fetch(CAPI_ENDPOINT, {
     method: 'POST',
@@ -115,7 +126,8 @@ function fireDual(method: 'track' | 'trackCustom', name: string, opts?: FireDual
       eventSourceUrl: window.location.href,
       fbp: readCookie('_fbp'),
       fbc: readCookie('_fbc'),
-      email: opts?.email
+      email: opts?.email,
+      ...params
     }
   }).catch(() => {})
 }
