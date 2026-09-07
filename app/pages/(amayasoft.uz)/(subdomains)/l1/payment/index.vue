@@ -84,8 +84,8 @@ const meta = computed(() => {
 
 /* --------------------------- аналитика --------------------------- */
 
-const { track, adoptIdentity } = useL2Mixpanel()
-const { trackStandard, trackPageView } = useMetaPixel()
+const { track, adoptIdentity } = useL1Mixpanel()
+const { trackStandard, trackPageView } = useL1MetaPixel()
 
 onMounted(() => trackPageView())
 
@@ -94,28 +94,33 @@ watch(screen, (current) => {
 })
 
 /**
- * Данные покупки для `landing_billing_purchase`. `Payment_count` и `Sandbox`
- * знает только биллинг, поэтому берём их из ответа `/status`, когда он их
- * отдаёт; пока не отдаёт — эти поля просто не уходят, а не заполняются
- * выдуманным значением (см. server/api/l2/mixpanel/track.post.ts).
+ * `landing_billing_purchase` в Mixpanel теперь шлёт бэкенд напрямую, не
+ * фронт: у него есть `Payment_count` и `Sandbox`, которых фронт не знает, и
+ * он же видит продления подписки, до которых человек на лендинге вообще не
+ * доходит. Код ниже оставлен закомментированным, а не удалён — если решение
+ * поменяют, включить обратно — это снять комментарий с вызова `track(...)`
+ * здесь и с одной строки в белом списке server/api/l2/mixpanel/track.post.ts.
+ *
+ * Meta-событие `Purchase` эта договорённость не касается: канал отдельный,
+ * фронт продолжает слать его сам (см. `trackStandard('Purchase', …)` ниже).
  */
 function trackPurchase(status: L1StatusResponse) {
   // Дедупликация переживает перезагрузку: вернуться сюда по той же ссылке —
   // обычное дело, а статус при этом снова ответит `purchased`. Событие
-  // выручки должно уйти один раз на инвойс, а не на просмотр страницы.
+  // `Purchase` должно уйти один раз на инвойс, а не на просмотр страницы.
   if (!claimL1PurchaseTracking(invoiceId.value)) return
 
   const price = status.price ?? L1_PRICE
   const currency = status.currency ?? L1_CURRENCY
 
-  track('landing_billing_purchase', {
-    Price: price,
-    Currency: currency,
-    Subscription_type: status.subscriptionType ?? L1_SUBSCRIPTION_TYPE,
-    Trial: status.trial ?? false,
-    ...(typeof status.sandbox === 'boolean' ? { Sandbox: status.sandbox } : {}),
-    ...(typeof status.paymentCount === 'number' ? { Payment_count: status.paymentCount } : {})
-  })
+  // track('landing_billing_purchase', {
+  //   Price: price,
+  //   Currency: currency,
+  //   Subscription_type: status.subscriptionType ?? L1_SUBSCRIPTION_TYPE,
+  //   Trial: status.trial ?? false,
+  //   ...(typeof status.sandbox === 'boolean' ? { Sandbox: status.sandbox } : {}),
+  //   ...(typeof status.paymentCount === 'number' ? { Payment_count: status.paymentCount } : {})
+  // })
 
   // Стандартное событие Meta с суммой — под него кампания оптимизируется на
   // выручку. Дублируется в Conversions API тем же composable.

@@ -270,7 +270,7 @@ async function handleNext(to?: 'reset') {
 /* --------------------------- аналитика --------------------------- */
 
 const { track, identify } = useL2Mixpanel()
-const { trackStandard, trackCustom, trackPageView } = useMetaPixel()
+const { trackStandard, trackCustom, trackPageView } = useL2MetaPixel()
 
 onMounted(() => trackPageView())
 
@@ -481,7 +481,7 @@ async function resetPassword() {
     «Parolni unutdingizmi?», конверт — стилизованы теми же токенами макета.
   -->
   <div class="page">
-    <L2TesterBanner />
+    <TesterBanner />
 
     <div
       class="page__wrapper"

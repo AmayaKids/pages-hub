@@ -20,7 +20,7 @@ withDefaults(defineProps<{ variant?: 'default' | 'congrats' }>(), {
 
 <template>
   <div class="shell">
-    <L2TesterBanner />
+    <TesterBanner />
 
     <div
       class="shell__wrapper"

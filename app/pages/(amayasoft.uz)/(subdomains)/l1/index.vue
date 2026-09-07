@@ -16,7 +16,7 @@ import offerCityPng from '~/assets/images/l1/png/offer-city.png'
 import offerPlanePng from '~/assets/images/l1/png/offer-plane.png'
 import offerCarPng from '~/assets/images/l1/png/offer-car.png'
 import checkSvg from '~/assets/images/l1/svg/check.svg'
-import starPng from '~/assets/images/l1/png/star.png'
+import reviewStarsSvg from '~/assets/images/l1/svg/review-stars.svg'
 import videoPreviewPng from '~/assets/images/l1/png/video-preview.png'
 import cars2Video from '~/assets/videos/Cars2_1280x720.mp4'
 
@@ -28,8 +28,8 @@ useSeoMeta({
 // стандартным `PageView`) — человек попал на лендинг. Только на клиенте: на
 // SSR оба composable ничего не шлют, иначе событие задублировалось бы на
 // гидрации.
-const { track } = useL2Mixpanel()
-const { trackCustom, trackPageView } = useMetaPixel()
+const { track } = useL1Mixpanel()
+const { trackCustom, trackPageView } = useL1MetaPixel()
 
 onMounted(() => {
   track('landing_opened')
@@ -172,7 +172,7 @@ onMounted(() => {
 
 <template>
   <div class="l1">
-    <L2TesterBanner />
+    <TesterBanner />
 
     <div class="page">
       <!-- Header -->
@@ -359,16 +359,13 @@ onMounted(() => {
             <p class="review__text">
               {{ review.text }}
             </p>
-            <div class="review__stars">
-              <img
-                v-for="n in 5"
-                :key="n"
-                :src="starPng"
-                width="15"
-                height="14"
-                alt=""
-              >
-            </div>
+            <img
+              class="review__stars"
+              :src="reviewStarsSvg"
+              width="83"
+              height="14"
+              alt="5 yulduz"
+            >
             <p class="review__author">
               {{ review.author }}
             </p>
@@ -979,14 +976,9 @@ onMounted(() => {
   }
 
   &__stars {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-
-    img {
-      width: 15px;
-      height: 14px;
-    }
+    display: block;
+    width: 83px;
+    height: 14px;
   }
 
   &__author {

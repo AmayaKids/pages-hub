@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
- * Виден только тому, у кого в localStorage стоит метка тестировщика (см.
- * useQaTester.ts) — обычным посетителям не показывается вообще.
+ * Общий баннер для лендингов l1 и l2. Виден только тому, у кого в
+ * localStorage стоит метка тестировщика (см. useQaTester.ts) — обычным
+ * посетителям не показывается вообще.
  * Смысл — дать тестировщику понять, что он опознан и его действия помечены
  * в аналитике отдельно, реальную статистику не портят; если баннер не
  * появился — метка не сработала, и на проде лучше не тестировать.
@@ -12,14 +13,14 @@ const { isTester, testerName } = useQaTester()
 <template>
   <div
     v-if="isTester"
-    class="l2-tester-banner"
+    class="tester-banner"
   >
     🧪 Режим тестировщика: {{ testerName }} — события помечены, реальную аналитику не портят
   </div>
 </template>
 
 <style scoped>
-.l2-tester-banner {
+.tester-banner {
   position: fixed;
   top: 0;
   left: 0;

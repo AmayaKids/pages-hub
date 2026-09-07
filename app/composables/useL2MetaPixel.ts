@@ -1,12 +1,11 @@
 /**
- * Meta Pixel лендингов — общий для «/» и «/auth» (l2 и платного l1).
+ * Meta Pixel лендинга l2 (l2.amayasoft.uz).
  *
- * Раньше загрузчик жил только в l2/index.vue, но события воронки
- * (`LandingPasswordScreen`, `CompleteRegistration`) происходят уже на
- * «/auth». Вынесен сюда, чтобы обе страницы подключали ровно один и тот же
- * код и `window.fbq` был доступен независимо от того, с какой из них
- * начался визит: с прямого захода на «/auth» (клиентский заголовок, deep
- * link) или с клиентской SPA-навигации с «/».
+ * Отдельный composable от l1 (см. useL1MetaPixel.ts): у лендингов разный
+ * набор событий (у l2 есть `Lead`, которого у l1 никогда не было; у l1
+ * есть `Purchase`, которого у l2 нет — доступ там бесплатный, покупок не
+ * существует). Оба лишь пишут в один и тот же пиксель (тот же
+ * `META_PIXEL_ID`, тот же рекламный кабинет).
  *
  * Каждое событие уходит дважды — в браузер (`fbq`) и на сервер
  * (server/api/l2/meta-capi/track.post.ts → Conversions API) с одним и тем же
@@ -26,7 +25,8 @@ declare global {
 
 /** Id пикселя не секрет (виден в исходнике страницы у любого посетителя),
  *  поэтому лежит константой, а не в runtimeConfig — в отличие от серверного
- *  токена Conversions API. */
+ *  токена Conversions API. Тот же пиксель, что и у l1 — оба лендинга
+ *  рекламируют один и тот же продукт в одном рекламном кабинете. */
 const META_PIXEL_ID = '1335375415064544'
 
 const CAPI_ENDPOINT = '/api/l2/meta-capi/track'
@@ -95,11 +95,6 @@ interface FireDualOptions {
    *  события уже введён (шаги после email-формы) — на более ранних шагах
    *  просто не с чем сюда прийти. */
   email?: string
-  /** Сумма и код валюты покупки — только для стандартного `Purchase`
-   *  платного лендинга l1. Без этой пары Meta не считает выручку и ROAS, и
-   *  оптимизация кампании на покупки работать не будет. */
-  value?: number
-  currency?: string
 }
 
 /** Один и тот же `event_id` уходит и в `fbq`, и на сервер — это и есть ключ
@@ -110,13 +105,7 @@ function fireDual(method: 'track' | 'trackCustom', name: string, opts?: FireDual
 
   const eventId = createEventId()
 
-  // Пустой объект, когда суммы нет: у Meta `value` и `currency` идут только
-  // парой, одиночное значение она отбрасывает вместе с предупреждением.
-  const params = opts?.value != null && opts?.currency
-    ? { value: opts.value, currency: opts.currency }
-    : {}
-
-  window.fbq?.(method, name, params, { eventID: eventId })
+  window.fbq?.(method, name, {}, { eventID: eventId })
 
   void $fetch(CAPI_ENDPOINT, {
     method: 'POST',
@@ -126,13 +115,12 @@ function fireDual(method: 'track' | 'trackCustom', name: string, opts?: FireDual
       eventSourceUrl: window.location.href,
       fbp: readCookie('_fbp'),
       fbc: readCookie('_fbc'),
-      email: opts?.email,
-      ...params
+      email: opts?.email
     }
   }).catch(() => {})
 }
 
-export function useMetaPixel() {
+export function useL2MetaPixel() {
   injectPixelLoader()
 
   /**

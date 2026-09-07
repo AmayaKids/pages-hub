@@ -1,13 +1,13 @@
 /**
- * Приём событий лендинга l2 (l2.amayasoft.uz) и отправка их в Mixpanel.
+ * Приём событий лендинга l1 (l1.amayasoft.uz) и отправка их в Mixpanel.
  *
- * Для l1 (l1.amayasoft.uz) есть свой отдельный роут —
- * server/api/l1/mixpanel/track.post.ts. Раньше оба лендинга шли через этот
- * файл под одним белым списком, что разрешало бы l1-события (например,
- * платёжную воронку) прийти и с хоста l2. Токен при этом общий (тот же
- * проект Mixpanel, см. nuxt.config.ts → cars2MixpanelToken) — разделение
- * именно по тому, какие события каждый лендинг имеет право слать, а не по
- * токенам.
+ * Отдельный роут от l2 (см. server/api/l2/mixpanel/track.post.ts): у
+ * лендингов разный набор разрешённых событий (у l1 есть платёжная воронка,
+ * у l2 доступ бесплатный), и держать оба под одним белым списком значило бы
+ * разрешать l1-события на хосте l2 и наоборот. Токен при этом общий (тот же
+ * проект Mixpanel, см. nuxt.config.ts → cars2MixpanelToken) — это не
+ * копия одной и той же логики ради разделения токенов, а разделение именно
+ * по тому, какие события каждый лендинг имеет право слать.
  *
  * Токен живёт только здесь, на сервере (`NUXT_CARS2_MIXPANEL_TOKEN` →
  * `runtimeConfig.cars2MixpanelToken`), в браузер он не попадает — поэтому
@@ -20,11 +20,19 @@
 
 const MIXPANEL_ENDPOINT = 'https://api.mixpanel.com/track'
 
-/** Ровно те события, которые шлёт лендинг l2. Всё остальное отбрасывается. */
+/** Ровно те события, которые шлёт лендинг l1. Всё остальное отбрасывается. */
 const ALLOWED_EVENTS = new Set([
   'landing_opened',
   'landing_email_screen',
   'landing_password_screen',
+  'landing_payment_screen',
+  // 'landing_billing_purchase' и 'landing_billing_refund' сюда намеренно не
+  // входят: обе покупки шлёт бэкенд напрямую (у него есть `Payment_count` и
+  // `Sandbox`, которых фронт не знает, и он же видит продления подписки и
+  // возвраты — а до возврата человек на сайте уже не доходит). Если решение
+  // поменяют, вернуть строку сюда и раскомментировать `pickPurchaseProperties`
+  // ниже (см. app/pages/(amayasoft.uz)/(subdomains)/l1/payment/index.vue →
+  // trackPurchase()).
   'landing_congratulation_screen',
   'landing_appstore_button_tap',
   // Служебное событие Mixpanel: связывает анонимный id с id аккаунта
@@ -55,6 +63,40 @@ const PROPERTY_MAX_LENGTH = 255
  *  гарантию на сервере, а не только в composable — это последняя точка перед
  *  Mixpanel, и она не должна зависеть от того, что именно прислал клиент. */
 const PROPERTY_UNDEFINED = 'undefined'
+
+/**
+ * Свойства покупки для `landing_billing_purchase` — событие сейчас шлёт
+ * бэкенд напрямую (см. `ALLOWED_EVENTS`), поэтому парсер ниже закомментирован
+ * целиком, а не удалён: он был написан так, чтобы поля не подставлялись
+ * заглушкой (`Payment_count` и `Sandbox` считает биллинг, и выдуманное
+ * значение молча испортило бы отчёт по выручке) — если событие вернут на
+ * фронт, этот код можно раскомментировать как есть.
+ */
+// const PURCHASE_PROPERTIES = {
+//   Price: 'number',
+//   Currency: 'string',
+//   Subscription_type: 'string',
+//   Trial: 'boolean',
+//   Sandbox: 'boolean',
+//   Payment_count: 'number'
+// } as const
+//
+// function pickPurchaseProperties(raw: unknown) {
+//   const source = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {}
+//   const picked: Record<string, string | number | boolean> = {}
+//
+//   for (const [key, expected] of Object.entries(PURCHASE_PROPERTIES)) {
+//     const value = source[key]
+//
+//     if (typeof value !== expected) continue
+//     if (typeof value === 'number' && !Number.isFinite(value)) continue
+//     if (typeof value === 'string' && (!value || value.length > PROPERTY_MAX_LENGTH)) continue
+//
+//     picked[key] = value as string | number | boolean
+//   }
+//
+//   return picked
+// }
 
 interface TrackBody {
   event?: unknown
@@ -113,7 +155,7 @@ export default defineEventHandler(async (event) => {
   // Без токена (локальная разработка, забытая переменная) просто ничего не
   // отправляем: аналитика не должна ронять страницу.
   if (!token) {
-    console.warn('[l2/mixpanel] NUXT_CARS2_MIXPANEL_TOKEN не задан — событие не отправлено:', name)
+    console.warn('[l1/mixpanel] NUXT_CARS2_MIXPANEL_TOKEN не задан — событие не отправлено:', name)
     return null
   }
 
@@ -150,10 +192,10 @@ export default defineEventHandler(async (event) => {
     })
 
     if (response?.status !== 1) {
-      console.warn('[l2/mixpanel] событие отклонено:', name, response?.error)
+      console.warn('[l1/mixpanel] событие отклонено:', name, response?.error)
     }
   } catch (error) {
-    console.warn('[l2/mixpanel] не удалось отправить событие:', name, error)
+    console.warn('[l1/mixpanel] не удалось отправить событие:', name, error)
   }
 
   // Клиенту всегда отвечаем успехом: он всё равно ничего не делает с ответом,

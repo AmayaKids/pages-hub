@@ -35,7 +35,7 @@ export const L1_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
 
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
  *  здесь она нужна только для показа и для аналитики покупки. */
-export const L1_PRICE = 50000
+export const L1_PRICE = 49000
 export const L1_OLD_PRICE = 100000
 export const L1_CURRENCY = 'UZS'
 
@@ -197,14 +197,17 @@ export interface L1StatusResponse {
   /** Фискальный чек. Отдаётся здесь же, отдельно от квитанции. */
   fiscalReceiptUrl?: string | null
   message?: string
-  /**
-   * Поля покупки для события `landing_billing_purchase`. Фронтенд их не
-   * знает: `paymentCount` и `sandbox` — это состояние биллинга, а не
-   * страницы. Пока бэкенд их не отдаёт, событие уходит с константами из
-   * этого файла (см. `l1/auth/index.vue`).
-   */
+  /** Сумма и валюта — используются для Meta `Purchase` (см.
+   *  `l1/payment/index.vue` → `trackPurchase()`), с откатом на константы
+   *  этого файла, если биллинг их не прислал. */
   price?: number
   currency?: string
+  /**
+   * Дальше — поля для `landing_billing_purchase` в Mixpanel. Событие сейчас
+   * шлёт бэкенд напрямую (см. useL1Mixpanel.ts), так что здесь эти поля
+   * временно не читаются никем — оставлены как задокументированная форма
+   * ответа на случай, если событие вернут на фронт.
+   */
   subscriptionType?: string
   trial?: boolean
   sandbox?: boolean

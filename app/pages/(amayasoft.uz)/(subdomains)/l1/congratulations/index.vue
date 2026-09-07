@@ -21,8 +21,8 @@ const confirmed = ref(false)
 const receiptUrl = ref<string | null>(null)
 const fiscalReceiptUrl = ref<string | null>(null)
 
-const { track, adoptIdentity } = useL2Mixpanel()
-const { trackCustom, trackPageView } = useMetaPixel()
+const { track, adoptIdentity } = useL1Mixpanel()
+const { trackCustom, trackPageView } = useL1MetaPixel()
 
 onMounted(() => trackPageView())
 

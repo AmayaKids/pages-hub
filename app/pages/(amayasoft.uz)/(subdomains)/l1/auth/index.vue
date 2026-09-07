@@ -229,8 +229,8 @@ async function handleNext(to?: 'reset') {
 
 /* --------------------------- аналитика --------------------------- */
 
-const { track, identify } = useL2Mixpanel()
-const { trackStandard, trackCustom, trackPageView } = useMetaPixel()
+const { track, identify } = useL1Mixpanel()
+const { trackStandard, trackCustom, trackPageView } = useL1MetaPixel()
 
 onMounted(() => trackPageView())
 
@@ -243,7 +243,7 @@ onMounted(() => trackPageView())
  * пароль пришёл на почту (`signup`, `reset-signin`), и там, где человек
  * вводит свой (`clean-signin`).
  */
-const SCREEN_EVENTS: Partial<Record<Step, L2MixpanelEvent>> = {
+const SCREEN_EVENTS: Partial<Record<Step, L1MixpanelEvent>> = {
   'auth': 'landing_email_screen',
   'clean-signin': 'landing_password_screen',
   'signup': 'landing_password_screen',

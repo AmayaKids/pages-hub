@@ -1,11 +1,11 @@
 /**
- * Серверное дублирование событий Meta Pixel лендинга l2 через Conversions API.
+ * Серверное дублирование событий Meta Pixel лендинга l1 через Conversions API.
  *
- * Отдельный роут от l1 (см. server/api/l1/meta-capi/track.post.ts): у l2
- * есть `Lead`, которого у l1 никогда не было, а `Purchase` с суммой и
- * валютой у l2 нет вовсе — доступ там бесплатный, покупок не существует.
+ * Отдельный роут от l2 (см. server/api/l2/meta-capi/track.post.ts): у l1
+ * есть `Purchase` с суммой и валютой, которого у l2 нет, и держать оба под
+ * одним белым списком значило бы разрешать `Purchase` и с хоста l2 тоже.
  * Токен и id пикселя при этом общие (тот же рекламный кабинет, см.
- * app/composables/useL2MetaPixel.ts) — разделение именно по тому, какие
+ * app/composables/useL1MetaPixel.ts) — разделение именно по тому, какие
  * события каждый лендинг имеет право слать.
  *
  * Дублирует ровно то, что уже шлёт браузерный пиксель — та же связка
@@ -34,22 +34,24 @@ import { createHash } from 'node:crypto'
 // не менялся.
 const META_GRAPH_ENDPOINT = 'https://graph.facebook.com'
 
-/** Тот же id пикселя, что и в useL2MetaPixel.ts — не секрет, дублирование
+/** Тот же id пикселя, что и в useL1MetaPixel.ts — не секрет, дублирование
  *  константы дешевле, чем тащить её через shared/ ради одной строки. */
 const META_PIXEL_ID = '1335375415064544'
 
-/** Ровно те события, которые шлёт лендинг l2 (браузерный пиксель + этот
+/** Ровно те события, которые шлёт лендинг l1 (браузерный пиксель + этот
  *  роут). Всё остальное отбрасывается — без белого списка роут работал бы
- *  как открытый ретранслятор в чужой рекламный кабинет. `Purchase` сюда
- *  намеренно не входит — покупок на l2 нет, доступ бесплатный. */
+ *  как открытый ретранслятор в чужой рекламный кабинет. `Lead` сюда
+ *  намеренно не входит — это событие только у l2. */
 const ALLOWED_EVENTS = new Set([
   'PageView',
   'LandingOpened',
   'LandingEmailScreen',
   'LandingPasswordScreen',
-  'Lead',
   'CompleteRegistration',
-  'LandingAppstoreButtonTap'
+  'LandingAppstoreButtonTap',
+  // Единственное событие с суммой — под него кампания оптимизируется на
+  // выручку.
+  'Purchase'
 ])
 
 interface TrackBody {
@@ -65,6 +67,9 @@ interface TrackBody {
    *  Передаётся лишь для событий, где на момент отправки email уже введён
    *  (шаги после email-формы). */
   email?: unknown
+  /** Сумма и код валюты покупки — только у `Purchase`. */
+  value?: unknown
+  currency?: unknown
 }
 
 /** `em` у Meta — SHA-256 от email, приведённого к нижнему регистру и без
@@ -102,7 +107,7 @@ export default defineEventHandler(async (event) => {
   // Без токена (локальная разработка, забытая переменная) просто ничего не
   // отправляем: аналитика не должна ронять страницу.
   if (!token) {
-    console.warn('[l2/meta-capi] NUXT_CARS2_META_CAPI_TOKEN не задан — событие не отправлено:', eventName)
+    console.warn('[l1/meta-capi] NUXT_CARS2_META_CAPI_TOKEN не задан — событие не отправлено:', eventName)
     return null
   }
 
@@ -112,6 +117,14 @@ export default defineEventHandler(async (event) => {
   const fbp = asNonEmptyString(body?.fbp, 256)
   const fbc = asNonEmptyString(body?.fbc, 256)
   const emailHash = hashEmail(body?.email)
+
+  // `value` + `currency` — строго парой и только у `Purchase`: половина пары
+  // Meta всё равно не засчитает, а у остальных событий суммы просто нет.
+  const value = typeof body?.value === 'number' && Number.isFinite(body.value) ? body.value : null
+  const currency = asNonEmptyString(body?.currency, 8)
+  const customData = eventName === 'Purchase' && value != null && currency
+    ? { custom_data: { value, currency } }
+    : {}
 
   const payload = {
     data: [{
@@ -128,7 +141,8 @@ export default defineEventHandler(async (event) => {
         // Массив — так требует формат Meta (поддерживает несколько
         // идентификаторов на одно событие), даже когда значение одно.
         ...(emailHash ? { em: [emailHash] } : {})
-      }
+      },
+      ...customData
     }],
     ...(config.cars2MetaCapiTestEventCode ? { test_event_code: config.cars2MetaCapiTestEventCode } : {})
   }
@@ -144,10 +158,10 @@ export default defineEventHandler(async (event) => {
     )
 
     if (!response?.events_received) {
-      console.warn('[l2/meta-capi] событие не принято:', eventName, response?.messages)
+      console.warn('[l1/meta-capi] событие не принято:', eventName, response?.messages)
     }
   } catch (error) {
-    console.warn('[l2/meta-capi] не удалось отправить событие:', eventName, error)
+    console.warn('[l1/meta-capi] не удалось отправить событие:', eventName, error)
   }
 
   // Клиенту всегда отвечаем успехом: он всё равно ничего не делает с ответом,

@@ -1,35 +1,63 @@
 /**
- * Отправка событий лендинга l2 (l2.amayasoft.uz) в Mixpanel.
+ * Отправка событий лендинга l1 (l1.amayasoft.uz) в Mixpanel.
  *
- * Для l1 (l1.amayasoft.uz) есть свой отдельный composable —
- * useL1Mixpanel.ts. Раньше l1 переиспользовал этот файл напрямую, из-за
- * чего выглядело так, будто платный лендинг l1 зависит от бесплатного l2;
- * на деле это два равноправных лендинга одного продукта, у каждого свой
- * набор событий (у l1 есть платёжная воронка, у l2 её нет), и оба лишь
- * пишут в один и тот же проект Mixpanel (тот же токен, см. nuxt.config.ts
- * → cars2MixpanelToken).
+ * Отдельный composable от l2 (см. useL2Mixpanel.ts), хотя логика внутри
+ * почти одинаковая: у лендингов разные хосты (значит, разный localStorage —
+ * он изолирован по origin), разные события (у l1 есть платёжная воронка,
+ * у l2 доступ бесплатный) и разное будущее одного из событий
+ * (`landing_billing_purchase` здесь временно не шлётся, у l2 такого
+ * события никогда не было). Раньше l1 просто дёргал `useL2Mixpanel()`, и
+ * это читалось так, будто лендинг l1 зависит от l2, — на деле это два
+ * равноправных лендинга одного продукта, которые лишь пишут в один и тот же
+ * проект Mixpanel (тот же токен, см. nuxt.config.ts → cars2MixpanelToken).
  *
  * Токен проекта в браузер не отдаётся, поэтому composable ничего не знает про
  * Mixpanel напрямую — он только шлёт имя события на свой серверный роут
- * (`server/api/l2/mixpanel/track.post.ts`), а тот уже подписывает его токеном.
+ * (`server/api/l1/mixpanel/track.post.ts`), а тот уже подписывает его токеном.
  *
  * Все вызовы — «выстрелил и забыл»: аналитика не должна ни задерживать
  * интерфейс, ни ронять флоу, поэтому ошибки гасятся молча.
  */
 
-export type L2MixpanelEvent
+export type L1MixpanelEvent
   = | 'landing_opened'
     | 'landing_email_screen'
     | 'landing_password_screen'
+    | 'landing_payment_screen'
+    // 'landing_billing_purchase' — намеренно не в списке: это событие и
+    // парный ему `landing_billing_refund` (которого на фронте никогда и не
+    // было — возврат случается, когда посетителя на сайте уже нет) теперь
+    // шлёт бэкенд напрямую: у него есть `Payment_count` и `Sandbox`,
+    // которых фронт не знает, и он же видит продления подписки. Если
+    // решение поменяют — вернуть строку сюда и раскомментировать
+    // `track('landing_billing_purchase', …)` в l1/payment/index.vue →
+    // trackPurchase() и запись в белом списке
+    // server/api/l1/mixpanel/track.post.ts.
     | 'landing_congratulation_screen'
     | 'landing_appstore_button_tap'
 
-const ENDPOINT = '/api/l2/mixpanel/track'
-const STORAGE_KEY = 'amaya_l2_distinct_id'
-const UTM_STORAGE_KEY = 'amaya_l2_utm'
+/**
+ * Свойства покупки/возврата для `landing_billing_purchase` и
+ * `landing_billing_refund` — сейчас оба шлёт бэкенд, но тип оставлен: он
+ * ещё описывает форму `extra` у `track()` на случай, если события вернут
+ * на фронт. Имена — ровно как в требованиях аналитики (с заглавной буквы),
+ * Mixpanel различает регистр.
+ */
+export interface L1PurchaseProps {
+  Price: number
+  Currency: string
+  Subscription_type: string
+  Trial: boolean
+  Sandbox: boolean
+  Payment_count: number
+}
+
+const ENDPOINT = '/api/l1/mixpanel/track'
+const STORAGE_KEY = 'amaya_l1_distinct_id'
+const UTM_STORAGE_KEY = 'amaya_l1_utm'
 
 /** Метки, которые рекламные ссылки приносят в query. Список должен совпадать
- *  с белым списком в server/api/l2/mixpanel/track.post.ts. */
+ *  с белым списком в server/api/l1/mixpanel/track.post.ts. */
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
 
 /** Названия кампаний и креативов бывают длинными — режем, чтобы в Mixpanel не
@@ -60,7 +88,7 @@ function createId() {
 
   // `crypto.randomUUID` есть только в защищённом контексте (https/localhost),
   // так что для http-окружений нужен запасной вариант.
-  return `l2-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+  return `l1-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
 }
 
 /** Анонимный id посетителя, переживающий перезагрузки и возвраты на сайт. */
@@ -174,19 +202,42 @@ function send(body: Record<string, unknown>) {
   void $fetch(ENDPOINT, { method: 'POST', body }).catch(() => {})
 }
 
-export function useL2Mixpanel() {
+export function useL1Mixpanel() {
   /**
    * Событие показа экрана/тапа. Шлётся при каждом показе — в том числе при
    * возврате на экран по стрелке «назад».
+   *
+   * `extra` — свойства сверх общих (UTM + tester). Сейчас ни один активный
+   * вызов их не передаёт (`landing_billing_purchase`, для которого параметр
+   * заводился, временно шлёт бэкенд — см. `L1MixpanelEvent`); параметр
+   * оставлен ради типа `L1PurchaseProps`, чтобы включить обратно было
+   * некуда возвращать сигнатуру. Сервер всё равно пропускает только
+   * известные ему ключи, так что лишнее сюда не просочится.
    */
-  function track(event: L2MixpanelEvent) {
+  function track(event: L1MixpanelEvent, extra?: Partial<L1PurchaseProps>) {
     if (import.meta.server) return
 
     send({
       event,
       distinctId: identifiedId || getAnonId(),
-      properties: { ...getUtmProps(), Tester: getTesterProp() }
+      properties: { ...getUtmProps(), Tester: getTesterProp(), ...extra }
     })
+  }
+
+  /**
+   * Подставляет id аккаунта как distinct_id, не отправляя `$identify`.
+   *
+   * Нужно там, где вход произошёл на прошлой загрузке страницы: воронка l1
+   * разнесена по адресам (`/auth` → `/payment` → `/congratulations`), и к
+   * моменту события покупки память модуля уже пуста, а событие должно уйти
+   * от имени аккаунта, а не анонима. Склейка личностей при этом уже
+   * сделана — второй `$identify` только задублировал бы её.
+   */
+  function adoptIdentity(accountId: string | number) {
+    if (import.meta.server) return
+
+    const id = String(accountId ?? '')
+    if (id) identifiedId = id
   }
 
   /** Склеивает анонимный id с аккаунтом после успешного входа, чтобы события
@@ -203,5 +254,5 @@ export function useL2Mixpanel() {
     send({ event: '$identify', distinctId: id, anonId })
   }
 
-  return { track, identify }
+  return { track, identify, adoptIdentity }
 }

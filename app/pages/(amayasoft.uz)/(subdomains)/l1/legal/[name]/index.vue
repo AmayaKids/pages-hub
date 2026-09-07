@@ -59,6 +59,8 @@ useSeoMeta({
 
 <template>
   <div class="l1">
+    <TesterBanner />
+
     <div class="page">
       <!-- Header -->
       <header class="header">
