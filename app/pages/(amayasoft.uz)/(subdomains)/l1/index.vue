@@ -407,6 +407,7 @@ onMounted(() => {
         <div
           ref="reviewsEl"
           class="reviews__track"
+          :class="{ 'reviews__track--dragging': isDraggingScrollbar }"
           @scroll.passive="updateScrollThumb"
         >
           <article
@@ -991,6 +992,15 @@ onMounted(() => {
 
     &::-webkit-scrollbar {
       display: none;
+    }
+
+    /* Пока ползунок тащат курсором, каждый шаг scrollLeft — отдельный
+       скролл-жест: proximity-снап пытается тут же притянуть ленту к
+       ближайшей карточке и позиция дёргается. Отключаем snap на время
+       драга и возвращаем его по отпусканию — тогда лента сама доедет до
+       ближайшей карточки, как и при обычном свайпе. */
+    &--dragging {
+      scroll-snap-type: none;
     }
   }
 

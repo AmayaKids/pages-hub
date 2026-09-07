@@ -7,6 +7,7 @@ import logoSvg from '~/assets/images/l1/svg/logo.svg'
 import publicOfferUz from './content/uz/public-offer.json'
 import privacyPolicyUz from './content/uz/privacy-policy.json'
 import refundPolicyUz from './content/uz/refund-policy.json'
+import termsOfUseUz from './content/uz/terms-of-use.json'
 
 interface LegalBlock {
   type: 'paragraph' | 'list'
@@ -32,7 +33,8 @@ interface LegalDocument {
 const DOCUMENTS: Record<string, LegalDocument> = {
   'public-offer': publicOfferUz as LegalDocument,
   'privacy-policy': privacyPolicyUz as LegalDocument,
-  'refund-policy': refundPolicyUz as LegalDocument
+  'refund-policy': refundPolicyUz as LegalDocument,
+  'terms-of-use': termsOfUseUz as LegalDocument
 }
 
 const route = useRoute()
