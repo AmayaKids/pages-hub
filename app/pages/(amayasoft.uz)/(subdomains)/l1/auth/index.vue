@@ -11,19 +11,17 @@ useSeoMeta({
 })
 
 /* ------------------------------------------------------------------ *
- * Шаги 1 и 2 воронки l1: аккаунт и оплата.
+ * Шаг 1 воронки l1 — аккаунт.
  *
- * Логика аккаунта — порт l2/auth/index.vue без изменений: те же три
- * сценария (нового аккаунта нет → пароль приходит письмом; аккаунт есть →
- * свой пароль; забыл → восстановление), те же регулярки, та же обработка
- * ошибок. Отличий два:
- *   • шаг после входа — не выдача бесплатного доступа, а создание боевого
- *     инвойса и уход на Multicard (см. useL1Payment.ts);
- *   • тексты и разметка — по макету l1 (три шага вместо двух).
+ * Порт l2/auth/index.vue без изменений: те же три сценария (нового аккаунта
+ * нет → пароль приходит письмом; аккаунт есть → свой пароль; забыл →
+ * восстановление), те же регулярки, та же обработка ошибок. Отличие одно:
+ * после успешного входа человек уходит не на выдачу бесплатного доступа, а
+ * на `/payment` — там создаётся боевой инвойс и открывается шлюз.
  *
- * Шаг 3 (поздравление) живёт на /payment-result: туда возвращает Multicard.
- * Здесь он показывается только в одном случае — когда бэкенд ответил
- * `already_purchased`, то есть платить уже не за что.
+ * Каждый шаг воронки живёт на своём адресе (`/auth` → `/payment` →
+ * `/congratulations`): так состояние переживает перезагрузку, а кнопка
+ * «назад» в браузере возвращает на предыдущий экран, а не в начало.
  * ------------------------------------------------------------------ */
 
 type Step
@@ -33,23 +31,9 @@ type Step
     | 'reset' // забыл пароль — ввести email
     | 'check-email' // «пароль отправлен на почту»
     | 'reset-signin' // ввести новый пароль из письма
-    | 'payment' // инвойс создан, уходим на шлюз
-    | 'payment-error' // инвойс создать не удалось
-    | 'congrats' // товар уже куплен — платить не за что
 
 const step = ref<Step>('auth')
 const processing = ref(false)
-
-/** AJWT из ответа `/login`. Дублируется в localStorage: он нужен ещё раз
- *  после возврата с Multicard, а это уже другая загрузка страницы. */
-const ajwt = ref('')
-
-/** Куда уходить по кнопке «To‘lovga o‘tish», если автоматический переход
- *  не сработал (блокировщик, медленный редирект). */
-const checkoutUrl = ref('')
-
-/** Заполняется только на ветке `already_purchased`. */
-const receiptUrl = ref<string | null>(null)
 
 /* ---------------------------- поля ---------------------------- */
 
@@ -170,16 +154,6 @@ const meta = computed<{ title: string[], subtitle: string }>(() => {
         title: ['Akkauntga kirish'],
         subtitle: 'Pochtangizga kelgan yangi parolni kiriting.'
       }
-    case 'payment':
-      return {
-        title: ['To‘lov kutilmoqda'],
-        subtitle: 'Siz to‘lov sahifasiga yo‘naltirilasiz. Agar sahifa avtomatik ravishda ochilmasa, tugmani bosing:'
-      }
-    case 'payment-error':
-      return {
-        title: ['To‘lovda xatolik'],
-        subtitle: 'To‘lov amalga oshmadi. Mumkin bo‘lgan sabablar: kartada mablag‘ yetarli emasligi, to‘lov vaqti tugagani yoki bankingiz tomonidan cheklovlar o‘rnatilganligi. Kartadan pul yechilmadi.'
-      }
     default:
       return { title: [], subtitle: '' }
   }
@@ -191,12 +165,8 @@ const isPasswordStep = computed(() => (
 
 const isEmailStep = computed(() => step.value === 'auth' || step.value === 'reset')
 
-const isPaymentStep = computed(() => (
-  step.value === 'payment' || step.value === 'payment-error'
-))
-
-/** Индикатор шагов: всё, что про аккаунт — шаг 1, платёжные экраны — шаг 2. */
-const activeStep = computed<1 | 2 | 3>(() => (isPaymentStep.value ? 2 : 1))
+/** Вся страница — первый шаг воронки. */
+const activeStep = 1
 
 const showBack = computed(() => (
   ['clean-signin', 'signup', 'reset', 'reset-signin'].includes(step.value)
@@ -266,7 +236,8 @@ onMounted(() => trackPageView())
 
 /**
  * Шаг флоу → событие показа экрана. Шаги без события (`reset`,
- * `check-email`, `payment-error`) в карту не входят и ничего не шлют.
+ * `check-email`, экраны ошибки и проверки оплаты) в карту не входят и
+ * ничего не шлют.
  *
  * `landing_password_screen` висит на всех трёх экранах с паролем: и там, где
  * пароль пришёл на почту (`signup`, `reset-signin`), и там, где человек
@@ -276,9 +247,7 @@ const SCREEN_EVENTS: Partial<Record<Step, L2MixpanelEvent>> = {
   'auth': 'landing_email_screen',
   'clean-signin': 'landing_password_screen',
   'signup': 'landing_password_screen',
-  'reset-signin': 'landing_password_screen',
-  'payment': 'landing_payment_screen',
-  'congrats': 'landing_congratulation_screen'
+  'reset-signin': 'landing_password_screen'
 }
 
 // `immediate` — чтобы стартовый экран тоже попал в аналитику. Дедупликации
@@ -374,21 +343,23 @@ async function signIn() {
       }
     })
 
-    ajwt.value = response?.AJWT ?? ''
+    const token = response?.AJWT ?? ''
 
-    // Без токена платить нечем. Это не «сломался платёж», а неудачный вход,
-    // поэтому ведём себя как при ошибке `/login`, а не уводим на экран
-    // оплаты с кнопкой «повторить», которая упиралась бы в то же самое.
-    if (!ajwt.value) {
+    // Без токена платить нечем — ведём себя как при ошибке `/login`.
+    if (!token) {
       handleApiError({ statusCode: 500 })
       return
     }
 
-    saveL1Ajwt(ajwt.value)
+    saveL1Ajwt(token)
+
+    // Новый вход — новая попытка оплаты: сбрасываем ссылку на прошлый
+    // платёж, иначе `/payment` показал бы кнопку от чужого инвойса.
+    clearL1Checkout()
 
     // Склеиваем анонимного посетителя лендинга с аккаунтом — дальше события
-    // уходят уже от его имени. Id ещё и сохраняем: событие покупки уйдёт уже
-    // с /payment-result, то есть на следующей загрузке страницы.
+    // уходят уже от его имени. Id ещё и сохраняем: событие покупки уйдёт на
+    // следующем шаге, то есть на другой загрузке страницы.
     if (response?.id) {
       identify(response.id)
       saveL1AccountId(String(response.id))
@@ -399,56 +370,11 @@ async function signIn() {
       trackStandard('CompleteRegistration', { email: fields.email.value })
     }
 
-    await startPayment()
+    // Шаг 1 закрыт. Инвойс создаётся уже на `/payment`: так платёжный экран
+    // получает собственную запись в истории браузера.
+    await navigateTo('/payment')
   } catch (error) {
     handleApiError(error)
-  } finally {
-    processing.value = false
-  }
-}
-
-/**
- * Шаг 2 — боевой инвойс. Вызывается сразу после входа и повторно по кнопке
- * «Qayta urunib ko‘ring» на экране ошибки.
- *
- * Ошибку инвойса не вешаем на поле пароля: аккаунт на этот момент уже создан
- * и вход выполнен, возвращать человека к паролю было бы враньём — у него
- * сломался платёж, а не логин. Поэтому отдельный экран с повтором.
- */
-async function startPayment() {
-  if (!ajwt.value) {
-    // Сюда можно попасть только с экрана ошибки после перезагрузки вкладки —
-    // тогда единственное осмысленное действие — войти заново.
-    step.value = 'auth'
-    return
-  }
-
-  processing.value = true
-
-  try {
-    const invoice = await createL1Invoice(ajwt.value)
-
-    if (invoice.status === 'already_purchased') {
-      receiptUrl.value = invoice.receiptUrl ?? null
-      clearL1InvoiceId()
-      step.value = 'congrats'
-      return
-    }
-
-    // `payment_required` (новый инвойс) и `payment_pending` (незакрытый
-    // прежний) обрабатываются одинаково: и там, и там есть ссылка на оплату.
-    if (invoice.checkoutUrl && invoice.invoiceId) {
-      saveL1InvoiceId(invoice.invoiceId)
-      checkoutUrl.value = invoice.checkoutUrl
-      step.value = 'payment'
-
-      // Кнопка на экране остаётся видимой: если браузер придержит переход,
-      // человек уйдёт на шлюз руками.
-      window.location.assign(invoice.checkoutUrl)
-      return
-    }
-
-    step.value = 'payment-error'
   } finally {
     processing.value = false
   }
@@ -477,37 +403,15 @@ async function resetPassword() {
     processing.value = false
   }
 }
-
-/** Ручной уход на шлюз с экрана «To‘lov kutilmoqda», когда автоматический
- *  переход не сработал. */
-function goToCheckout() {
-  if (checkoutUrl.value) window.location.assign(checkoutUrl.value)
-}
-
-/** Ссылка поддержки с экрана ошибки оплаты. Адрес — заглушка до тех пор,
- *  пока не назван реальный канал поддержки лендинга. */
-const SUPPORT_URL = 'mailto:support@amayasoft.uz'
 </script>
 
 <template>
-  <L1Shell :variant="step === 'congrats' ? 'congrats' : 'default'">
-    <L1Congrats
-      v-if="step === 'congrats'"
-      :receipt-url="receiptUrl"
-      @appstore="track('landing_appstore_button_tap'); trackCustom('LandingAppstoreButtonTap', { email: fields.email.value })"
-    />
-
-    <div
-      v-else
-      class="auth"
-    >
+  <L1Shell>
+    <div class="auth">
       <L1Card>
         <L1Steps :active="activeStep" />
 
-        <h1
-          class="title"
-          :class="{ 'title--lg': isPaymentStep }"
-        >
+        <h1 class="title">
           <span
             v-for="line in meta.title"
             :key="line"
@@ -637,21 +541,6 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
         />
 
         <L1Button
-          v-else-if="step === 'payment'"
-          label="To‘lovga o‘tish"
-          size="lg"
-          @click="goToCheckout"
-        />
-
-        <L1Button
-          v-else-if="step === 'payment-error'"
-          label="Qayta urunib ko‘ring"
-          size="lg"
-          :pending="processing"
-          @click="startPayment()"
-        />
-
-        <L1Button
           v-else
           label="OK"
           @click="handleNext()"
@@ -667,23 +556,6 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
         >
           Parolni unutdingizmi?
         </button>
-
-        <button
-          v-else-if="step === 'payment'"
-          class="secondary"
-          type="button"
-          @click="handleBack"
-        >
-          Orqaga
-        </button>
-
-        <p
-          v-else-if="step === 'payment-error'"
-          class="support"
-        >
-          <span>Yordam kerakmi?</span>
-          <a :href="SUPPORT_URL">Bizga yozing</a>
-        </p>
       </L1Card>
 
       <button
@@ -716,9 +588,8 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
 
 <style scoped lang="scss">
 /* Все величины — из макета Figma «Cars 1 / PW_locals_Cars1_UZ-3», фреймы
-   Email / Password / Payment: заголовок #00bf73 Nunito Black 28 (32 на
-   планшете и на платёжных экранах), подпись Nunito SemiBold 18/24 #595959,
-   поле 48px с обводкой 2px #b8b5c8. */
+   Email и Password: заголовок #00bf73 Nunito Black 28 (32 на планшете),
+   подпись Nunito SemiBold 18/24 #595959, поле 48px с обводкой 2px #b8b5c8. */
 
 .auth {
   display: flex;
@@ -745,11 +616,6 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
     line-height: 32px;
   }
 
-  /* Платёжные экраны набраны 32-м уже на мобильном. */
-  &--lg {
-    font-size: 32px;
-    line-height: 32px;
-  }
 }
 
 /* ---------- поля ---------- */
@@ -941,38 +807,6 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
   &:disabled {
     cursor: default;
     opacity: 0.6;
-  }
-}
-
-.secondary {
-  padding: 0;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 24px;
-  color: #0089b9;
-  text-decoration: underline;
-}
-
-.support {
-  width: 100%;
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 24px;
-  text-align: center;
-  color: #595959;
-
-  span {
-    display: block;
-  }
-
-  a {
-    color: #0089b9;
-    text-decoration: underline;
   }
 }
 

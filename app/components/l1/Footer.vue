@@ -36,9 +36,6 @@ defineProps<{ solid?: boolean }>()
       <NuxtLink to="/legal/privacy-policy">
         Maxfiylik siyosati
       </NuxtLink>
-      <NuxtLink to="/legal/terms-of-use">
-        Foydalanish shartlari
-      </NuxtLink>
       <NuxtLink to="/legal/refund-policy">
         To‘lovni qaytarish siyosati
       </NuxtLink>

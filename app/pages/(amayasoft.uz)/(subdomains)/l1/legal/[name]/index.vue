@@ -129,28 +129,7 @@ useSeoMeta({
         </section>
       </main>
 
-      <!-- Footer -->
-      <footer class="footer">
-        <div class="footer__company">
-          <p>«AMAYA SOFT», MChJ</p>
-          <p>Toshkent shahri, Shayxontohur tumani, Navoiy ko‘chasi, 3-uy, 76 honadon</p>
-          <p>STIR 305210613</p>
-          <p>2026, Amaya Kids</p>
-          <p>Barcha huquqlar himoyalangan</p>
-        </div>
-
-        <nav class="footer__links">
-          <NuxtLink to="/legal/public-offer">
-            Ommaviy oferta
-          </NuxtLink>
-          <NuxtLink to="/legal/privacy-policy">
-            Maxfiylik siyosati
-          </NuxtLink>
-          <NuxtLink to="/legal/refund-policy">
-            To‘lovni qaytarish siyosati
-          </NuxtLink>
-        </nav>
-      </footer>
+      <L1Footer solid />
     </div>
   </div>
 </template>
@@ -317,67 +296,6 @@ useSeoMeta({
       &:first-child {
         margin-top: 0;
       }
-    }
-  }
-}
-
-/* ---------- footer ---------- */
-
-.footer {
-  width: 100%;
-  margin-top: 32px;
-  background: #33cbff;
-  padding: 28px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-
-  @include md-tablet {
-    margin-top: 56px;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 32px 44px;
-  }
-
-  &__company,
-  &__links {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__company p,
-  &__links a {
-    font-family: "Open Sans", Arial, sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    color: #ffffff;
-
-    @include md-tablet {
-      font-size: 18px;
-      line-height: 26px;
-    }
-  }
-
-  &__company p + p {
-    margin-top: 8px;
-
-    @include md-tablet {
-      margin-top: 10px;
-    }
-  }
-
-  &__links a {
-    text-decoration: underline;
-  }
-
-  &__links a + a {
-    margin-top: 12px;
-
-    @include md-tablet {
-      margin-top: 14px;
     }
   }
 }

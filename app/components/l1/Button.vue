@@ -75,6 +75,10 @@ withDefaults(defineProps<{
     font-size: 20px;
     line-height: 20px;
     text-align: center;
+    /* Надпись не переносится: в макете кнопка «Qayta urunib ko‘ring» (321)
+       шире полосы контента карточки (279) и симметрично выходит в её
+       отступы, а не ломается на две строки. */
+    white-space: nowrap;
     color: #ffffff;
     background-image: linear-gradient(to bottom, #ffffff, #c3ffdc);
     -webkit-background-clip: text;

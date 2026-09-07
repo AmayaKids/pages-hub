@@ -1,9 +1,8 @@
 <script setup lang="ts">
 /**
  * Экран «покупка прошла» (Figma: `Congrats Mobile` / `Congrats Desktop`).
- * Показывается в двух местах: сразу после входа, если бэкенд ответил
- * `already_purchased`, и после подтверждённой оплаты на /payment-result —
- * поэтому компонент, а не кусок страницы.
+ * Показывается в двух случаях: сразу после входа, если биллинг ответил
+ * `already_purchased`, и после подтверждённой оплаты на возврате со шлюза.
  *
  * Поп-ап в макете — картинка 655×541 (802×663 на планшете), обрезанная по
  * `cover`; текст лежит поверх неё колонкой шириной 248 (289). Все величины
@@ -13,8 +12,12 @@ import congratsPopupBgPng from '~/assets/images/l1/png/congrats-popup-bg.png'
 import appStoreBadgeSvg from '~/assets/images/l1/svg/appstore-badge.svg'
 
 defineProps<{
-  /** Ссылка на чек Multicard, если бэкенд её вернул. */
+  /** Квитанция Multicard — бывает пустой даже у подтверждённой покупки. */
   receiptUrl?: string | null
+  /** Фискальный чек. Приходит из проверки статуса отдельно от квитанции;
+   *  как именно его отдавать пользователю, ещё обсуждается — пока просто
+   *  ссылка рядом с квитанцией. */
+  fiscalReceiptUrl?: string | null
 }>()
 
 const emit = defineEmits<{ appstore: [] }>()
@@ -75,6 +78,16 @@ const appStoreUrl = L1_APP_STORE_URL
         rel="noopener"
       >
         Chekni ochish
+      </a>
+
+      <a
+        v-if="fiscalReceiptUrl"
+        class="congrats__receipt"
+        :href="fiscalReceiptUrl"
+        target="_blank"
+        rel="noopener"
+      >
+        Fiskal chekni ochish
       </a>
     </div>
   </div>
