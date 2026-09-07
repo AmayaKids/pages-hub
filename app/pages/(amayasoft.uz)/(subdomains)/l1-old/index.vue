@@ -235,7 +235,7 @@ onMounted(() => {
                 Umrbod
               </p>
               <p class="offer__price-now">
-                <span>Atigi </span><b>50 000 so‘m</b>
+                <span>Atigi </span><b>49 000 so‘m</b>
               </p>
             </div>
             <button

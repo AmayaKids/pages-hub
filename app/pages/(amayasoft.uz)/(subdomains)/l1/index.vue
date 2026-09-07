@@ -128,13 +128,18 @@ const reviews = [
 /* --------------------------- лента отзывов --------------------------- */
 
 /**
- * Отзывы листаются горизонтально, а под ними — индикатор прокрутки из
- * макета. Нативный скроллбар для этого не годится: его вид не задать
- * одинаково в Safari и Chrome, поэтому он спрятан, а полоска считается по
- * позиции прокрутки.
+ * Отзывы листаются горизонтально; под ними — своя полоска прокрутки вместо
+ * нативной (её вид не задать одинаково в Safari и Chrome). На карточках
+ * работает обычный тач-свайп/трекпад — их за это отвечает нативный
+ * `overflow-x` ниже. А вот колесо мыши по вертикали браузер сам в
+ * горизонтальный скролл не переводит, и добавлять это намеренно не стали —
+ * вместо этого полоску сделали перетаскиваемой, как настоящий скроллбар:
+ * нажал в любом месте — лента прыгает туда, держишь и двигаешь — едет следом.
  */
 const reviewsEl = ref<HTMLElement | null>(null)
+const scrollbarEl = ref<HTMLElement | null>(null)
 const scrollThumb = reactive({ width: 100, offset: 0 })
+const isDraggingScrollbar = ref(false)
 
 function updateScrollThumb() {
   const el = reviewsEl.value
@@ -150,12 +155,65 @@ function updateScrollThumb() {
     : 0
 }
 
+/**
+ * Двигает ленту так, чтобы ползунок оказался под курсором — центр ползунка
+ * приходится ровно на точку нажатия, независимо от того, ткнули в сам
+ * ползунок или мимо него по дорожке. Дорожка меряется по `clientWidth`:
+ * это то же самое число, к которому уже привязаны проценты `width`/`left`
+ * ползунка (обе стороны считают от padding-box контейнера).
+ */
+function moveScrollbarThumbTo(clientX: number) {
+  const track = reviewsEl.value
+  const bar = scrollbarEl.value
+  if (!track || !bar) return
+
+  const scrollable = track.scrollWidth - track.clientWidth
+  if (scrollable <= 0) return
+
+  const trackWidth = bar.clientWidth
+  const thumbWidth = (scrollThumb.width / 100) * trackWidth
+  const travel = Math.max(trackWidth - thumbWidth, 1)
+
+  const barRect = bar.getBoundingClientRect()
+  const offset = clientX - barRect.left - thumbWidth / 2
+  const ratio = Math.min(1, Math.max(0, offset / travel))
+
+  track.scrollLeft = ratio * scrollable
+  updateScrollThumb()
+}
+
+function onScrollbarPointerMove(event: PointerEvent) {
+  moveScrollbarThumbTo(event.clientX)
+}
+
+function stopScrollbarDrag() {
+  isDraggingScrollbar.value = false
+  window.removeEventListener('pointermove', onScrollbarPointerMove)
+  window.removeEventListener('pointerup', stopScrollbarDrag)
+}
+
+/** И дорожка, и сам ползунок ловят один и тот же обработчик — иначе клик
+ *  мимо ползунка ничего бы не делал, а именно на это и жаловались. */
+function onScrollbarPointerDown(event: PointerEvent) {
+  // Иначе браузер тут же попытался бы выделить текст соседних карточек.
+  event.preventDefault()
+
+  isDraggingScrollbar.value = true
+  moveScrollbarThumbTo(event.clientX)
+
+  window.addEventListener('pointermove', onScrollbarPointerMove)
+  window.addEventListener('pointerup', stopScrollbarDrag)
+}
+
 onMounted(() => {
   updateScrollThumb()
   window.addEventListener('resize', updateScrollThumb)
 })
 
-onBeforeUnmount(() => window.removeEventListener('resize', updateScrollThumb))
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateScrollThumb)
+  stopScrollbarDrag()
+})
 
 /* ------------------------------- видео ------------------------------- */
 
@@ -280,7 +338,7 @@ onMounted(() => {
               Atigi
             </p>
             <p class="offer__amount">
-              50 000 so‘m
+              49 000 so‘m
             </p>
             <p class="offer__old">
               100 000 so‘m
@@ -373,8 +431,13 @@ onMounted(() => {
         </div>
 
         <div
+          ref="scrollbarEl"
           class="reviews__scrollbar"
-          aria-hidden="true"
+          :class="{ 'reviews__scrollbar--dragging': isDraggingScrollbar }"
+          role="scrollbar"
+          aria-orientation="horizontal"
+          aria-label="Sharhlar ro‘yxatini aylantirish"
+          @pointerdown="onScrollbarPointerDown"
         >
           <span
             class="reviews__thumb"
@@ -940,6 +1003,17 @@ onMounted(() => {
     border-radius: 24px;
     background: #e5f8ff;
     box-sizing: border-box;
+    /* Перетаскивается мышью — см. onScrollbarPointerDown в скрипте. Колесо
+       мыши намеренно не поддержано: горизонтальная лента листается тут
+       только этой полоской (и тач-свайпом/трекпадом по самим карточкам). */
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+    &--dragging {
+      cursor: grabbing;
+    }
   }
 
   &__thumb {
@@ -949,7 +1023,15 @@ onMounted(() => {
     min-width: 24px;
     border-radius: 24px;
     background: #00aeea;
+    /* Плавность нужна, когда позиция ползунка меняется сама по себе
+       (природный скролл карточек), а не пока её тащит курсор — иначе
+       перетаскивание ощутимо запаздывало бы за пальцем/мышью. */
     transition: left 0.1s linear;
+    pointer-events: none;
+  }
+
+  &__scrollbar--dragging &__thumb {
+    transition: none;
   }
 
   &__btn {
