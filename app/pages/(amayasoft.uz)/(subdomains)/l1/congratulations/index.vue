@@ -22,7 +22,7 @@ const receiptUrl = ref<string | null>(null)
 const fiscalReceiptUrl = ref<string | null>(null)
 
 const { track, adoptIdentity } = useL1Mixpanel()
-const { trackCustom, trackPageView } = useL1MetaPixel()
+const { trackStandard, trackCustom, trackPageView } = useL1MetaPixel()
 
 onMounted(() => trackPageView())
 
@@ -56,6 +56,16 @@ onMounted(async () => {
     receiptUrl.value = status.receiptUrl ?? null
     fiscalReceiptUrl.value = status.fiscalReceiptUrl ?? null
     confirmed.value = true
+
+    // Подстраховка для пути, где покупку раньше нас обнаружил не `/payment`
+    // (см. l1/payment/index.vue → trackPurchase()), а сразу `prepareInvoice()`
+    // через `already_purchased` — тогда Purchase там не улетал вообще.
+    // `claimL1PurchaseTracking` общий для обеих страниц, так что событие всё
+    // равно уйдёт ровно один раз на инвойс, с какой бы стороны его ни поймали.
+    if (claimL1PurchaseTracking(invoiceId)) {
+      trackStandard('Purchase', { value: status.price ?? L1_PRICE, currency: status.currency ?? L1_CURRENCY })
+    }
+
     return
   }
 
