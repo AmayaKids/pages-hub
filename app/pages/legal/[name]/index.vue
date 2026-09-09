@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import L1Legal from '~/pages/(amayasoft.uz)/(subdomains)/l1/legal/[name]/index.vue'
 import L2Legal from '~/pages/(amayasoft.uz)/(subdomains)/l2/legal/[name]/index.vue'
+import L3Legal from '~/pages/(amayasoft.uz)/(subdomains)/l3/legal/[name]/index.vue'
 
 // Host-scoped sub-page dispatcher, same pattern as HostLandingRouter.vue but
 // for a path other than `/` — see docs/domains-and-subdomains.md → "Как
@@ -13,7 +14,8 @@ definePageMeta({ i18n: false })
 
 const Page = resolveHostPage({
   'amayasoft-uz-l1': L1Legal,
-  'amayasoft-uz-l2': L2Legal
+  'amayasoft-uz-l2': L2Legal,
+  'amayasoft-uz-l3': L3Legal
 })
 </script>
 

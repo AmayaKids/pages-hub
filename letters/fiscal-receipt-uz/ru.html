@@ -1,0 +1,147 @@
+<!-- Unlayer content block — locale: ru -->
+<!-- Subject: Электронный чек по вашему заказу № {{orderNumber}} в AmayaKids -->
+<!-- Vars: {{orderNumber}} {{paidAt}} {{amount}} {{receiptUrl}} -->
+<style>
+  table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; border-collapse:collapse !important; }
+  img { -ms-interpolation-mode:bicubic; border:0; height:auto; line-height:100%; outline:none; text-decoration:none; display:block; }
+  a { text-decoration:none; }
+  #outlook a { padding:0; }
+
+  @media only screen and (max-width:640px) {
+    .px { padding-left:20px !important; padding-right:20px !important; }
+    .row-key { display:block !important; width:100% !important; padding-bottom:2px !important; }
+    .row-val { display:block !important; width:100% !important; text-align:left !important; padding-bottom:12px !important; }
+    .btn { display:block !important; width:100% !important; box-sizing:border-box !important; }
+  }
+</style>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="width:100%; background-color:#FFFFFF; border-radius:16px; overflow:hidden;">
+
+  <!-- ============ HEADER / LOGO ============ -->
+  <tr>
+    <td align="center" class="px" style="padding:32px 32px 24px 32px;">
+      <img src="https://pages.amayakids.com/assets/images/common-storage/amayakids-logo.png"
+           width="180" height="41" alt="Amaya Kids"
+           style="width:180px; height:41px; margin:0 auto;">
+    </td>
+  </tr>
+
+  <!-- ============ INTRO ============ -->
+  <tr>
+    <td class="px" style="padding:0 32px 24px 32px;">
+      <p style="margin:0 0 12px 0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:16px; line-height:24px; font-weight:400;">
+        Здравствуйте!
+      </p>
+      <p style="margin:0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:16px; line-height:24px; font-weight:400;">
+        Благодарим вас за покупку на сайте AmayaKids! Ваш платёж успешно обработан,
+        сформирован электронный фискальный чек.
+      </p>
+    </td>
+  </tr>
+
+  <!-- ============ PAYMENT DETAILS ============ -->
+  <tr>
+    <td class="px" style="padding:0 32px 24px 32px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F5F5F7"
+             style="width:100%; background-color:#F5F5F7; border-radius:12px;">
+        <tr>
+          <td style="padding:20px 20px 8px 20px;">
+            <p style="margin:0; color:#1F1F1F; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:18px; line-height:24px; font-weight:700;">
+              Детали платежа
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 20px 20px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="width:100%; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:15px; line-height:22px;">
+
+              <tr>
+                <td class="row-key" valign="top" style="padding:12px 12px 12px 0; color:#77767E; font-weight:400;">Номер заказа</td>
+                <td class="row-val" valign="top" align="right" style="padding:12px 0; color:#1F1F1F; font-size:14px; line-height:20px; font-weight:600; word-break:break-word;">{{orderNumber}}</td>
+              </tr>
+
+              <tr>
+                <td class="row-key" valign="top" style="padding:12px 12px 12px 0; border-top:1px solid #E6E6EA; color:#77767E; font-weight:400;">Организация</td>
+                <td class="row-val" valign="top" align="right" style="padding:12px 0; border-top:1px solid #E6E6EA; color:#1F1F1F; font-weight:600;">AmayaSoft MChJ</td>
+              </tr>
+
+              <tr>
+                <td class="row-key" valign="top" style="padding:12px 12px 12px 0; border-top:1px solid #E6E6EA; color:#77767E; font-weight:400;">ИНН</td>
+                <td class="row-val" valign="top" align="right" style="padding:12px 0; border-top:1px solid #E6E6EA; color:#1F1F1F; font-weight:600;">305210613</td>
+              </tr>
+
+              <tr>
+                <td class="row-key" valign="top" style="padding:12px 12px 12px 0; border-top:1px solid #E6E6EA; color:#77767E; font-weight:400;">Дата и время</td>
+                <td class="row-val" valign="top" align="right" style="padding:12px 0; border-top:1px solid #E6E6EA; color:#1F1F1F; font-weight:600;">{{paidAt}}</td>
+              </tr>
+
+              <tr>
+                <td class="row-key" valign="top" style="padding:12px 12px 0 0; border-top:1px solid #E6E6EA; color:#77767E; font-weight:400;">Сумма платежа</td>
+                <td class="row-val" valign="top" align="right" style="padding:12px 0 0 0; border-top:1px solid #E6E6EA; color:#1F1F1F; font-size:18px; line-height:24px; font-weight:700;">{{amount}} сум</td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- ============ CTA ============ -->
+  <tr>
+    <td align="center" class="px" style="padding:0 32px 12px 32px;">
+      <p style="margin:0 0 16px 0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:15px; line-height:22px; font-weight:400; text-align:center;">
+        Чтобы посмотреть фискальный чек, проверить его подлинность и получить информацию
+        о фискальных признаках (включая QR-код), перейдите по официальной ссылке:
+      </p>
+
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+          href="{{receiptUrl}}" style="height:52px; v-text-anchor:middle; width:340px;" arcsize="40%" strokecolor="#F0592B" fillcolor="#F0592B">
+        <w:anchorlock/>
+        <center style="color:#FFFFFF; font-family:Arial,sans-serif; font-size:16px; font-weight:600;">Посмотреть фискальный чек</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-- -->
+      <a href="{{receiptUrl}}" target="_blank" class="btn"
+         style="display:inline-block; background-color:#F0592B; border-radius:12px; padding:15px 32px; color:#FFFFFF; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:16px; line-height:22px; font-weight:600; text-align:center; text-decoration:none !important;">
+        Посмотреть фискальный чек
+      </a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+
+  <!-- ============ SIGNATURE ============ -->
+  <tr>
+    <td class="px" style="padding:24px 32px 32px 32px;">
+      <p style="margin:0 0 4px 0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:15px; line-height:22px; font-weight:400;">
+        С уважением,<br>AmayaSoft MChJ
+      </p>
+      <p style="margin:0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:15px; line-height:22px; font-weight:400;">
+        Служба поддержки: <a href="mailto:support@amayasoft.uz" style="color:#F0592B; text-decoration:underline;">support@amayasoft.uz</a><br>
+        <a href="https://l1.amayasoft.uz" target="_blank" style="color:#F0592B; text-decoration:underline;">l1.amayasoft.uz</a>
+      </p>
+    </td>
+  </tr>
+
+  <!-- ============ FOOTER ============ -->
+  <tr>
+    <td style="padding:0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F4FBFC" style="background-color:#F4FBFC;">
+        <tr>
+          <td align="center" class="px" style="padding:24px 32px 28px 32px;">
+            <p style="margin:0 0 10px 0; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:14px; line-height:20px; text-align:center;">
+              <a href="https://amayakids.com/privacy.html" target="_blank" style="color:#F0592B; text-decoration:underline;">Maxfiylik siyosati</a>
+            </p>
+            <p style="margin:0; color:#3D3B4B; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:14px; line-height:20px; font-weight:400; text-align:center;">
+              © 2026, Amaya Kids | Barcha huquqlar himoyalangan
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>

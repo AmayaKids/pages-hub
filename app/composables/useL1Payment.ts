@@ -33,6 +33,19 @@ export const L1_EXPERIMENT = 'UA_Cars2_var2'
 /** Платный пожизненный доступ — единственный товар этого лендинга. */
 export const L1_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
 
+/** Тот же товар, но тестовый — чтобы прогон реального платёжного флоу на
+ *  проде тестировщиком (см. useQaTester.ts, `?tester=`) не создавал настоящий
+ *  инвойс в Multicard и не портил биллинговую аналитику. Отображение
+ *  (цена, копирайт) не меняется — подменяется только то, что уходит в тело
+ *  запроса к биллингу. */
+export const L1_PRODUCT_ID_TEST = 'com.amayasoft.cars2.ua.landing.lifetime.paid.test'
+
+/** Кто тестировщик — та же метка, что и в остальной аналитике лендинга. */
+function resolveL1ProductId(): string {
+  if (import.meta.server) return L1_PRODUCT_ID
+  return getTesterProp() === 'none' ? L1_PRODUCT_ID : L1_PRODUCT_ID_TEST
+}
+
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
  *  здесь она нужна только для показа и для аналитики покупки. */
 export const L1_PRICE = 49000
@@ -228,7 +241,7 @@ export async function createL1Invoice(ajwt: string): Promise<L1InvoiceResponse> 
     return await $fetch<L1InvoiceResponse>(`${L1_PAYMENT_API}/invoice`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${ajwt}` },
-      body: { productId: L1_PRODUCT_ID }
+      body: { productId: resolveL1ProductId() }
     })
   } catch (error) {
     // Сюда попадают только транспортные сбои и не-2xx: свои ошибки AGS
@@ -253,7 +266,7 @@ export async function checkL1PaymentStatus(ajwt: string, invoiceId: string): Pro
     return await $fetch<L1StatusResponse>(`${L1_PAYMENT_API}/status`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${ajwt}` },
-      body: { productId: L1_PRODUCT_ID, invoiceId }
+      body: { productId: resolveL1ProductId(), invoiceId }
     })
   } catch (error) {
     const data = (error as { data?: L1StatusResponse })?.data
