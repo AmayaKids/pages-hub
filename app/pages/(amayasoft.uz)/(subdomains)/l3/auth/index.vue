@@ -544,7 +544,7 @@ async function resetPassword() {
           </a>
 
           <a
-            class="congrats__badge congrats__badge--googleplay"
+            class="congrats__badge"
             :href="GOOGLE_PLAY_URL"
             target="_blank"
             rel="noopener"
@@ -1462,35 +1462,24 @@ async function resetPassword() {
     }
   }
 
+  /* Официальная графика App Store и Google Play (обновление дизайна, Figma
+     PW_locals_Cars2_UZ-4) — обе нарисованы на одну ширину (160), поэтому
+     обоим бейджам достаточно задать одинаковую ширину и оставить высоту по
+     собственной пропорции картинки, без отдельного модификатора под каждый. */
   &__badge {
     flex-shrink: 0;
     display: block;
     width: 130px;
-    height: 43.455px;
 
     @include md-tablet {
       width: 160px;
-      height: 53.483px;
     }
 
     img {
       display: block;
       width: 100%;
-      height: 100%;
+      height: auto;
       border: 0;
-    }
-
-    /* Официальная графика Google Play — другое соотношение сторон, чем у
-       App Store (180×53.333 против ~130×43.455), поэтому не переиспользуем
-       ширину/высоту базового `&__badge` как есть: это бы растянуло бейдж.
-       Вместо этого высота — та же, что у App Store (для визуального
-       единства пары), а ширина — по собственной пропорции картинки. */
-    &--googleplay {
-      width: 146.66px;
-
-      @include md-tablet {
-        width: 180.51px;
-      }
     }
   }
 

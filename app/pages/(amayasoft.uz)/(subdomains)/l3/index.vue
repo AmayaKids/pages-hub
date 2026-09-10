@@ -161,6 +161,9 @@ onMounted(() => {
             <p class="congrats__subtitle">
               Siz «Mashinalar» ilovasidan BEPUL to‘liq foydalanish imkoniga ega bo‘ldingiz!
             </p>
+            <p class="congrats__stores">
+              App Store va Google Play’da mavjud
+            </p>
             <NuxtLink
               class="btn congrats__btn"
               to="/auth"
@@ -524,7 +527,11 @@ onMounted(() => {
     justify-content: center;
 
     > * {
-      margin-top: 20px;
+      // Было 20px — дизайнер уменьшил после того, как между подзаголовком и
+      // кнопкой добавилась строка про App Store/Google Play, иначе блок
+      // становился слишком высоким (см. аннотацию в Figma, страница
+      // PW_locals_Cars2_UZ-4).
+      margin-top: 8px;
 
       &:first-child {
         margin-top: 0;
@@ -550,6 +557,20 @@ onMounted(() => {
     line-height: 24px;
     text-align: center;
     color: #ffffff;
+  }
+
+  /* Новая строка из обновления дизайна (Figma, PW_locals_Cars2_UZ-4) — не
+     смог снять точные значения размера/веса шрифта из самого макета
+     (см. ограничение инструмента браузера в отчёте), подобрано на глаз под
+     общий стиль пузыря; проверьте вживую и поправьте при расхождении. */
+  &__stores {
+    width: 100%;
+    font-family: "Nunito", Arial, sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    color: #005471;
   }
 
   &__btn {
