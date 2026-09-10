@@ -80,7 +80,7 @@ const benefits = [
   'Kichkina poygachilar uchun 75+ mashina',
   'Mashinangizni tanlang, ranglar va g‘ildiraklarni o‘zgartiring, stikerlar bilan bezating va yo‘lga chiqing!',
   '6 ta yorqin poyga trassasi',
-  'Ilovaga kirish imkoniyatini o‘z qurilmangizdan sotib oling — ilovani bolangizning iPhone yoki iPad‘iga qurilmasiga o‘rnating'
+  'Ilovaga kirishni o‘z qurilmangizda xarid qiling — uni bolangizning iPhone yoki iPad’iga o‘rnating'
 ]
 
 const utpItems = [
