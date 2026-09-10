@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "shared-web",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/kirill/Repositories/Quickway/quickway-platform' && pnpm --filter shared-web dev"
+      ],
+      "port": 3100
+    }
+  ]
+}

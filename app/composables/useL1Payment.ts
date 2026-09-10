@@ -38,7 +38,7 @@ export const L1_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
  *  инвойс в Multicard и не портил биллинговую аналитику. Отображение
  *  (цена, копирайт) не меняется — подменяется только то, что уходит в тело
  *  запроса к биллингу. */
-export const L1_PRODUCT_ID_TEST = 'com.amayasoft.cars2.ua.landing.lifetime.paid.test'
+export const L1_PRODUCT_ID_TEST = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
 
 /** Кто тестировщик — та же метка, что и в остальной аналитике лендинга. */
 function resolveL1ProductId(): string {
