@@ -48,8 +48,8 @@ function resolveL1ProductId(): string {
 
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
  *  здесь она нужна только для показа и для аналитики покупки. */
-export const L1_PRICE = 49000
-export const L1_OLD_PRICE = 100000
+export const L1_PRICE = 9900
+export const L1_OLD_PRICE = 19900
 export const L1_CURRENCY = 'UZS'
 
 /** Пока на лендинге единственный тип покупки (см. требования по аналитике). */

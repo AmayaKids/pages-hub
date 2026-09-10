@@ -338,10 +338,10 @@ onMounted(() => {
               Atigi
             </p>
             <p class="offer__amount">
-              49 000 so‘m
+              9 900 so‘m
             </p>
             <p class="offer__old">
-              100 000 so‘m
+              19 900 so‘m
             </p>
           </div>
 
