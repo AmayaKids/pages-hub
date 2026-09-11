@@ -353,10 +353,10 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
 </script>
 
 <template>
-  <L4Shell>
+  <L1Shell>
     <div class="payment">
-      <L4Card>
-        <L4Steps :active="2" />
+      <L1Card>
+        <L1Steps :active="2" />
 
         <h1
           v-if="meta.title"
@@ -378,14 +378,14 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
           aria-hidden="true"
         />
 
-        <L4Button
+        <L1Button
           v-else-if="screen === 'ready'"
           label="To‘lovga o‘tish"
           size="lg"
           @click="goToCheckout"
         />
 
-        <L4Button
+        <L1Button
           v-else-if="screen === 'unavailable'"
           label="Qayta tekshirish"
           size="lg"
@@ -393,7 +393,7 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
           @click="recheck"
         />
 
-        <L4Button
+        <L1Button
           v-else-if="screen === 'error' && canRetry"
           label="Qayta urunib ko‘ring"
           size="lg"
@@ -417,9 +417,9 @@ const SUPPORT_URL = 'mailto:support@amayasoft.uz'
           <span>Yordam kerakmi?</span>
           <a :href="SUPPORT_URL">Bizga yozing</a>
         </p>
-      </L4Card>
+      </L1Card>
     </div>
-  </L4Shell>
+  </L1Shell>
 </template>
 
 <style scoped lang="scss">

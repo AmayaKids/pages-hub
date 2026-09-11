@@ -406,10 +406,10 @@ async function resetPassword() {
 </script>
 
 <template>
-  <L4Shell>
+  <L1Shell>
     <div class="auth">
-      <L4Card>
-        <L4Steps :active="activeStep" />
+      <L1Card>
+        <L1Steps :active="activeStep" />
 
         <h1 class="title">
           <span
@@ -524,7 +524,7 @@ async function resetPassword() {
         </div>
 
         <!-- Кнопка шага -->
-        <L4Button
+        <L1Button
           v-if="isEmailStep"
           label="Yuborish"
           :pending="processing"
@@ -532,7 +532,7 @@ async function resetPassword() {
           @click="handleNext()"
         />
 
-        <L4Button
+        <L1Button
           v-else-if="isPasswordStep"
           label="Davom etish"
           :pending="processing"
@@ -540,7 +540,7 @@ async function resetPassword() {
           @click="handleNext()"
         />
 
-        <L4Button
+        <L1Button
           v-else
           label="OK"
           @click="handleNext()"
@@ -556,7 +556,7 @@ async function resetPassword() {
         >
           Parolni unutdingizmi?
         </button>
-      </L4Card>
+      </L1Card>
 
       <button
         v-if="showBack"
@@ -583,7 +583,7 @@ async function resetPassword() {
         </svg>
       </button>
     </div>
-  </L4Shell>
+  </L1Shell>
 </template>
 
 <style scoped lang="scss">

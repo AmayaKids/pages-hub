@@ -83,12 +83,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <L4Shell variant="congrats">
-    <L4Congrats
+  <L1Shell variant="congrats">
+    <L1Congrats
       v-if="confirmed"
       :receipt-url="receiptUrl"
       :fiscal-receipt-url="fiscalReceiptUrl"
       @appstore="track('landing_appstore_button_tap'); trackCustom('LandingAppstoreButtonTap')"
     />
-  </L4Shell>
+  </L1Shell>
 </template>

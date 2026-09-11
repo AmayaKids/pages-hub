@@ -133,7 +133,7 @@ useSeoMeta({
         </section>
       </main>
 
-      <L4Footer solid />
+      <L1Footer solid />
     </div>
   </div>
 </template>
