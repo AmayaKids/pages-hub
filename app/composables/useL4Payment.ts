@@ -66,13 +66,22 @@ function resolveL4ProductId(): string {
  * одинаково — включая заглушки: `undefined` там, где метки в ссылке не было,
  * и `none` у не-тестировщика. Пустые строки вместо них означали бы, что
  * одна и та же сессия в двух системах размечена по-разному.
+ *
+ * `Host` здесь берётся из браузера, а не из заголовка запроса, как в
+ * server/api/l4/mixpanel/track.post.ts: инвойс уходит из браузера прямо в
+ * AGS, нашего сервера в этой цепочке нет — подставить домен на стороне
+ * сервера просто негде.
  */
 function resolveL4Attribution(): Record<string, string> | undefined {
   // Метки живут в localStorage и в адресной строке — на сервере нет ни того,
   // ни другого. Инвойс всё равно создаётся только из `onMounted`.
   if (import.meta.server) return undefined
 
-  return { ...getL4UtmProps(), Tester: getTesterProp() }
+  return {
+    ...getL4UtmProps(),
+    Tester: getTesterProp(),
+    Host: window.location.hostname
+  }
 }
 
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
