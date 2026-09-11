@@ -164,7 +164,7 @@ export default defineEventHandler(async (event) => {
   const clientIp = getRequestIP(event, { xForwardedFor: true })
 
   // Хост берём из самого запроса, а не из тела: роут живёт на том же домене,
-  // что и лендинг, поэтому `Host` здесь — это и есть домен, с которого
+  // что и лендинг, поэтому заголовок `Host` — это и есть домен, с которого
   // пришло событие. Клиенту это значение не доверяем — иначе запросом в
   // обход страницы можно было бы приписать свои события чужому домену.
   // `xForwardedHost` — потому что прод стоит за прокси, которая переписывает
@@ -186,7 +186,10 @@ export default defineEventHandler(async (event) => {
         // `$identify` — служебное событие склейки личностей, метки в нём
         // ничего не дают, поэтому туда они не идут.
         ? { $identified_id: distinctId, $anon_id: anonId }
-        : { ...pickAllowedProperties(body?.properties), Host: requestHost })
+        // Свойство строчными — одно написание с `attribution` инвойса
+        // (см. useL1Payment.ts): Mixpanel различает регистр, и `host`/`Host`
+        // стали бы двумя разными колонками.
+        : { ...pickAllowedProperties(body?.properties), host: requestHost })
     }
   }]
 

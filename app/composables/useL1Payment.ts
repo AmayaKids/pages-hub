@@ -57,10 +57,14 @@ function resolveL1ProductId(): string {
  * и `none` у не-тестировщика. Пустые строки вместо них означали бы, что
  * одна и та же сессия в двух системах размечена по-разному.
  *
- * `Host` здесь берётся из браузера, а не из заголовка запроса, как в
+ * `host` здесь берётся из браузера, а не из заголовка запроса, как в
  * server/api/l1/mixpanel/track.post.ts: инвойс уходит из браузера прямо в
  * AGS, нашего сервера в этой цепочке нет — подставить домен на стороне
  * сервера просто негде.
+ *
+ * Ключ строчными — так просил бэкенд (иначе им пришлось бы перезапускать
+ * много сервисов). Тем же написанием он уходит и в Mixpanel, чтобы одно и
+ * то же поле не называлось в двух системах по-разному.
  */
 function resolveL1Attribution(): Record<string, string> | undefined {
   // Метки живут в localStorage и в адресной строке — на сервере нет ни того,
@@ -70,7 +74,7 @@ function resolveL1Attribution(): Record<string, string> | undefined {
   return {
     ...getL1UtmProps(),
     Tester: getTesterProp(),
-    Host: window.location.hostname
+    host: window.location.hostname
   }
 }
 
