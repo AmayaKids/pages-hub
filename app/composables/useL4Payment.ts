@@ -33,8 +33,10 @@ export const L4_COUNTRY = 'Uzbekistan'
 // схеме — бэк это значение не подтверждал, поправить при необходимости.
 export const L4_EXPERIMENT = 'UA_Cars2_var4'
 
-/** Платный пожизненный доступ — единственный товар этого лендинга. */
-export const L4_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
+/** Платный пожизненный доступ — единственный товар этого лендинга. Свой,
+ *  отдельный от l1 (`…lifetime.paid`): у l4 другая цена, и на бэке под неё
+ *  заведён отдельный productId. */
+export const L4_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid2'
 
 /** Тот же товар, но тестовый — чтобы прогон реального платёжного флоу на
  *  проде тестировщиком (см. useQaTester.ts, `?tester=`) не создавал настоящий
@@ -46,12 +48,31 @@ export const L4_PRODUCT_ID = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
  *  с суффиксом `.test` на бэке ещё не заведён (см. историю useL1Payment.ts:
  *  suffix отключили обратно после того, как AGS не узнал такой productId).
  *  Когда его заведут на бэке — здесь и там нужно поменять синхронно. */
-export const L4_PRODUCT_ID_TEST = 'com.amayasoft.cars2.ua.landing.lifetime.paid'
+export const L4_PRODUCT_ID_TEST = 'com.amayasoft.cars2.ua.landing.lifetime.paid2'
 
 /** Кто тестировщик — та же метка, что и в остальной аналитике лендинга. */
 function resolveL4ProductId(): string {
   if (import.meta.server) return L4_PRODUCT_ID
   return getTesterProp() === 'none' ? L4_PRODUCT_ID : L4_PRODUCT_ID_TEST
+}
+
+/**
+ * Метки перехода, которые уходят вместе с инвойсом: по ним биллинг сводит
+ * выручку с рекламными кампаниями.
+ *
+ * Значения берутся из тех же источников, что и события аналитики
+ * (useL4Mixpanel.ts → `getL4UtmProps()`, useQaTester.ts → `getTesterProp()`),
+ * поэтому покупка в биллинге и события в Mixpanel описывают переход
+ * одинаково — включая заглушки: `undefined` там, где метки в ссылке не было,
+ * и `none` у не-тестировщика. Пустые строки вместо них означали бы, что
+ * одна и та же сессия в двух системах размечена по-разному.
+ */
+function resolveL4Attribution(): Record<string, string> | undefined {
+  // Метки живут в localStorage и в адресной строке — на сервере нет ни того,
+  // ни другого. Инвойс всё равно создаётся только из `onMounted`.
+  if (import.meta.server) return undefined
+
+  return { ...getL4UtmProps(), Tester: getTesterProp() }
 }
 
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
@@ -249,7 +270,10 @@ export async function createL4Invoice(ajwt: string): Promise<L4InvoiceResponse> 
     return await $fetch<L4InvoiceResponse>(`${L4_PAYMENT_API}/invoice`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${ajwt}` },
-      body: { productId: resolveL4ProductId() }
+      body: {
+        productId: resolveL4ProductId(),
+        attribution: resolveL4Attribution()
+      }
     })
   } catch (error) {
     // Сюда попадают только транспортные сбои и не-2xx: свои ошибки AGS
