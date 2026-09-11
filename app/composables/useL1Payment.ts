@@ -46,6 +46,25 @@ function resolveL1ProductId(): string {
   return getTesterProp() === 'none' ? L1_PRODUCT_ID : L1_PRODUCT_ID_TEST
 }
 
+/**
+ * Метки перехода, которые уходят вместе с инвойсом: по ним биллинг сводит
+ * выручку с рекламными кампаниями.
+ *
+ * Значения берутся из тех же источников, что и события аналитики
+ * (useL1Mixpanel.ts → `getL1UtmProps()`, useQaTester.ts → `getTesterProp()`),
+ * поэтому покупка в биллинге и события в Mixpanel описывают переход
+ * одинаково — включая заглушки: `undefined` там, где метки в ссылке не было,
+ * и `none` у не-тестировщика. Пустые строки вместо них означали бы, что
+ * одна и та же сессия в двух системах размечена по-разному.
+ */
+function resolveL1Attribution(): Record<string, string> | undefined {
+  // Метки живут в localStorage и в адресной строке — на сервере нет ни того,
+  // ни другого. Инвойс всё равно создаётся только из `onMounted`.
+  if (import.meta.server) return undefined
+
+  return { ...getL1UtmProps(), Tester: getTesterProp() }
+}
+
 /** Цена с макета. Реальную сумму списывает Multicard по данным инвойса —
  *  здесь она нужна только для показа и для аналитики покупки. */
 export const L1_PRICE = 9900
@@ -241,7 +260,10 @@ export async function createL1Invoice(ajwt: string): Promise<L1InvoiceResponse> 
     return await $fetch<L1InvoiceResponse>(`${L1_PAYMENT_API}/invoice`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${ajwt}` },
-      body: { productId: resolveL1ProductId() }
+      body: {
+        productId: resolveL1ProductId(),
+        attribution: resolveL1Attribution()
+      }
     })
   } catch (error) {
     // Сюда попадают только транспортные сбои и не-2xx: свои ошибки AGS

@@ -168,8 +168,13 @@ function withUtmDefaults(partial: Record<string, string>): Record<string, string
  * метки одинаково часто (`utm_content`, например, есть не на каждом
  * плейсменте), а без органического трафика (прямой заход, поиск и т.п.)
  * меток нет вовсе — в обоих случаях недостающее превращается в `UTM_UNDEFINED`.
+ *
+ * Экспортируется (в отличие от такой же функции у l2/l3) ради `attribution`
+ * в теле инвойса — см. useL1Payment.ts. Читать метки там своей копией этого
+ * кода нельзя: хранилище `amaya_l1_utm` одно, и две независимые реализации
+ * рано или поздно разъехались бы.
  */
-function getUtmProps(): Record<string, string> {
+export function getL1UtmProps(): Record<string, string> {
   const fromUrl = readUtmFromUrl()
 
   if (fromUrl) {
@@ -220,7 +225,7 @@ export function useL1Mixpanel() {
     send({
       event,
       distinctId: identifiedId || getAnonId(),
-      properties: { ...getUtmProps(), Tester: getTesterProp(), ...extra }
+      properties: { ...getL1UtmProps(), Tester: getTesterProp(), ...extra }
     })
   }
 
