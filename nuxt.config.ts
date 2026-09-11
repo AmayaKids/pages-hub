@@ -35,10 +35,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Только сервер: подставляется из NUXT_CARS2_MIXPANEL_TOKEN и используется
-    // в server/api/l1/mixpanel/track.post.ts, server/api/l2/mixpanel/track.post.ts
-    // и server/api/l3/mixpanel/track.post.ts — один проект Mixpanel на все три
-    // лендинга, у каждого свой роут. В браузер токен не попадает — именно
-    // поэтому события лендинга идут через свой роут, а не напрямую.
+    // в server/api/l1/mixpanel/track.post.ts, server/api/l2/mixpanel/track.post.ts,
+    // server/api/l3/mixpanel/track.post.ts и server/api/l4/mixpanel/track.post.ts
+    // — один проект Mixpanel на все четыре лендинга, у каждого свой роут. В
+    // браузер токен не попадает — именно поэтому события лендинга идут через
+    // свой роут, а не напрямую.
     cars2MixpanelToken: '',
     // Не обязателен для HTTP `/track` (проверено — события доходят и без
     // него), но Mixpanel постепенно требует его на других эндпоинтах, так что
@@ -104,11 +105,13 @@ export default defineNuxtConfig({
         'l1.amayasoft.uz',
         'l2.amayasoft.uz',
         'l3.amayasoft.uz',
+        'l4.amayasoft.uz',
         'test.amayasoft.uz',
         'amayakids.com.loc',
         'l1.amayasoft.uz.loc',
         'l2.amayasoft.uz.loc',
         'l3.amayasoft.uz.loc',
+        'l4.amayasoft.uz.loc',
         'test.amayasoft.uz.loc'
       ]
     }

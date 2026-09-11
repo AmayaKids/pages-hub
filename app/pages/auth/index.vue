@@ -2,6 +2,7 @@
 import L1Auth from '~/pages/(amayasoft.uz)/(subdomains)/l1/auth/index.vue'
 import L2Auth from '~/pages/(amayasoft.uz)/(subdomains)/l2/auth/index.vue'
 import L3Auth from '~/pages/(amayasoft.uz)/(subdomains)/l3/auth/index.vue'
+import L4Auth from '~/pages/(amayasoft.uz)/(subdomains)/l4/auth/index.vue'
 
 // Host-scoped sub-page dispatcher, same pattern as HostLandingRouter.vue but
 // for a path other than `/` — see docs/domains-and-subdomains.md → "Как
@@ -15,7 +16,8 @@ definePageMeta({ i18n: false })
 const Page = resolveHostPage({
   'amayasoft-uz-l1': L1Auth,
   'amayasoft-uz-l2': L2Auth,
-  'amayasoft-uz-l3': L3Auth
+  'amayasoft-uz-l3': L3Auth,
+  'amayasoft-uz-l4': L4Auth
 })
 </script>
 

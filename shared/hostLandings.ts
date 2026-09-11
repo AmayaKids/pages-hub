@@ -55,6 +55,10 @@ export const HOST_CONFIGS = {
     pageKey: 'amayasoft-uz-l3',
     locale: { localized: false }
   },
+  'l4.amayasoft.uz': {
+    pageKey: 'amayasoft-uz-l4',
+    locale: { localized: false }
+  },
   'test.amayasoft.uz': {
     pageKey: 'amayasoft-uz-test',
     locale: { localized: true, locales: GLOBAL_LOCALES, defaultLocale: GLOBAL_DEFAULT_LOCALE }
@@ -112,6 +116,7 @@ export function getLandingSlug(host: string | undefined | null): string | undefi
   if (pageKey.endsWith('-l1')) return 'l1'
   if (pageKey.endsWith('-l2')) return 'l2'
   if (pageKey.endsWith('-l3')) return 'l3'
+  if (pageKey.endsWith('-l4')) return 'l4'
   if (pageKey.endsWith('-test')) return 'test'
 
   return undefined

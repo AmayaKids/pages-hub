@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import L1PaymentResult from '~/pages/(amayasoft.uz)/(subdomains)/l1/payment-result/index.vue'
+import L4PaymentResult from '~/pages/(amayasoft.uz)/(subdomains)/l4/payment-result/index.vue'
 
 // Host-scoped sub-page dispatcher, same pattern as HostLandingRouter.vue but
 // for a path other than `/` — see docs/domains-and-subdomains.md → "Как
@@ -13,7 +14,8 @@ import L1PaymentResult from '~/pages/(amayasoft.uz)/(subdomains)/l1/payment-resu
 definePageMeta({ i18n: false })
 
 const Page = resolveHostPage({
-  'amayasoft-uz-l1': L1PaymentResult
+  'amayasoft-uz-l1': L1PaymentResult,
+  'amayasoft-uz-l4': L4PaymentResult
 })
 </script>
 
