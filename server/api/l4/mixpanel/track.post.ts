@@ -161,6 +161,16 @@ export default defineEventHandler(async (event) => {
   // передать явно — иначе все события окажутся в стране хостинга.
   const clientIp = getRequestIP(event, { xForwardedFor: true })
 
+  // Хост берём из самого запроса, а не из тела: роут живёт на том же домене,
+  // что и лендинг, поэтому `Host` здесь — это и есть домен, с которого
+  // пришло событие. Клиенту это значение не доверяем — иначе запросом в
+  // обход страницы можно было бы приписать свои события чужому домену.
+  // `xForwardedHost` — потому что прод стоит за прокси, которая переписывает
+  // `Host` (см. server/middleware/host-landing.ts и useAppHost.ts).
+  // Порт отрезаем: в дев-режиме он есть (`…:3000`), на проде нет, а в отчёте
+  // это должна быть одна и та же колонка.
+  const requestHost = (getRequestHost(event, { xForwardedHost: true }) || '').split(':')[0]
+
   const payload = [{
     event: name,
     properties: {
@@ -174,7 +184,7 @@ export default defineEventHandler(async (event) => {
         // `$identify` — служебное событие склейки личностей, метки в нём
         // ничего не дают, поэтому туда они не идут.
         ? { $identified_id: distinctId, $anon_id: anonId }
-        : pickAllowedProperties(body?.properties))
+        : { ...pickAllowedProperties(body?.properties), Host: requestHost })
     }
   }]
 
